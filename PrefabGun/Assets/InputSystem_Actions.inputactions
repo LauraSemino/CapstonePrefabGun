@@ -67,9 +67,9 @@
                     "priority": 0
                 },
                 {
-                    "name": "SwapMode",
+                    "name": "PlusIndex",
                     "type": "Button",
-                    "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0",
+                    "id": "b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -77,9 +77,9 @@
                     "priority": 0
                 },
                 {
-                    "name": "SwapIndex",
+                    "name": "MinusIndex",
                     "type": "Button",
-                    "id": "b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba",
+                    "id": "147bdace-3773-4824-8e6e-d814a01c9fc9",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -282,7 +282,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "SwapIndex",
+                    "action": "PlusIndex",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -293,7 +293,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "SwapIndex",
+                    "action": "PlusIndex",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb2e6943-5b6d-41c9-8080-21be74732341",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "MinusIndex",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "df027188-4e3a-4124-905e-17eb40d7d500",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "MinusIndex",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -316,28 +338,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1534dc16-a6aa-499d-9c3a-22b47347b52a",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "SwapMode",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "25060bbd-a3a6-476e-8fba-45ae484aad05",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "SwapMode",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
