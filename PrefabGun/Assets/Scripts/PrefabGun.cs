@@ -16,20 +16,24 @@ public class PrefabGun : MonoBehaviour
 
     GameObject grabObject;
     GameObject toPlace = null;
-
-    bool tryLeftMouse;
-    bool followMouse;
+    bool isPlaceMode;
+    public int placeIncriment;
+    int placeAdjust = 0;
     [SerializeField] TextMeshProUGUI displayIndex;
     // Update is called once per frame
     void Update()
-    { 
-        if (followMouse)
+    {
+        //follows mouse better in update
+        if (isPlaceMode && toPlace != null)
         {
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
             {
-                toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
+                Debug.Log("hit");
+                toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);                
                 toPlace.transform.SetParent(transform, true);
+                placeAdjust += placeIncriment;
+                toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
             }
         }
     }
@@ -61,46 +65,70 @@ public class PrefabGun : MonoBehaviour
                 toPlace.GetComponent<MeshRenderer>().material = canBePlaced;
                 toPlace.GetComponent<Collider>().isTrigger = true;
                 toPlace.GetComponent<Rigidbody>().isKinematic = true;
-                followMouse = true;
+                isPlaceMode = true;
             }
         }
         if (context.canceled && toPlace != null)
         {
-            followMouse = false;
+            isPlaceMode = false;
             Vector3 placePos = toPlace.transform.position;
+            Quaternion placeRot = toPlace.transform.rotation;
             Destroy(toPlace.gameObject);
             toPlace = null;
-            Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
+            Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
+            placeAdjust = 0;
         }
     }
     public void OnPlusIndex(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            if (curObjIndex < savedObjects.Count - 1)
+            if (isPlaceMode)
             {
-                curObjIndex += 1;
+                placeIncriment = -1;
             }
             else
             {
-                curObjIndex = 0;
+                if (curObjIndex < savedObjects.Count - 1)
+                {
+                    curObjIndex += 1;
+                }
+                else
+                {
+                    curObjIndex = 0;
+                }
+                displayIndex.text = (curObjIndex + 1).ToString();
             }
-            displayIndex.text = (curObjIndex + 1).ToString();
+        }
+        if (context.canceled)
+        {
+            placeIncriment = 0;
         }
     }
     public void OnMinusIndex(InputAction.CallbackContext context)
-    {
+    { 
         if (context.started)
         {
-            if (curObjIndex > 0)
+            if(isPlaceMode)
             {
-                curObjIndex -= 1;
+                placeIncriment = 1;
             }
             else
             {
-                curObjIndex = 0;
-            }
-            displayIndex.text = (curObjIndex + 1).ToString();
+                if (curObjIndex > 0)
+                {
+                    curObjIndex -= 1;
+                }
+                else
+                {
+                    curObjIndex = 0;
+                }
+                displayIndex.text = (curObjIndex + 1).ToString();
+            }          
+        }
+        if(context.canceled)
+        {
+            placeIncriment = 0;
         }
     }
 }
