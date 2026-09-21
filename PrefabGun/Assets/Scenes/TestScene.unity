@@ -1030,6 +1030,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1698931645}
     - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
       propertyPath: m_ActionEvents.Array.data[6].m_ActionId
       value: b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba
       objectReference: {fileID: 0}
@@ -1078,6 +1082,10 @@ PrefabInstance:
       value: 147bdace-3773-4824-8e6e-d814a01c9fc9
       objectReference: {fileID: 0}
     - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
+      value: 20e8e22d-7a0b-4b35-b5ff-57e7910da79f
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
       propertyPath: m_ActionEvents.Array.data[6].m_ActionName
       value: 'Player/Next[/Keyboard/2]'
       objectReference: {fileID: 0}
@@ -1124,6 +1132,10 @@ PrefabInstance:
     - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
       propertyPath: m_ActionEvents.Array.data[17].m_ActionName
       value: 'Player/MinusIndex[/Keyboard/q]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
+      value: 'Player/Push/Pull Object[/Mouse/scroll/down,/Mouse/scroll/up]'
       objectReference: {fileID: 0}
     - target: {fileID: 8837608948090298816, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
       propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.size

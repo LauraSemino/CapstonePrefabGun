@@ -383,6 +383,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 147bdace-3773-4824-8e6e-d814a01c9fc9
     m_ActionName: 'Player/MinusIndex[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4321287402091313040}
+        m_TargetAssemblyTypeName: PrefabGun, Assembly-CSharp
+        m_MethodName: OnPushPullObject
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 20e8e22d-7a0b-4b35-b5ff-57e7910da79f
+    m_ActionName: 'Player/Push/Pull Object[/Mouse/scroll/down,/Mouse/scroll/up]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

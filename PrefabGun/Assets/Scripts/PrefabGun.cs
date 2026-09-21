@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PrefabGun : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class PrefabGun : MonoBehaviour
     int placeAdjust = 0;
     [SerializeField] TextMeshProUGUI displayIndex;
 
+    float objProjectionDistance = 0;
+
     public Transform displayPoint;
     private GameObject displayedObject;
 
@@ -30,15 +33,11 @@ public class PrefabGun : MonoBehaviour
         //follows mouse better in update
         if (isPlaceMode && toPlace != null)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
-            {
-                Debug.Log("hit");
-                toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
-                toPlace.transform.SetParent(transform, true);
-                placeAdjust += placeIncriment;
-                toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
-            }
+            Debug.Log("hit");
+            toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
+            toPlace.transform.SetParent(transform, true);
+            placeAdjust += placeIncriment;
+            toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
         }
     }
     //scanning and placing
@@ -46,35 +45,48 @@ public class PrefabGun : MonoBehaviour
     {
         if (context.started)
         {
-            LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
-            RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
+            if(!isPlaceMode)
             {
-                if (hit.collider != null && hit.collider.gameObject.layer != 10 && hit.collider.gameObject.layer != 11 && ScanCheck(hit.collider.gameObject.GetComponent<ObjectData>().objData.id))
+                LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+                RaycastHit hit;
+                if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
                 {
-                    Debug.Log("raycast hit");                    
-                    GameObject savedObject = Instantiate(hit.collider.gameObject);
-                    savedObject.SetActive(false);
-                    savedObjects.Add(savedObject);
-                    UpdateDisplay();    
+                    if (ScanCheck(hit.collider.gameObject.GetComponent<ObjectData>().objData.id))
+                    {
+                        Debug.Log("raycast hit");
+                        GameObject savedObject = Instantiate(hit.collider.gameObject);
+                        savedObject.SetActive(false);
+                        savedObjects.Add(savedObject);
+                        UpdateDisplay();
+                    }
                 }
+            }
+            else
+            {
+                if(toPlace != null)
+                {
+                    Destroy(toPlace.gameObject);
+                }
+                isPlaceMode = false;
             }
         }
     }
     public void OnRightClick(InputAction.CallbackContext context)
     {
         if (context.started)
-        {
-            RaycastHit hit;
+        {        
+            toPlace = Instantiate(savedObjects[curObjIndex], new Vector3(transform.position.x, transform.position.y + savedObjects[curObjIndex].transform.localScale.y / 4, transform.position.z) + transform.forward * 2, new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
+            toPlace.SetActive(true);
+            toPlace.GetComponent<MeshRenderer>().material = canBePlaced;
+            toPlace.GetComponent<Collider>().isTrigger = true;
+            toPlace.GetComponent<Rigidbody>().isKinematic = true;
+            isPlaceMode = true;
+
+           /* RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
             {
-                toPlace = Instantiate(savedObjects[curObjIndex], new Vector3(hit.point.x, hit.point.y + savedObjects[curObjIndex].transform.localScale.y / 2, hit.point.z), new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
-                toPlace.SetActive(true);
-                toPlace.GetComponent<MeshRenderer>().material = canBePlaced;
-                toPlace.GetComponent<Collider>().isTrigger = true;
-                toPlace.GetComponent<Rigidbody>().isKinematic = true;
-                isPlaceMode = true;
-            }
+                
+            }*/
         }
         if (context.canceled && toPlace != null)
         {
@@ -138,6 +150,16 @@ public class PrefabGun : MonoBehaviour
         if(context.canceled)
         {
             placeIncriment = 0;
+        }
+    }
+
+    public void OnPushPullObject(InputAction.CallbackContext context)
+    {
+        if(isPlaceMode && toPlace != null)
+        {
+            //needs distance limiter
+            objProjectionDistance = context.ReadValue<float>();
+            toPlace.transform.position += objProjectionDistance * transform.forward;
         }
     }
 
