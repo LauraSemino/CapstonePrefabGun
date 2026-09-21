@@ -50,13 +50,13 @@ public class PrefabGun : MonoBehaviour
             RaycastHit hit;
             if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
             {
-                if (hit.collider != null && hit.collider.gameObject.layer != 10 && hit.collider.gameObject.layer != 11)
+                if (hit.collider != null && hit.collider.gameObject.layer != 10 && hit.collider.gameObject.layer != 11 && ScanCheck(hit.collider.gameObject.GetComponent<ObjectData>().objData.id))
                 {
-                    Debug.Log("raycast hit");
+                    Debug.Log("raycast hit");                    
                     GameObject savedObject = Instantiate(hit.collider.gameObject);
                     savedObject.SetActive(false);
                     savedObjects.Add(savedObject);
-                    UpdateDisplay();
+                    UpdateDisplay();    
                 }
             }
         }
@@ -168,5 +168,18 @@ public class PrefabGun : MonoBehaviour
         {
             rb.isKinematic = true;
         }
+    }
+
+    bool ScanCheck(int incomingID)
+    {
+        //checks if the object has already been scanned into the gun
+        foreach (GameObject obj in savedObjects)
+        {
+            if (incomingID == obj.GetComponent<ObjectData>().objData.id)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
