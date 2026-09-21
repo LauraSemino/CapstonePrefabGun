@@ -45,7 +45,7 @@ public class PlayerControl : MonoBehaviour
 
         //interpret the vectors and multiply for the direction accordingly
         moveDirection = (forward * currentSpeedX) + (right * currentSpeedY);
-
+       
         //jump handling
         if (tryJump == true && canMove && characterController.isGrounded)
         {
@@ -74,6 +74,7 @@ public class PlayerControl : MonoBehaviour
             walkSpeed = originalWalkSpeed;
 
         }
+
         //adds terminal velocity
         if (moveDirection.y < -15)
         {
@@ -82,6 +83,7 @@ public class PlayerControl : MonoBehaviour
 
         //apply changes
         characterController.Move(moveDirection * Time.deltaTime);
+
 
         //mouse movement
         if (canMove)
@@ -102,6 +104,11 @@ public class PlayerControl : MonoBehaviour
             alreadyWalking = false;
         }
     }
+    public void Explode(Vector3 force)
+    {
+        moveDirection += force;
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();

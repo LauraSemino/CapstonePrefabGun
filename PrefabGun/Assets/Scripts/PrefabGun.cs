@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PrefabGun : MonoBehaviour
 {
@@ -13,13 +14,16 @@ public class PrefabGun : MonoBehaviour
 
     public List<GameObject> savedObjects;
     public int curObjIndex = 0;
-
     GameObject grabObject;
     GameObject toPlace = null;
     bool isPlaceMode;
     public int placeIncriment;
     int placeAdjust = 0;
     [SerializeField] TextMeshProUGUI displayIndex;
+
+    public Transform displayPoint;
+    private GameObject displayedObject;
+
     // Update is called once per frame
     void Update()
     {
@@ -30,7 +34,7 @@ public class PrefabGun : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
             {
                 Debug.Log("hit");
-                toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);                
+                toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
                 toPlace.transform.SetParent(transform, true);
                 placeAdjust += placeIncriment;
                 toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
@@ -39,7 +43,7 @@ public class PrefabGun : MonoBehaviour
     }
     //scanning and placing
     public void OnLeftClick(InputAction.CallbackContext context)
-    { 
+    {
         if (context.started)
         {
             LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
@@ -49,7 +53,10 @@ public class PrefabGun : MonoBehaviour
                 if (hit.collider != null && hit.collider.gameObject.layer != 10 && hit.collider.gameObject.layer != 11)
                 {
                     Debug.Log("raycast hit");
-                    savedObjects.Add(hit.collider.gameObject);
+                    GameObject savedObject = Instantiate(hit.collider.gameObject);
+                    savedObject.SetActive(false);
+                    savedObjects.Add(savedObject);
+                    UpdateDisplay();
                 }
             }
         }
@@ -61,7 +68,8 @@ public class PrefabGun : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
             {
-                toPlace = Instantiate(savedObjects[curObjIndex], new Vector3(hit.point.x, hit.point.y + savedObjects[curObjIndex].gameObject.transform.localScale.y / 2, hit.point.z), new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
+                toPlace = Instantiate(savedObjects[curObjIndex], new Vector3(hit.point.x, hit.point.y + savedObjects[curObjIndex].transform.localScale.y / 2, hit.point.z), new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
+                toPlace.SetActive(true);
                 toPlace.GetComponent<MeshRenderer>().material = canBePlaced;
                 toPlace.GetComponent<Collider>().isTrigger = true;
                 toPlace.GetComponent<Rigidbody>().isKinematic = true;
@@ -75,7 +83,8 @@ public class PrefabGun : MonoBehaviour
             Quaternion placeRot = toPlace.transform.rotation;
             Destroy(toPlace.gameObject);
             toPlace = null;
-            Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
+            GameObject placedObject = Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
+            placedObject.SetActive(true);
             placeAdjust = 0;
         }
     }
@@ -97,7 +106,7 @@ public class PrefabGun : MonoBehaviour
                 {
                     curObjIndex = 0;
                 }
-                displayIndex.text = (curObjIndex + 1).ToString();
+                UpdateDisplay();
             }
         }
         if (context.canceled)
@@ -106,7 +115,7 @@ public class PrefabGun : MonoBehaviour
         }
     }
     public void OnMinusIndex(InputAction.CallbackContext context)
-    { 
+    {
         if (context.started)
         {
             if(isPlaceMode)
@@ -123,12 +132,41 @@ public class PrefabGun : MonoBehaviour
                 {
                     curObjIndex = 0;
                 }
-                displayIndex.text = (curObjIndex + 1).ToString();
-            }          
+                UpdateDisplay();
+            }
         }
         if(context.canceled)
         {
             placeIncriment = 0;
+        }
+    }
+
+    void UpdateDisplay()
+    {
+        if (savedObjects.Count == 0) return;
+
+        displayIndex.text = curObjIndex + 1 + "/" + savedObjects.Count;
+
+        if (displayedObject != null)
+        {
+            Destroy(displayedObject);
+        }
+        displayedObject = Instantiate(savedObjects[curObjIndex], displayPoint);
+        displayedObject.SetActive(true);
+        displayedObject.transform.localPosition = Vector3.zero;
+        displayedObject.transform.localRotation = Quaternion.identity;
+
+        Vector3 originalScale = displayedObject.transform.localScale;
+        displayedObject.transform.localScale = originalScale * 0.5f;
+
+        foreach (Collider col in displayedObject.GetComponentsInChildren<Collider>())
+        {
+            col.enabled = false;
+        }
+
+        foreach (Rigidbody rb in displayedObject.GetComponentsInChildren<Rigidbody>())
+        {
+            rb.isKinematic = true;
         }
     }
 }
