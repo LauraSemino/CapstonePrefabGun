@@ -187,12 +187,12 @@ MonoBehaviour:
   mainCamera: {fileID: 1924660253183047822}
   lookSensitivity: 0.2
   lookXLimit: 90
-  walkSpeed: 7
-  airSpeed: 0
-  groundAcceleration: 10
-  airAcceleration: 5
-  friction: 6
-  jumpStrength: 10
+  walkSpeed: 6
+  airSpeed: 4
+  groundAcceleration: 6
+  airAcceleration: 2.5
+  friction: 7.5
+  jumpStrength: 1.5
   gravity: -20
   originalWalkSpeed: 7
   JumpFrame: 0

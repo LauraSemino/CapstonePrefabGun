@@ -729,34 +729,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: gravity
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: airSpeed
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: friction
-      value: 7.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: walkSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: jumpStrength
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: airAcceleration
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121965159737549811, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: groundAcceleration
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 4321287402091313040, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
       propertyPath: displayIndex
       value: 
