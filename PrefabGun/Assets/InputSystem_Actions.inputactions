@@ -95,6 +95,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "RemoveItem",
+                    "type": "Button",
+                    "id": "ecdbe0e9-0fb9-490f-8718-6e5c92e8547b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -460,6 +470,28 @@
                     "action": "Push/Pull Object",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "6607a66a-1cf0-4d1e-83cd-fe769178a366",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "RemoveItem",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "16415fac-ad3c-459e-aae4-3346530fef75",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "RemoveItem",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

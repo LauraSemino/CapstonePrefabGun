@@ -25,6 +25,10 @@ public class PrefabGun : MonoBehaviour
     public Transform displayPoint;
     private GameObject displayedObject;
 
+    float curBudget;
+    public float maxBudget;
+
+
     // Update is called once per frame
     void Update()
     {
@@ -84,7 +88,7 @@ public class PrefabGun : MonoBehaviour
                 
             }*/
         }
-        if (context.canceled && toPlace != null)
+        if (context.canceled && toPlace != null && CalculateBudget(toPlace.GetComponent<ObjectData>().objData.cost) == true)
         {
             isPlaceMode = false;
             Vector3 placePos = toPlace.transform.position;
@@ -93,6 +97,7 @@ public class PrefabGun : MonoBehaviour
             toPlace = null;
             GameObject placedObject = Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
             placedObject.SetActive(true);
+            placedObject.GetComponent<ObjectData>().createdByPlayer = true;
             placeAdjust = 0;
             objProjectionDistance = 2;
         }
@@ -154,7 +159,6 @@ public class PrefabGun : MonoBehaviour
     {
         if(isPlaceMode && toPlace != null)
         {
-            //needs distance limiter
             float i = context.ReadValue<float>();
             objProjectionDistance += i;
             if(objProjectionDistance <= 10 && objProjectionDistance >= 2)
@@ -213,5 +217,32 @@ public class PrefabGun : MonoBehaviour
             }
         }
         return true;
+    }
+
+    bool CalculateBudget(float c)
+    {
+        if (curBudget + c <= maxBudget)
+        {
+            curBudget += c;
+            return true;
+        }
+        else { return false; }   
+    }
+
+    public void OnRemoveObject(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
+            {
+                if(hit.collider.gameObject.GetComponent<ObjectData>().createdByPlayer == true)
+                {
+                    curBudget -= hit.collider.gameObject.GetComponent<ObjectData>().objData.cost;
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+        }
     }
 }

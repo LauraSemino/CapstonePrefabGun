@@ -405,6 +405,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 20e8e22d-7a0b-4b35-b5ff-57e7910da79f
     m_ActionName: 'Player/Push/Pull Object[/Mouse/scroll/down,/Mouse/scroll/up]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4321287402091313040}
+        m_TargetAssemblyTypeName: PrefabGun, Assembly-CSharp
+        m_MethodName: OnRemoveObject
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ecdbe0e9-0fb9-490f-8718-6e5c92e8547b
+    m_ActionName: 'Player/RemoveItem[/Keyboard/r]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -662,6 +678,7 @@ MonoBehaviour:
   placeIncriment: 0
   displayIndex: {fileID: 2041856409000007048}
   displayPoint: {fileID: 8821524946429126504}
+  maxBudget: 0
 --- !u!1 &4311369921450105789
 GameObject:
   m_ObjectHideFlags: 0

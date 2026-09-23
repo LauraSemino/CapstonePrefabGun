@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GenericObject
   id: 3
   displayName: Fan
+  budgetUsed: 2
