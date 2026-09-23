@@ -25,7 +25,7 @@ public class PlayerControl : MonoBehaviour
     [Header("Jumping")]
     [SerializeField] private float jumpStrength;
     [SerializeField] private float gravity;
-
+    private Vector3 spawnPos;
     private CharacterController characterController;
     private bool isGrounded;
     private Rigidbody rb;
@@ -34,8 +34,6 @@ public class PlayerControl : MonoBehaviour
     public bool JumpFrame;
     public Vector3 Velocity;
     private bool jumpPressed;
-
-    // for audio
 
     Vector2 moveInput;
     Vector2 lookInput;
@@ -46,6 +44,7 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        spawnPos = transform.position;
     }
 
     void Update()
@@ -187,6 +186,22 @@ public class PlayerControl : MonoBehaviour
         float speedRatio = newSpeed / currentSpeed;
 
         velocity *= speedRatio;
+    }
+
+    void ResetPlayer()
+    {
+        Debug.Log(spawnPos);
+        gameObject.GetComponent<CharacterController>().enabled = false;
+        transform.position = spawnPos;
+        gameObject.GetComponent<CharacterController>().enabled = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Hazard")
+        {
+            ResetPlayer();
+        }
     }
 }
 
