@@ -185,12 +185,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
   mainCamera: {fileID: 1924660253183047822}
-  walkSpeed: 7
-  jumpStrength: 10
   lookSensitivity: 0.2
   lookXLimit: 90
-  gravity: 20
+  walkSpeed: 7
+  airSpeed: 0
+  groundAcceleration: 10
+  airAcceleration: 5
+  friction: 6
+  jumpStrength: 10
+  gravity: -20
   originalWalkSpeed: 7
+  JumpFrame: 0
+  Velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &8837608948090298816
 MonoBehaviour:
   m_ObjectHideFlags: 0
