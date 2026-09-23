@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PrefabGun : MonoBehaviour
 {
@@ -26,9 +27,9 @@ public class PrefabGun : MonoBehaviour
     private GameObject displayedObject;
 
     float curBudget;
-    public float maxBudget;
+    [SerializeField] float maxBudget;
 
-
+    [SerializeField] Scrollbar budgetBar;
     // Update is called once per frame
     void Update()
     {
@@ -40,6 +41,9 @@ public class PrefabGun : MonoBehaviour
             placeAdjust += placeIncriment;
             toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
         }
+
+        //updates UI for budget bar
+        budgetBar.size = curBudget / maxBudget;
     }
     //scanning and placing
     public void OnLeftClick(InputAction.CallbackContext context)
@@ -88,18 +92,21 @@ public class PrefabGun : MonoBehaviour
                 
             }*/
         }
-        if (context.canceled && toPlace != null && CalculateBudget(toPlace.GetComponent<ObjectData>().objData.cost) == true)
+        if (context.canceled && toPlace != null)
         {
             isPlaceMode = false;
             Vector3 placePos = toPlace.transform.position;
             Quaternion placeRot = toPlace.transform.rotation;
+            if (CalculateBudget(toPlace.GetComponent<ObjectData>().objData.cost))
+            {
+                GameObject placedObject = Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
+                placedObject.SetActive(true);
+                placedObject.GetComponent<ObjectData>().createdByPlayer = true;
+                placeAdjust = 0;
+                objProjectionDistance = 2;
+            }
             Destroy(toPlace.gameObject);
             toPlace = null;
-            GameObject placedObject = Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
-            placedObject.SetActive(true);
-            placedObject.GetComponent<ObjectData>().createdByPlayer = true;
-            placeAdjust = 0;
-            objProjectionDistance = 2;
         }
     }
     public void OnPlusIndex(InputAction.CallbackContext context)
@@ -221,7 +228,7 @@ public class PrefabGun : MonoBehaviour
 
     bool CalculateBudget(float c)
     {
-        if (curBudget + c <= maxBudget)
+        if ((curBudget + c) <= maxBudget)
         {
             curBudget += c;
             return true;
