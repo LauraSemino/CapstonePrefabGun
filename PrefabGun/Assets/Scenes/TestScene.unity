@@ -678,10 +678,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pillar
       objectReference: {fileID: 0}
-    - target: {fileID: 6064309318200269459, guid: 7caf146aedb96304f87becc7c1a309dc, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 7241094579273393883, guid: 7caf146aedb96304f87becc7c1a309dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10
