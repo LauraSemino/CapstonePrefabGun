@@ -125,6 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ca0eba5dab3f74f8aaeb84dd2bdf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FanWind
+  playerForce: 25
+  upwardForce: 15
   windness: 15
 --- !u!1 &7538722933533684109
 GameObject:
@@ -156,7 +158,7 @@ Transform:
   m_GameObject: {fileID: 7538722933533684109}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.05, z: 2.486}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 0.07, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -281,3 +283,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: b009ee234719f0d42a0f2f6ddd8cae28, type: 2}
+  createdByPlayer: 0
