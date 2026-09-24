@@ -1,241 +1,270 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PrefabGun : MonoBehaviour
 {
-    //0 is scan, 1 is create
+    //0 is scan, 1 is create, 2 is delete
+
+    [Header("Gun Visual Components")]
     public MeshRenderer colour;
     [SerializeField] Material green;
     [SerializeField] Material red;
     [SerializeField] Material canBePlaced;
 
-    public List<GameObject> savedObjects;
+    [Header("Object Storage")]
+    public List<GenericObject> savedObjects;
+    public HashSet<int> savedIDs;
     public int curObjIndex = 0;
-    GameObject grabObject;
+
+    [Header("Object Placement")]
+    public float minDistancePlace = 2.5f;
+    public float maxDistancePlace = 10f;
+    public float objectRotation;
+    public float rotationInput;
+    public float rotationOffset;
+    public float rotationSpeed = 100f;
+    float objProjectionDistance = 0;
     GameObject toPlace = null;
     bool isPlaceMode;
-    public int placeIncriment;
-    int placeAdjust = 0;
+
+    [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
-
-    float objProjectionDistance = 0;
-
     public Transform displayPoint;
     private GameObject displayedObject;
 
-    float curBudget;
+    [Header("Budget")]
     [SerializeField] float maxBudget;
-
     [SerializeField] Scrollbar budgetBar;
+    public float curBudget;
+
+
+    // Game default settings
+    private void Awake()
+    {
+        savedIDs = new HashSet<int>();
+        savedIDs.Clear();
+        foreach (GenericObject obj in savedObjects)
+        {
+            if (obj != null)
+                savedIDs.Add(obj.id);
+        }
+        SetGunMode(false);
+        UpdateDisplay();
+
+    }
+
     // Update is called once per frame
     void Update()
     {
         //follows mouse better in update
         if (isPlaceMode && toPlace != null)
         {
-            toPlace.transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
-            toPlace.transform.SetParent(transform, true);
-            placeAdjust += placeIncriment;
-            toPlace.transform.rotation = Quaternion.Euler(toPlace.transform.rotation.x, toPlace.transform.rotation.y + (placeAdjust), toPlace.transform.rotation.z);
+            if (rotationInput != 0f)
+            {
+                rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
+            }
+            UpdatePlacement();
         }
+    }
 
-        //updates UI for budget bar
-        budgetBar.size = curBudget / maxBudget;
+    public void UpdateBudgetUI()
+    {
+        if (budgetBar != null || maxBudget <= 0f)
+        {
+            budgetBar.size = Mathf.Clamp01(curBudget / maxBudget);
+        }
     }
-    //scanning and placing
+
+    bool TrySpend(float cost)
+    {
+        if (curBudget + cost > maxBudget) return false;
+
+        curBudget += cost;
+        UpdateBudgetUI();
+        return true;
+
+    }
+
+    void Refund(float cost)
+    {
+        curBudget = Mathf.Max(0f, curBudget - cost);
+        UpdateBudgetUI();
+    }
+
+    //scanning
     public void OnLeftClick(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            if(!isPlaceMode)
-            {
-                LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
-                RaycastHit hit;
-                if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
-                {
-                    if (ScanCheck(hit.collider.gameObject.GetComponent<ObjectData>().objData.id))
-                    {
-                        GameObject savedObject = Instantiate(hit.collider.gameObject);
-                        savedObject.SetActive(false);
-                        savedObjects.Add(savedObject);
-                        UpdateDisplay();
-                    }
-                }
-            }
-            else
-            {
-                if(toPlace != null)
-                {
-                    objProjectionDistance = 2;
-                    Destroy(toPlace.gameObject);
-                }
-                isPlaceMode = false;
-            }
-        }
-    }
-    public void OnRightClick(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {        
-            toPlace = Instantiate(savedObjects[curObjIndex], new Vector3(transform.position.x, transform.position.y , transform.position.z) + transform.forward * 2, new Quaternion(0, transform.rotation.y, 0, transform.rotation.w));
-            toPlace.SetActive(true);
-            toPlace.GetComponent<MeshRenderer>().material = canBePlaced;
-            toPlace.GetComponent<Collider>().isTrigger = true;
-            toPlace.GetComponent<Rigidbody>().isKinematic = true;
-            isPlaceMode = true;
-           /* RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, 5f))
-            {
-                
-            }*/
-        }
-        if (context.canceled && toPlace != null)
-        {
-            isPlaceMode = false;
-            Vector3 placePos = toPlace.transform.position;
-            Quaternion placeRot = toPlace.transform.rotation;
-            if (CalculateBudget(toPlace.GetComponent<ObjectData>().objData.cost))
-            {
-                GameObject placedObject = Instantiate(savedObjects[curObjIndex], placePos, new Quaternion(0, placeRot.y, 0, placeRot.w));
-                placedObject.SetActive(true);
-                placedObject.GetComponent<ObjectData>().createdByPlayer = true;
-                placeAdjust = 0;
-                objProjectionDistance = 2;
-            }
-            Destroy(toPlace.gameObject);
-            toPlace = null;
-        }
-    }
-    public void OnPlusIndex(InputAction.CallbackContext context)
     {
         if (context.started)
         {
             if (isPlaceMode)
             {
-                placeIncriment = -1;
+                CancelPlace();
+                return;
             }
             else
             {
-                if (curObjIndex < savedObjects.Count - 1)
-                {
-                    curObjIndex += 1;
-                }
-                else
-                {
-                    curObjIndex = 0;
-                }
-                UpdateDisplay();
+                ScanObject();
             }
         }
-        if (context.canceled)
-        {
-            placeIncriment = 0;
-        }
     }
-    public void OnMinusIndex(InputAction.CallbackContext context)
+
+    //placing
+    public void OnRightClick(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            if(isPlaceMode)
-            {
-                placeIncriment = 1;
-            }
-            else
-            {
-                if (curObjIndex > 0)
-                {
-                    curObjIndex -= 1;
-                }
-                else
-                {
-                    curObjIndex = 0;
-                }
-                UpdateDisplay();
-            }
+            StartPlace();
         }
-        if(context.canceled)
+        if (context.canceled)
         {
-            placeIncriment = 0;
+            ConfirmPlace();
         }
     }
 
+
+    // Object scanning
+    public void ScanObject()
+    {
+        // Cast and find hit
+        LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+        RaycastHit hit;
+        if (!Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
+        {
+            return;
+        }
+
+        // Set object data based
+        ObjectData objData = hit.collider.gameObject.GetComponent<ObjectData>();
+        int objID = objData.objData.id;
+        if (savedIDs.Contains(objData.objData.id))
+        {
+            return;
+        }
+        savedIDs.Add(objData.objData.id);
+        savedObjects.Add(objData.objData);
+        UpdateDisplay();
+    }
+
+    
+
+    // Start the object placement process
+    public void StartPlace()
+    {
+        if (savedObjects.Count == 0)
+            return;
+        if (isPlaceMode)
+            return;
+
+        // Set stats to default and show preview
+        isPlaceMode = true;
+        rotationInput = 0f;
+        rotationOffset = 0f;
+        objProjectionDistance = minDistancePlace;
+        GenericObject OG = savedObjects[curObjIndex];
+        toPlace = Instantiate(OG.prefab);
+        SetGunMode(true);
+        Preview(toPlace);
+        UpdatePlacement();
+    }
+
+    // Place down object
+    public void ConfirmPlace()
+    {
+        if (!isPlaceMode || toPlace == null) return;
+
+        Vector3 placePos = toPlace.transform.position;
+        Quaternion placeRot = toPlace.transform.rotation;
+        Destroy(toPlace);
+        toPlace = null;
+        GenericObject OG = savedObjects[curObjIndex];
+
+        // Place down object prefab
+        if (TrySpend(OG.cost))
+        {
+            GameObject placedDownObject = Instantiate(OG.prefab, placePos, placeRot);
+            placedDownObject.SetActive(true);
+
+            ObjectData data = placedDownObject.GetComponent<ObjectData>();
+            data.createdByPlayer = true;
+        }
+
+        ExitPlace();
+    }
+
+    // Stope the placing down process
+    public void ExitPlace()
+    {
+        isPlaceMode = false;
+        rotationInput = 0f;
+        rotationOffset = 0f;
+        objProjectionDistance = minDistancePlace;
+        SetGunMode(false);
+    }
+
+    // Stop the placement
+    public void CancelPlace()
+    {
+        if (toPlace != null)
+        {
+            Destroy(toPlace);
+            toPlace = null;
+        }
+        ExitPlace();
+    }
+
+    // Update the placement of the object to be placed
+    public void UpdatePlacement()
+    {
+        if (toPlace == null)
+            return;
+
+        Vector3 position = transform.position + transform.forward * objProjectionDistance;
+        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset, 0f);
+        toPlace.transform.SetPositionAndRotation(position, rotation);
+
+    }
+
+    // Goes to the next object
+    public void NextObject()
+    {
+        if (savedObjects.Count == 0)
+            return;
+        curObjIndex++;
+        if (curObjIndex >= savedObjects.Count)
+            curObjIndex = 0;
+        UpdateDisplay();
+    }
+
+    // Goes to the previous object
+    public void PreviousObject()
+    {
+        if (savedObjects.Count == 0)
+            return;
+        curObjIndex--;
+        if (curObjIndex < 0)
+            curObjIndex = savedObjects.Count - 1;
+        UpdateDisplay();
+    }
+
+    // Move objects pre-place with mouse wheel
     public void OnPushPullObject(InputAction.CallbackContext context)
     {
-        if(isPlaceMode && toPlace != null)
-        {
-            float i = context.ReadValue<float>();
-            objProjectionDistance += i;
-            if(objProjectionDistance <= 10 && objProjectionDistance >= 2)
-            {
-                toPlace.transform.position += i * transform.forward;
-            }
-            else if (objProjectionDistance > 10)
-            {
-                objProjectionDistance = 10;
-            }
-            else if (objProjectionDistance < 2)
-            {
-                objProjectionDistance = 2;
-            }
-            Debug.Log(objProjectionDistance);
-        }
+        if (!isPlaceMode && toPlace == null)
+            return;
+
+        float i = context.ReadValue<float>();
+        objProjectionDistance += i;
+        objProjectionDistance = Mathf.Clamp(objProjectionDistance, minDistancePlace, maxDistancePlace);
+        UpdatePlacement();
+        Debug.Log(objProjectionDistance);
+
     }
 
-    void UpdateDisplay()
-    {
-        if (savedObjects.Count == 0) return;
-
-        displayIndex.text = curObjIndex + 1 + "/" + savedObjects.Count;
-
-        if (displayedObject != null)
-        {
-            Destroy(displayedObject);
-        }
-        displayedObject = Instantiate(savedObjects[curObjIndex], displayPoint);
-        displayedObject.SetActive(true);
-        displayedObject.transform.localPosition = Vector3.zero;
-        displayedObject.transform.localRotation = Quaternion.identity;
-
-        Vector3 originalScale = displayedObject.transform.localScale;
-        displayedObject.transform.localScale = originalScale * 0.5f;
-
-        foreach (Collider col in displayedObject.GetComponentsInChildren<Collider>())
-        {
-            col.enabled = false;
-        }
-
-        foreach (Rigidbody rb in displayedObject.GetComponentsInChildren<Rigidbody>())
-        {
-            rb.isKinematic = true;
-        }
-    }
-
-    bool ScanCheck(int incomingID)
-    {
-        //checks if the object has already been scanned into the gun
-        foreach (GameObject obj in savedObjects)
-        {
-            if (incomingID == obj.GetComponent<ObjectData>().objData.id)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool CalculateBudget(float c)
-    {
-        if ((curBudget + c) <= maxBudget)
-        {
-            curBudget += c;
-            return true;
-        }
-        else { return false; }   
-    }
-
+    // remove objects that player placed
     public void OnRemoveObject(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -244,12 +273,139 @@ public class PrefabGun : MonoBehaviour
             RaycastHit hit;
             if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
             {
-                if(hit.collider.gameObject.GetComponent<ObjectData>().createdByPlayer == true)
+                if (hit.collider.gameObject.GetComponent<ObjectData>().createdByPlayer == true)
                 {
-                    curBudget -= hit.collider.gameObject.GetComponent<ObjectData>().objData.cost;
+                    Refund(hit.collider.gameObject.GetComponent<ObjectData>().objData.cost);
                     Destroy(hit.collider.gameObject);
                 }
             }
         }
     }
+
+    // Rotate the object positive
+    public void OnPlusIndex(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (isPlaceMode)
+            {
+                rotationInput = -1;
+                return;
+            }
+            NextObject();
+        }
+        if (context.canceled && isPlaceMode)
+        {
+            rotationInput = 0f;
+
+        }
+    }
+
+    // Rotate the object negative
+    public void OnMinusIndex(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (isPlaceMode)
+            {
+                rotationInput = 1;
+                return;
+            }
+            PreviousObject();
+        }
+        if (context.canceled && isPlaceMode)
+        {
+            rotationInput = 0f;
+
+        }
+    }
+
+    // Changes the guns mode
+    public void SetGunMode(bool placing)
+    {
+        if (colour == null)
+            return;
+
+        colour.sharedMaterial = placing ? red : green;
+    }
+
+    // Displays the object in gun
+    public void Display(GameObject display)
+    {
+        // Removes the functionality of the prefabs
+        foreach (Collider col in display.GetComponentsInChildren<Collider>())
+        {
+            col.enabled = false;
+        }
+
+        foreach (Rigidbody body in display.GetComponentsInChildren<Rigidbody>())
+        {
+            body.isKinematic = true;
+            body.detectCollisions = false;
+        }
+
+        foreach (MonoBehaviour behaviour in
+                 display.GetComponentsInChildren<MonoBehaviour>())
+        {
+            behaviour.enabled = false;
+        }
+    }
+
+    // Shows the object at place location before placement
+    public void Preview(GameObject prev)
+    {
+        // Removes the functionality of the prefabs
+        foreach (Collider col in prev.GetComponentsInChildren<Collider>())
+        {
+            col.enabled = false;
+        }
+
+        foreach (Rigidbody body in prev.GetComponentsInChildren<Rigidbody>())
+        {
+            body.isKinematic = true;
+            body.detectCollisions = false;
+        }
+
+        foreach (MonoBehaviour behaviour in
+                 prev.GetComponentsInChildren<MonoBehaviour>())
+        {
+            behaviour.enabled = false;
+        }
+
+        if (canBePlaced != null)
+        {
+            foreach (Renderer renderer in
+                     prev.GetComponentsInChildren<Renderer>())
+            {
+                renderer.sharedMaterial = canBePlaced;
+            }
+        }
+    }
+
+    // Update the prefab gun's UI
+    void UpdateDisplay()
+    {
+
+        displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
+
+        if (displayedObject != null)
+        {
+            Destroy(displayedObject);
+            displayedObject = null;
+        }
+
+        if (savedObjects.Count == 0) return;
+
+        GenericObject OG = savedObjects[curObjIndex];
+
+        displayedObject = Instantiate(OG.prefab, displayPoint);
+
+        displayedObject.SetActive(true);
+        displayedObject.transform.localPosition = Vector3.zero;
+        displayedObject.transform.localRotation = Quaternion.identity;
+        displayedObject.transform.localScale *= 0.5f;
+
+        Display(displayedObject);
+    }
 }
+

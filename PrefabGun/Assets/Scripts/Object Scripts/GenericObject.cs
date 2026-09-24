@@ -6,4 +6,6 @@ public class GenericObject : ScriptableObject
     public int id = 0;
     public string displayName = string.Empty;
     public float cost;
+
+    public GameObject prefab;
 }
