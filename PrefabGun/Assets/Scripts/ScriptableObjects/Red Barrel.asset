@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 4
   displayName: Red Barrel
   cost: 2
+  prefab: {fileID: 8852661371909634862, guid: e580c2af0a5ce474586da1cde22edd46, type: 3}

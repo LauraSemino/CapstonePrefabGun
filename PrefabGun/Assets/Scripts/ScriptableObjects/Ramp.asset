@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978892d5d9e94d748bda771816e28d00, type: 3}
-  m_Name: Box
+  m_Name: Ramp
   m_EditorClassIdentifier: Assembly-CSharp::GenericObject
-  id: 0
-  displayName: Box
+  id: 6
+  displayName: Ramp
   cost: 1
-  prefab: {fileID: 2513977179908992717, guid: 959a9e998cddcb84699202c461f50659, type: 3}
+  prefab: {fileID: 6078136517662743872, guid: dd1b93e56f3b3e24d99887aa82dfd312, type: 3}

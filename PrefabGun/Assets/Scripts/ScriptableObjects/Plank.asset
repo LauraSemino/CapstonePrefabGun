@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 2
   displayName: Plank
   cost: 1
+  prefab: {fileID: 3301605764446235081, guid: 8a4013cbb7fd8c946ad44c39494dffba, type: 3}

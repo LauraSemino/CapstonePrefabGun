@@ -23,9 +23,8 @@ public class PrefabGun : MonoBehaviour
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
-    public float objectRotation;
-    public float rotationInput;
-    public float rotationOffset;
+    float rotationInput;
+    float rotationOffset;
     public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;

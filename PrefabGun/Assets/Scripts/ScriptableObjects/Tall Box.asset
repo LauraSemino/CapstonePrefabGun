@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 1
   displayName: Tall Box
   cost: 1
+  prefab: {fileID: 3439884177550257500, guid: 2f0d9e17b3d692b41a36d366aab78cfe, type: 3}

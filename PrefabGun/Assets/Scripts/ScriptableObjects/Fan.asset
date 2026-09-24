@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 3
   displayName: Fan
   cost: 2
+  prefab: {fileID: 7538722933533684109, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}

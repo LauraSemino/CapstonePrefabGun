@@ -139,7 +139,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.4
-  m_SlopeLimit: 45
+  m_SlopeLimit: 50
   m_StepOffset: 0.25
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
@@ -677,10 +677,7 @@ MonoBehaviour:
   curObjIndex: 0
   minDistancePlace: 2.5
   maxDistancePlace: 10
-  objectRotation: 0
-  rotationInput: 0
-  rotationOffset: 0
-  rotationSpeed: 50
+  rotationSpeed: 250
   displayIndex: {fileID: 2041856409000007048}
   displayPoint: {fileID: 8821524946429126504}
   maxBudget: 10
