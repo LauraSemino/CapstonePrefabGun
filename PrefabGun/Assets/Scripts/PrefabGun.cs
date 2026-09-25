@@ -23,12 +23,13 @@ public class PrefabGun : MonoBehaviour
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
-    Vector3 rotationInput;
+    public Vector3 rotationInput;
     Vector3 rotationOffset;
     public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
     bool isPlaceMode;
+    public bool rotateMode;
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
@@ -103,12 +104,17 @@ public class PrefabGun : MonoBehaviour
             if (isPlaceMode)
             {
                 //change movement mode
+                rotateMode = true;
                 return;
             }
             else
             {
                 ScanObject();
             }
+        }
+        if(context.canceled)
+        {
+            rotateMode = false;
         }
     }
 
@@ -224,7 +230,7 @@ public class PrefabGun : MonoBehaviour
             return;
 
         Vector3 position = transform.position + transform.forward * objProjectionDistance;
-        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
+        Quaternion rotation = Quaternion.Euler(transform.eulerAngles.x + rotationOffset.x, transform.eulerAngles.y + rotationOffset.y, transform.eulerAngles.z + rotationOffset.z);
         toPlace.transform.SetPositionAndRotation(position, rotation);
 
     }

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
@@ -87,13 +88,21 @@ public class PlayerControl : MonoBehaviour
         float mouseX = lookInput.x * lookSensitivity;
         float mouseY = lookInput.y * lookSensitivity;
 
-        transform.Rotate(Vector3.up * mouseX);
+        if(!prefabGun.rotateMode)
+        {
+            transform.Rotate(Vector3.up * mouseX);
 
-        cameraRotation -= mouseY;
-        cameraRotation = Mathf.Clamp(cameraRotation, -lookXLimit, lookXLimit);
+            cameraRotation -= mouseY;
+            cameraRotation = Mathf.Clamp(cameraRotation, -lookXLimit, lookXLimit);
 
-        Quaternion cameraTurn = Quaternion.Euler(cameraRotation, 0f, 0f);
-        mainCamera.transform.localRotation = cameraTurn;
+            Quaternion cameraTurn = Quaternion.Euler(cameraRotation, 0f, 0f);
+            mainCamera.transform.localRotation = cameraTurn;
+        }
+        else
+        {
+            prefabGun.rotationInput.z = mouseX;
+            prefabGun.rotationInput.x = mouseY;
+        }
     }
 
     void DoMovement()
