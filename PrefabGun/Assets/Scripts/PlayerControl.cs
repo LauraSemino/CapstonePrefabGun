@@ -176,19 +176,14 @@ public class PlayerControl : MonoBehaviour
         Velocity.y += gravity * Time.deltaTime;
 
         movementThisFrame = Velocity * Time.deltaTime;
-        CheckCeiling();
         characterController.Move(movementThisFrame);
     }
 
-    private void CheckCeiling()
+    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (Velocity.y <= 0f)
-            return;
-
-        if (Physics.Raycast(transform.position, Vector3.up, out RaycastHit hit, 2f))
+        if (hit.normal.y < -0.5f && Velocity.y > 0f)
         {
-            if (hit.normal.y < -0.5f)
-                Velocity.y = ceilingBounce;
+            Velocity.y = ceilingBounce;
         }
     }
 
