@@ -10,17 +10,19 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float lookXLimit;
     private float cameraRotation;
 
-[Header("Movement")]
+    [Header("Movement")]
     [SerializeField] public float walkSpeed;
     [SerializeField] public float airSpeed;
-    [SerializeField] public float groundAcceleration = 10f;
-    [SerializeField] public float airAcceleration = 5f;
-    [SerializeField] public float friction = 6f;
+    [SerializeField] public float groundAcceleration = 5f;
+    [SerializeField] public float airAcceleration = 2f;
+    [SerializeField] public float friction = 7f;
     private Vector3 moveDirection = Vector3.zero;
     Vector3 flatVelocity;
     Vector3 movementThisFrame;
     float maxSpeed;
     float acceleration;
+    [SerializeField] private float speedMult = 1f;
+    [SerializeField, Range(0f, 1f)] private float landSpeedKeep = 0.95f;
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength;
@@ -28,17 +30,29 @@ public class PlayerControl : MonoBehaviour
     private Vector3 spawnPos;
     private CharacterController characterController;
     private bool isGrounded;
+    private bool wasGrounded;
     private Rigidbody rb;
     private bool canMove = true;
     public float originalWalkSpeed;
     public bool JumpFrame;
     public Vector3 Velocity;
     private bool jumpPressed;
+    PrefabGun prefabGun;
+
+    [Header("Make Jump Feel Good")]
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
+    private float coyoteTimer;
+    private float jumpBufferTimer;
+
+    // So no stuck on ceiling
+    [SerializeField] private float ceilingBounce = 0f;
+
+    // So stick on ramp
+    [SerializeField] private float groundedStickVelocity = -2f;
 
     Vector2 moveInput;
     Vector2 lookInput;
-    PrefabGun prefabGun;
-
 
     void Start()
     {
@@ -70,7 +84,7 @@ public class PlayerControl : MonoBehaviour
         if (context.performed)
         {
             jumpPressed = true;
-            JumpFrame = true;
+            jumpBufferTimer = jumpBufferTime;
         }
     }
     public void OnLook(InputAction.CallbackContext context)
@@ -98,10 +112,20 @@ public class PlayerControl : MonoBehaviour
 
     void DoMovement()
     {
+        wasGrounded = isGrounded;
         isGrounded = characterController.isGrounded;
+        bool justLanded = isGrounded && !wasGrounded;
+
+        if (isGrounded)
+            coyoteTimer = coyoteTime;
+        else
+            coyoteTimer -= Time.deltaTime;
+
+        if (jumpBufferTimer > 0f)
+            jumpBufferTimer -= Time.deltaTime;
 
         if (isGrounded && Velocity.y < 0f)
-            Velocity.y = -2f;
+            Velocity.y = groundedStickVelocity;
 
         moveDirection = transform.right * moveInput.x;
         moveDirection += transform.forward * moveInput.y;
@@ -120,18 +144,31 @@ public class PlayerControl : MonoBehaviour
             acceleration = airAcceleration;
         }
 
+        if (justLanded)
+            flatVelocity *= landSpeedKeep;
+
         Accelerate(ref flatVelocity, moveDirection, maxSpeed, acceleration);
 
         if (isGrounded)
             ApplyFriction(ref flatVelocity);
 
+        float speedCap = maxSpeed * speedMult;
+
+        if (flatVelocity.magnitude > speedCap)
+            flatVelocity = flatVelocity.normalized * speedCap;
+
         Velocity.x = flatVelocity.x;
         Velocity.z = flatVelocity.z;
 
-        if (isGrounded && jumpPressed)
+        bool canJumpNow = jumpBufferTimer > 0f && coyoteTimer > 0f;
+
+        if (canJumpNow)
         {
             float jumpVelocity = Mathf.Sqrt(jumpStrength * -2f * gravity);
             Velocity.y = jumpVelocity;
+            jumpBufferTimer = 0f;
+            coyoteTimer = 0f;
+            JumpFrame = true;
         }
 
         jumpPressed = false;
@@ -139,8 +176,22 @@ public class PlayerControl : MonoBehaviour
         Velocity.y += gravity * Time.deltaTime;
 
         movementThisFrame = Velocity * Time.deltaTime;
+        CheckCeiling();
         characterController.Move(movementThisFrame);
     }
+
+    private void CheckCeiling()
+    {
+        if (Velocity.y <= 0f)
+            return;
+
+        if (Physics.Raycast(transform.position, Vector3.up, out RaycastHit hit, 2f))
+        {
+            if (hit.normal.y < -0.5f)
+                Velocity.y = ceilingBounce;
+        }
+    }
+
     public void LateUpdate()
     {
         JumpFrame = false;
@@ -160,9 +211,7 @@ public class PlayerControl : MonoBehaviour
         float accelerationThisFrame = acceleration * maxSpeed * Time.deltaTime;
 
         if (accelerationThisFrame > speedLeft)
-        {
             accelerationThisFrame = speedLeft;
-        }
 
         Vector3 extraSpeed = direction * accelerationThisFrame;
         velocity += extraSpeed;
@@ -182,9 +231,7 @@ public class PlayerControl : MonoBehaviour
         float newSpeed = currentSpeed - speedLost;
 
         if (newSpeed < 0f)
-        {
             newSpeed = 0f;
-        }
 
         float speedRatio = newSpeed / currentSpeed;
 
@@ -207,4 +254,3 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
-

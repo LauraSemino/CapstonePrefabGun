@@ -186,16 +186,23 @@ MonoBehaviour:
   mainCamera: {fileID: 1924660253183047822}
   lookSensitivity: 0.2
   lookXLimit: 90
-  walkSpeed: 6
-  airSpeed: 4
+  walkSpeed: 7
+  airSpeed: 5
   groundAcceleration: 6
-  airAcceleration: 2.5
-  friction: 7.5
+  airAcceleration: 2
+  friction: 8
+  speedCapMultiplier: 1
+  maxAirAccelPerFrame: 4
+  landingSpeedRetention: 0.8
   jumpStrength: 1.5
   gravity: -20
   originalWalkSpeed: 7
   JumpFrame: 0
   Velocity: {x: 0, y: 0, z: 0}
+  coyoteTime: 0.1
+  jumpBufferTime: 0.1
+  ceilingBounceDamping: 0
+  groundedStickVelocity: -2
 --- !u!114 &8837608948090298816
 MonoBehaviour:
   m_ObjectHideFlags: 0
