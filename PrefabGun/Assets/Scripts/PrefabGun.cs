@@ -23,8 +23,8 @@ public class PrefabGun : MonoBehaviour
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
-    float rotationInput;
-    float rotationOffset;
+    Vector3 rotationInput;
+    Vector3 rotationOffset;
     public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
@@ -62,7 +62,7 @@ public class PrefabGun : MonoBehaviour
         //follows mouse better in update
         if (isPlaceMode && toPlace != null)
         {
-            if (rotationInput != 0f)
+            if (rotationInput != Vector3.zero)
             {
                 rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
             }
@@ -102,7 +102,7 @@ public class PrefabGun : MonoBehaviour
         {
             if (isPlaceMode)
             {
-                CancelPlace();
+                //change movement mode
                 return;
             }
             else
@@ -161,8 +161,8 @@ public class PrefabGun : MonoBehaviour
 
         // Set stats to default and show preview
         isPlaceMode = true;
-        rotationInput = 0f;
-        rotationOffset = 0f;
+        rotationInput = Vector3.zero;
+        rotationOffset = Vector3.zero;
         objProjectionDistance = minDistancePlace;
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab);
@@ -200,8 +200,8 @@ public class PrefabGun : MonoBehaviour
     public void ExitPlace()
     {
         isPlaceMode = false;
-        rotationInput = 0f;
-        rotationOffset = 0f;
+        rotationInput = Vector3.zero;
+        rotationOffset = Vector3.zero;
         objProjectionDistance = minDistancePlace;
         SetGunMode(false);
     }
@@ -224,7 +224,7 @@ public class PrefabGun : MonoBehaviour
             return;
 
         Vector3 position = transform.position + transform.forward * objProjectionDistance;
-        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset, 0f);
+        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
         toPlace.transform.SetPositionAndRotation(position, rotation);
 
     }
@@ -270,6 +270,11 @@ public class PrefabGun : MonoBehaviour
     {
         if (context.performed)
         {
+            if (isPlaceMode)
+            {
+                CancelPlace();
+                return;
+            }
             LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
             RaycastHit hit;
             if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
@@ -290,14 +295,14 @@ public class PrefabGun : MonoBehaviour
         {
             if (isPlaceMode)
             {
-                rotationInput = -1;
+                rotationInput.y = -1;
                 return;
             }
             NextObject();
         }
         if (context.canceled && isPlaceMode)
         {
-            rotationInput = 0f;
+            rotationInput.y = 0f;
 
         }
     }
@@ -309,14 +314,14 @@ public class PrefabGun : MonoBehaviour
         {
             if (isPlaceMode)
             {
-                rotationInput = 1;
+                rotationInput.y = 1;
                 return;
             }
             PreviousObject();
         }
         if (context.canceled && isPlaceMode)
         {
-            rotationInput = 0f;
+            rotationInput.y = 0f;
 
         }
     }

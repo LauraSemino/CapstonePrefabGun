@@ -37,6 +37,8 @@ public class PlayerControl : MonoBehaviour
 
     Vector2 moveInput;
     Vector2 lookInput;
+    PrefabGun prefabGun;
+
 
     void Start()
     {
@@ -45,6 +47,7 @@ public class PlayerControl : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         spawnPos = transform.position;
+        prefabGun = mainCamera.gameObject.GetComponent<PrefabGun>();
     }
 
     void Update()
