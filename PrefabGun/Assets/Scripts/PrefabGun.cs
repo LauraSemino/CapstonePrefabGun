@@ -66,6 +66,7 @@ public class PrefabGun : MonoBehaviour
             {
                 rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
             }
+            
             UpdatePlacement();
         }
     }
@@ -165,6 +166,7 @@ public class PrefabGun : MonoBehaviour
         objProjectionDistance = minDistancePlace;
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab);
+        toPlace.transform.SetParent(transform, true);
         SetGunMode(true);
         Preview(toPlace);
         UpdatePlacement();
