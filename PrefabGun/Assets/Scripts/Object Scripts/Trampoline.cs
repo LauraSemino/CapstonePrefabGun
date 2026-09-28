@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Timeline;
 using UnityEngine;
 
 public class Trampoline : MonoBehaviour
@@ -15,15 +16,15 @@ public class Trampoline : MonoBehaviour
 
         if (rb != null && player == null)
         {
-            Vector3 BounceForce = new Vector3(0, -rb.linearVelocity.y * bounciness, 0);
-            //multiply by rotation of trampoline here
+            Vector3 BounceForce = -rb.linearVelocity.y * transform.up * bounciness;
+            //multiply by rotation of trampoline here            
             rb.AddForce(BounceForce * rb.mass, ForceMode.Impulse);
 
             Debug.Log("bouncing object: "+ BounceForce);
         }
         if (player != null && !player.isGrounded)
         {
-            Vector3 BounceForce = new Vector3(0, -player.Velocity.y * bounciness, 0);
+            Vector3 BounceForce = -player.Velocity.y * transform.up * bounciness;
             //multiply by rotation of trampoline here
             player.PushPlayer(BounceForce);
 

@@ -15,4 +15,4 @@ MonoBehaviour:
   id: 11
   displayName: Trampoline
   cost: 2
-  prefab: {fileID: 5664050012972126599, guid: 42aca55c93176e442b106723138a2512, type: 3}
+  prefab: {fileID: 6309509738046387394, guid: 42aca55c93176e442b106723138a2512, type: 3}

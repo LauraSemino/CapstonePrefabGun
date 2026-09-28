@@ -12,14 +12,14 @@ public class FanWind : MonoBehaviour
 
         if (rb != null)
         {
-            rb.AddForce(Vector3.up * windness, ForceMode.Force);
+            rb.AddForce(transform.up * windness, ForceMode.Force);
         }
 
         PlayerControl player = other.GetComponent<PlayerControl>();
 
         if (player != null)
         {
-            player.PushPlayer(Vector3.up * windness * 0.075f);
+            player.PushPlayer(transform.up * windness * 0.075f);
         }
     }
 }
