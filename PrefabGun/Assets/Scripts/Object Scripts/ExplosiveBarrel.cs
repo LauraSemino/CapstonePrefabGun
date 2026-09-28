@@ -49,7 +49,7 @@ public class ExplosiveBarrel : MonoBehaviour
                 Vector3 direction = (player.transform.position - transform.position).normalized;
                 direction.y = 0;
 
-                player.Explode(direction * playerForce + Vector3.up * upwardForce);
+                player.PushPlayer(direction * playerForce + Vector3.up * upwardForce);
             }
         }
 

@@ -19,7 +19,7 @@ public class FanWind : MonoBehaviour
 
         if (player != null)
         {
-            player.Explode(Vector3.up * windness * 0.075f);
+            player.PushPlayer(Vector3.up * windness * 0.075f);
         }
     }
 }

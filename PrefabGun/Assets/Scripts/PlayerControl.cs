@@ -69,7 +69,7 @@ public class PlayerControl : MonoBehaviour
         DoMovement();
     }
 
-    public void Explode(Vector3 force)
+    public void PushPlayer(Vector3 force)
     {
         Velocity += force;
     }
