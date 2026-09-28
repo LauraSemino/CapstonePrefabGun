@@ -52,7 +52,7 @@ public class ExplosiveBarrel : MonoBehaviour
                 player.PushPlayer(direction * playerForce + Vector3.up * upwardForce);
             }
         }
-
+        PrefabGun.instance.Refund(2);
         Destroy(gameObject);
     }
 }
