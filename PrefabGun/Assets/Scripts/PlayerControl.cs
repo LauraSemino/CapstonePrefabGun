@@ -28,7 +28,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float gravity;
     private Vector3 spawnPos;
     private CharacterController characterController;
-    private bool isGrounded;
+    public bool isGrounded;
     private bool wasGrounded;
     private Rigidbody rb;
     private bool canMove = true;

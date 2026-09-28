@@ -818,10 +818,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1207784210}
-  - component: {fileID: 1207784209}
   - component: {fileID: 1207784211}
   - component: {fileID: 1207784213}
   - component: {fileID: 1207784212}
+  - component: {fileID: 1207784214}
   m_Layer: 3
   m_Name: Trampoline
   m_TagString: Untagged
@@ -829,27 +829,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1207784209
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207784208}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.35, y: 0.25, z: 1.35}
-  m_Center: {x: 0, y: 0.12, z: 0}
 --- !u!4 &1207784210
 Transform:
   m_ObjectHideFlags: 0
@@ -859,7 +838,7 @@ Transform:
   m_GameObject: {fileID: 1207784208}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.715, z: 0}
+  m_LocalPosition: {x: -2.59, y: 0.715, z: 1.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -924,6 +903,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: cf3a678e63185134f958e83d64423ec3, type: 2}
   createdByPlayer: 0
+--- !u!65 &1207784214
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207784208}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.35, y: 0.3, z: 1.35}
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!1 &1293055871
 GameObject:
   m_ObjectHideFlags: 0
