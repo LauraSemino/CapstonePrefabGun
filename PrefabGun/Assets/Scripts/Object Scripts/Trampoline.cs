@@ -16,7 +16,8 @@ public class Trampoline : MonoBehaviour
 
         if (rb != null && player == null)
         {
-            Vector3 BounceForce = -rb.linearVelocity.y * transform.up * bounciness;
+            //Vector3 BounceForce = -rb.linearVelocity.y * transform.up * bounciness;
+            Vector3 BounceForce = Vector3.Project(rb.linearVelocity, transform.up) * bounciness;
             //multiply by rotation of trampoline here            
             rb.AddForce(BounceForce * rb.mass, ForceMode.Impulse);
 
@@ -24,7 +25,7 @@ public class Trampoline : MonoBehaviour
         }
         if (player != null && !player.isGrounded)
         {
-            Vector3 BounceForce = -player.Velocity.y * transform.up * bounciness;
+            Vector3 BounceForce = Vector3.Project(player.Velocity, transform.up) * bounciness;
             //multiply by rotation of trampoline here
             player.PushPlayer(BounceForce);
 
