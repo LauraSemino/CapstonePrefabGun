@@ -8,6 +8,8 @@ public class PrefabGun : MonoBehaviour
 {
     //0 is scan, 1 is create, 2 is delete
 
+    public static PrefabGun instance;
+
     [Header("Gun Visual Components")]
     public MeshRenderer colour;
     [SerializeField] Material green;
@@ -28,6 +30,8 @@ public class PrefabGun : MonoBehaviour
     float objProjectionDistance = 0;
     GameObject toPlace = null;
     bool isPlaceMode;
+    [SerializeField] LayerMask placementBlockMask;
+    [SerializeField] float placementSurfaceOffset = 0.05f;
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
@@ -50,6 +54,7 @@ public class PrefabGun : MonoBehaviour
             if (obj != null)
                 savedIDs.Add(obj.id);
         }
+        instance = this;
         SetGunMode(false);
         UpdateDisplay();
 
@@ -88,7 +93,7 @@ public class PrefabGun : MonoBehaviour
 
     }
 
-    void Refund(float cost)
+    public void Refund(float cost)
     {
         curBudget = Mathf.Max(0f, curBudget - cost);
         UpdateBudgetUI();
@@ -226,6 +231,28 @@ public class PrefabGun : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
         toPlace.transform.SetPositionAndRotation(position, rotation);
 
+        // No more clipping into the floor stuff
+
+        // Gets all the renderers
+        Renderer[] renderers = toPlace.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+
+        // Checks bounds of renderers
+        Bounds boundies = renderers[0].bounds;
+        foreach (Renderer renderer in renderers)
+        {
+            boundies.Encapsulate(renderer.bounds);
+        }
+
+        // Checks if tryna place in the bounds then moves it up to avoid placing stuff inside the floor
+        Vector3 rayStartin = new Vector3(position.x, boundies.max.y + 0.5f, position.z);
+        if (Physics.Raycast(rayStartin, Vector3.down, out RaycastHit groundHit, boundies.size.y + maxDistancePlace, placementBlockMask))
+        {
+            if (boundies.min.y < groundHit.point.y)
+            {
+                toPlace.transform.position += Vector3.up * (groundHit.point.y - boundies.min.y + placementSurfaceOffset);
+            }
+        }
     }
 
     // Goes to the next object
