@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.Timeline;
 using UnityEngine;
 
 public class Trampoline : MonoBehaviour
