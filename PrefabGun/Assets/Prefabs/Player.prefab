@@ -160,19 +160,20 @@ MonoBehaviour:
   mainCamera: {fileID: 1924660253183047822}
   lookSensitivity: 0.2
   lookXLimit: 90
-  walkSpeed: 12
-  airSpeed: 4
-  groundAcceleration: 9
+  walkSpeed: 6.5
+  airSpeed: 3
+  groundAcceleration: 5
   airAcceleration: 2
-  friction: 7
+  friction: 8
   speedMult: 1
   landSpeedKeep: 0.95
   groundMask:
     serializedVersion: 2
     m_Bits: 63
-  groundCheckDistance: 0.1
+  groundCheckDistance: 0.15
   maxSlopeAngle: 50
   groundRayLength: 1.1
+  groundSkin: 0.05
   jumpStrength: 1.5
   gravity: -20
   isGrounded: 0

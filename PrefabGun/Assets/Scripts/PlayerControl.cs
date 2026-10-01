@@ -29,6 +29,8 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float maxSlopeAngle = 50f;
     private Vector3 groundNormal = Vector3.up;
     [SerializeField] private float groundRayLength = 1.1f;
+    [SerializeField] private float groundSkin = 0.05f;
+    private float jumpGroundIgnoreTimer;
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength;
@@ -119,23 +121,23 @@ public class PlayerControl : MonoBehaviour
     void CheckGround()
     {
         wasGrounded = isGrounded;
-
         isGrounded = false;
         groundNormal = Vector3.up;
 
-        if (Velocity.y > 0.1f)
-            return;
-
-        Vector3 bottom = capsule.bounds.center;
-        bottom.y = capsule.bounds.min.y + capsule.radius;
-
-        float checkDistance = groundCheckDistance + 0.05f;
-
-        if (Physics.SphereCast(bottom, capsule.radius, Vector3.down, out RaycastHit hit, checkDistance, groundMask, QueryTriggerInteraction.Ignore))
+        if (jumpGroundIgnoreTimer > 0f)
         {
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+            jumpGroundIgnoreTimer -= Time.fixedDeltaTime;
+            return;
+        }
 
-            if (slopeAngle <= maxSlopeAngle)
+        float radius = capsule.radius * Mathf.Max(Mathf.Abs(capsule.transform.lossyScale.x), Mathf.Abs(capsule.transform.lossyScale.z)) * 0.95f;
+
+        Vector3 origin = capsule.bounds.center;
+        origin.y = capsule.bounds.min.y + radius + groundSkin;
+
+        if (Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, groundSkin + groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle)
             {
                 isGrounded = true;
                 groundNormal = hit.normal;
