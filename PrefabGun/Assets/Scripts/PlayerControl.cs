@@ -25,7 +25,7 @@ public class PlayerControl : MonoBehaviour
 
     [Header("Ground Check")]
     [SerializeField] private LayerMask groundMask = 0;
-    [SerializeField] private float groundCheckDistance = 0.1f;
+    [SerializeField] private float groundCheckDistance = 0.15f;
     [SerializeField] private float maxSlopeAngle = 50f;
     private Vector3 groundNormal = Vector3.up;
     [SerializeField] private float groundRayLength = 1.1f;
@@ -60,7 +60,7 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        capsule = GetComponent<CapsuleCollider>();
+        capsule = GetComponentInChildren<CapsuleCollider>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         spawnPos = transform.position;
@@ -119,16 +119,27 @@ public class PlayerControl : MonoBehaviour
     void CheckGround()
     {
         wasGrounded = isGrounded;
+
         isGrounded = false;
         groundNormal = Vector3.up;
 
         if (Velocity.y > 0.1f)
             return;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundRayLength, groundMask))
+        Vector3 bottom = capsule.bounds.center;
+        bottom.y = capsule.bounds.min.y + capsule.radius;
+
+        float checkDistance = groundCheckDistance + 0.05f;
+
+        if (Physics.SphereCast(bottom, capsule.radius, Vector3.down, out RaycastHit hit, checkDistance, groundMask, QueryTriggerInteraction.Ignore))
         {
-            isGrounded = true;
-            groundNormal = hit.normal;
+            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+
+            if (slopeAngle <= maxSlopeAngle)
+            {
+                isGrounded = true;
+                groundNormal = hit.normal;
+            }
         }
     }
 
