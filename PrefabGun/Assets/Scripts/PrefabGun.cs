@@ -80,6 +80,7 @@ public class PrefabGun : MonoBehaviour
         if (budgetBar != null || maxBudget <= 0f)
         {
             budgetBar.size = Mathf.Clamp01(curBudget / maxBudget);
+            //budgetBar.colors.normalColor = Color.green;
         }
     }
 
@@ -417,7 +418,6 @@ public class PrefabGun : MonoBehaviour
     // Update the prefab gun's UI
     void UpdateDisplay()
     {
-
         displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
 
         if (displayedObject != null)
