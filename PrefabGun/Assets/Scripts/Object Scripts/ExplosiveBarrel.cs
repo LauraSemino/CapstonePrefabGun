@@ -13,12 +13,6 @@ public class ExplosiveBarrel : MonoBehaviour
     {
         if (exploded) return;
 
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            Explode();
-            return;
-        }
-
         Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
 
         if (rb != null && collision.relativeVelocity.magnitude > 2f)
@@ -40,16 +34,6 @@ public class ExplosiveBarrel : MonoBehaviour
             if (objectRb != null)
             {
                 objectRb.AddExplosionForce(boomForce, transform.position, boomRadius, 1f, ForceMode.Impulse);
-            }
-
-            PlayerControl player = obj.GetComponent<PlayerControl>();
-
-            if (player != null)
-            {
-                Vector3 direction = (player.transform.position - transform.position).normalized;
-                direction.y = 0;
-
-                player.PushPlayer(direction * playerForce + Vector3.up * upwardForce);
             }
         }
         PrefabGun.instance.Refund(2);

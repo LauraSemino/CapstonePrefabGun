@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7522322461220528126}
   - component: {fileID: 3285555872292215251}
   - component: {fileID: 5532643839602446859}
-  - component: {fileID: 2318436026359892767}
   - component: {fileID: 4224448605860597066}
   - component: {fileID: 4121965159737549811}
   - component: {fileID: 8837608948090298816}
@@ -119,31 +118,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!143 &2318436026359892767
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 123542631921752447}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.4
-  m_SlopeLimit: 50
-  m_StepOffset: 0.25
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4224448605860597066
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -166,11 +140,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!114 &4121965159737549811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,21 +160,27 @@ MonoBehaviour:
   mainCamera: {fileID: 1924660253183047822}
   lookSensitivity: 0.2
   lookXLimit: 90
-  walkSpeed: 7
-  airSpeed: 5
-  groundAcceleration: 6
+  walkSpeed: 12
+  airSpeed: 4
+  groundAcceleration: 9
   airAcceleration: 2
-  friction: 8
+  friction: 7
   speedMult: 1
   landSpeedKeep: 0.95
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 63
+  groundCheckDistance: 0.1
+  maxSlopeAngle: 50
+  groundRayLength: 1.1
   jumpStrength: 1.5
   gravity: -20
+  isGrounded: 0
   originalWalkSpeed: 7
   JumpFrame: 0
   Velocity: {x: 0, y: 0, z: 0}
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  ceilingBounce: 0
   groundedStickVelocity: -2
 --- !u!114 &8837608948090298816
 MonoBehaviour:

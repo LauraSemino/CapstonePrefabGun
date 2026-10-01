@@ -17,25 +17,30 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] public float friction = 7f;
     private Vector3 moveDirection = Vector3.zero;
     Vector3 flatVelocity;
-    Vector3 movementThisFrame;
     float maxSpeed;
     float acceleration;
     [SerializeField] private float speedMult = 1f;
     [SerializeField, Range(0f, 1f)] private float landSpeedKeep = 0.95f;
+    private bool canMove = true;
+
+    [Header("Ground Check")]
+    [SerializeField] private LayerMask groundMask = 0;
+    [SerializeField] private float groundCheckDistance = 0.1f;
+    [SerializeField] private float maxSlopeAngle = 50f;
+    private Vector3 groundNormal = Vector3.up;
+    [SerializeField] private float groundRayLength = 1.1f;
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength;
     [SerializeField] private float gravity;
     private Vector3 spawnPos;
-    private CharacterController characterController;
+    private Rigidbody rb;
+    private CapsuleCollider capsule;
     public bool isGrounded;
     private bool wasGrounded;
-    private Rigidbody rb;
-    private bool canMove = true;
     public float originalWalkSpeed;
     public bool JumpFrame;
     public Vector3 Velocity;
-    private bool jumpPressed;
     PrefabGun prefabGun;
 
     [Header("Make Jump Feel Good")]
@@ -44,34 +49,39 @@ public class PlayerControl : MonoBehaviour
     private float coyoteTimer;
     private float jumpBufferTimer;
 
-    // So no stuck on ceiling
-    [SerializeField] private float ceilingBounce = 0f;
-
     // So stick on ramp
     [SerializeField] private float groundedStickVelocity = -2f;
 
     Vector2 moveInput;
     Vector2 lookInput;
+    private float yaw;
+    private float pitch;
 
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
+        capsule = GetComponent<CapsuleCollider>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         spawnPos = transform.position;
+        yaw = transform.eulerAngles.y;
         prefabGun = mainCamera.gameObject.GetComponent<PrefabGun>();
     }
 
     void Update()
     {
         DoLook();
+    }
+
+    void FixedUpdate()
+    {
         DoMovement();
+        rb.MoveRotation(Quaternion.Euler(0f, yaw, 0f));
     }
 
     public void PushPlayer(Vector3 force)
     {
-        Velocity += force;
+        rb.linearVelocity += force;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -81,10 +91,7 @@ public class PlayerControl : MonoBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.performed)
-        {
-            jumpPressed = true;
             jumpBufferTimer = jumpBufferTime;
-        }
     }
     public void OnLook(InputAction.CallbackContext context)
     {
@@ -100,34 +107,49 @@ public class PlayerControl : MonoBehaviour
         float mouseX = lookInput.x * lookSensitivity;
         float mouseY = lookInput.y * lookSensitivity;
 
-        transform.Rotate(Vector3.up * mouseX);
+        yaw += lookInput.x * lookSensitivity;
+        pitch = Mathf.Clamp(pitch - lookInput.y * lookSensitivity, -lookXLimit, lookXLimit);
 
         cameraRotation -= mouseY;
         cameraRotation = Mathf.Clamp(cameraRotation, -lookXLimit, lookXLimit);
 
-        Quaternion cameraTurn = Quaternion.Euler(cameraRotation, 0f, 0f);
-        mainCamera.transform.localRotation = cameraTurn;
+        mainCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+    }
+
+    void CheckGround()
+    {
+        wasGrounded = isGrounded;
+        isGrounded = false;
+        groundNormal = Vector3.up;
+
+        if (Velocity.y > 0.1f)
+            return;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundRayLength, groundMask))
+        {
+            isGrounded = true;
+            groundNormal = hit.normal;
+        }
     }
 
     void DoMovement()
     {
-        wasGrounded = isGrounded;
-        isGrounded = characterController.isGrounded;
+        Velocity = rb.linearVelocity;
+
+        CheckGround();
         bool justLanded = isGrounded && !wasGrounded;
 
         if (isGrounded)
             coyoteTimer = coyoteTime;
         else
-            coyoteTimer -= Time.deltaTime;
+            coyoteTimer -= Time.fixedDeltaTime; ;
 
         if (jumpBufferTimer > 0f)
-            jumpBufferTimer -= Time.deltaTime;
+            jumpBufferTimer -= Time.fixedDeltaTime; ;
 
-        if (isGrounded && Velocity.y < 0f)
-            Velocity.y = groundedStickVelocity;
-
-        moveDirection = transform.right * moveInput.x;
-        moveDirection += transform.forward * moveInput.y;
+        Quaternion facing = transform.rotation;
+        moveDirection = facing * Vector3.right * moveInput.x;
+        moveDirection += facing * Vector3.forward * moveInput.y;
 
         if (moveDirection.sqrMagnitude > 0.001f)
             moveDirection.Normalize();
@@ -155,35 +177,38 @@ public class PlayerControl : MonoBehaviour
 
         if (flatVelocity.magnitude > speedCap)
             flatVelocity = flatVelocity.normalized * speedCap;
-
-        Velocity.x = flatVelocity.x;
-        Velocity.z = flatVelocity.z;
-
-        bool canJumpNow = jumpBufferTimer > 0f && coyoteTimer > 0f;
-
-        if (canJumpNow)
+        bool jumping = false;
+        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
-            float jumpVelocity = Mathf.Sqrt(jumpStrength * -2f * gravity);
-            Velocity.y = jumpVelocity;
+            jumping = true;
+            JumpFrame = true;
             jumpBufferTimer = 0f;
             coyoteTimer = 0f;
-            JumpFrame = true;
         }
 
-        jumpPressed = false;
-
-        Velocity.y += gravity * Time.deltaTime;
-
-        movementThisFrame = Velocity * Time.deltaTime;
-        characterController.Move(movementThisFrame);
-    }
-
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (hit.normal.y < -0.5f && Velocity.y > 0f)
+        if (jumping)
         {
-            Velocity.y = ceilingBounce;
+            Velocity.x = flatVelocity.x;
+            Velocity.z = flatVelocity.z;
+            Velocity.y = Mathf.Sqrt(jumpStrength * -2f * gravity);
         }
+        else if (isGrounded)
+        {
+            Vector3 slopeVelocity = Vector3.ProjectOnPlane(flatVelocity, groundNormal);
+            if (slopeVelocity.sqrMagnitude > 0.0001f)
+                slopeVelocity = slopeVelocity.normalized * flatVelocity.magnitude;
+
+            Velocity = slopeVelocity;
+            Velocity.y += groundedStickVelocity;
+        }
+        else
+        {
+            Velocity.x = flatVelocity.x;
+            Velocity.z = flatVelocity.z;
+            Velocity.y += gravity * Time.fixedDeltaTime;
+        }
+
+        rb.linearVelocity = Velocity;
     }
 
     public void LateUpdate()
@@ -202,13 +227,12 @@ public class PlayerControl : MonoBehaviour
         if (speedLeft <= 0f)
             return;
 
-        float accelerationThisFrame = acceleration * maxSpeed * Time.deltaTime;
+        float accelerationThisFrame = acceleration * maxSpeed * Time.fixedDeltaTime;
 
         if (accelerationThisFrame > speedLeft)
             accelerationThisFrame = speedLeft;
 
-        Vector3 extraSpeed = direction * accelerationThisFrame;
-        velocity += extraSpeed;
+        velocity += direction * accelerationThisFrame;
     }
 
     private void ApplyFriction(ref Vector3 velocity)
@@ -221,23 +245,19 @@ public class PlayerControl : MonoBehaviour
             return;
         }
 
-        float speedLost = currentSpeed * friction * Time.deltaTime;
-        float newSpeed = currentSpeed - speedLost;
+        float speedLost = currentSpeed * friction * Time.fixedDeltaTime;
+        float newSpeed = Mathf.Max(currentSpeed - speedLost, 0f);
 
-        if (newSpeed < 0f)
-            newSpeed = 0f;
-
-        float speedRatio = newSpeed / currentSpeed;
-
-        velocity *= speedRatio;
+        velocity *= newSpeed / currentSpeed;
     }
 
     void ResetPlayer()
     {
         Debug.Log(spawnPos);
-        gameObject.GetComponent<CharacterController>().enabled = false;
-        transform.position = spawnPos;
-        gameObject.GetComponent<CharacterController>().enabled = true;
+        rb.position = spawnPos;
+        rb.linearVelocity = Vector3.zero;
+        Velocity = Vector3.zero;
+        Physics.SyncTransforms();
     }
 
     private void OnTriggerEnter(Collider other)
