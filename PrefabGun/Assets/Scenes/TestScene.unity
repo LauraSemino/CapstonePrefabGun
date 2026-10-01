@@ -1142,10 +1142,6 @@ PrefabInstance:
       propertyPath: maxBudget
       value: 999
       objectReference: {fileID: 0}
-    - target: {fileID: 5532643839602446859, guid: 4c42f8f5971cdf94390d6d800315eddf, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: 6944fa3ec043d8c4f9f09c98aadb6d95, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
