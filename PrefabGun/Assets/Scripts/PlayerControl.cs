@@ -136,7 +136,7 @@ public class PlayerControl : MonoBehaviour
         origin.y = capsule.bounds.min.y + radius + groundSkin;
 
         if (Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, groundSkin + groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
-        {
+        {           
             if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle)
             {
                 isGrounded = true;

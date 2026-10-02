@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4ed468d33de8f40ad166a591d4eaf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trampoline
-  bounciness: -2
+  bounciness: -1
 --- !u!65 &1413856026196813448
 BoxCollider:
   m_ObjectHideFlags: 0

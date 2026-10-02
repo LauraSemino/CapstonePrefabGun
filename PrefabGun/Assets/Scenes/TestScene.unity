@@ -963,6 +963,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Trampoline
       objectReference: {fileID: 0}
+    - target: {fileID: 7748732208511075717, guid: 42aca55c93176e442b106723138a2512, type: 3}
+      propertyPath: bounciness
+      value: -0.85
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
