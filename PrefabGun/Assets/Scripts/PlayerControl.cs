@@ -7,66 +7,61 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float lookSensitivity;
     [SerializeField] private float lookXLimit;
-    private float cameraRotation;
 
     [Header("Movement")]
-    [SerializeField] public float walkSpeed;
-    [SerializeField] public float airSpeed;
-    [SerializeField] public float groundAcceleration = 5f;
-    [SerializeField] public float airAcceleration = 2f;
-    [SerializeField] public float friction = 7f;
-    private Vector3 moveDirection = Vector3.zero;
-    Vector3 flatVelocity;
-    float maxSpeed;
-    float acceleration;
-    [SerializeField] private float speedMult = 1f;
-    [SerializeField, Range(0f, 1f)] private float landSpeedKeep = 0.95f;
+    [SerializeField] public float walkSpeed; //Player's  max speed on the ground
+    [SerializeField] public float airSpeed; // Player's max speed in the air
+    [SerializeField] public float groundAcceleration = 5f; // How quickly we speed up on the ground
+    [SerializeField] public float airAcceleration = 2f; // How quickly we speed up in the air
+    [SerializeField] public float friction = 7f; // How quickly we slow down on the ground
+    private Vector3 moveDirection = Vector3.zero; // Which way players wants to move
+    Vector3 horVelocity; // Just the horizontal velocity
+    float maxSpeed; // Speed limit for the player in state
+    float acceleration; // Acceleration for the player in state
     private bool canMove = true;
 
     [Header("Ground Check")]
-    [SerializeField] private LayerMask groundMask = 0;
-    [SerializeField] private float groundCheckDistance = 0.15f;
-    [SerializeField] private float maxSlopeAngle = 50f;
-    private Vector3 groundNormal = Vector3.up;
-    [SerializeField] private float groundRayLength = 1.1f;
-    [SerializeField] private float groundSkin = 0.05f;
-    private float jumpGroundIgnoreTimer;
+    [SerializeField] private LayerMask groundMask = 0; // Lowkey just to make player ignore themself as ground mask
+    [SerializeField] private float groundCheckDistance = 0.15f; // How far below the feet we look for ground
+    [SerializeField] private float maxSlopeAngle = 50f; // Steeper surfaces don't count as ground
+    private Vector3 groundNormal = Vector3.up; // What is the normal of the ground we currently on
+    [SerializeField] private float groundSkin = 0.05f; // make the rays start a bit above the feet
+    [SerializeField] private float footGroundRingRadius = 0.9f; // Ring of rays as a fraction of the collider radius
+    [SerializeField] private int footGroundRays = 8; // rayRings
+    [SerializeField] private Transform groundCheckOrigin; // Point from which ground check occurs
+    [SerializeField] private float groundCheckRadius = 0.4f; // Radius for the ground check
 
     [Header("Jumping")]
-    [SerializeField] private float jumpStrength;
-    [SerializeField] private float gravity;
-    private Vector3 spawnPos;
-    private Rigidbody rb;
-    private CapsuleCollider capsule;
-    public bool isGrounded;
-    private bool wasGrounded;
+    [SerializeField] private float jumpStrength; // How big we be jumping
+    private Vector3 spawnPos; // Where we respawn after dying
+    public Rigidbody rb;
+    public MeshCollider capsule;
+    public bool isGrounded; // we on ground?
+    private bool wasGrounded; // Were we grounded?
     public float originalWalkSpeed;
-    public bool JumpFrame;
-    public Vector3 Velocity;
+    public Vector3 Velocity; // Our velocity we use and adjust
     PrefabGun prefabGun;
 
     [Header("Make Jump Feel Good")]
-    [SerializeField] private float coyoteTime = 0.1f;
-    [SerializeField] private float jumpBufferTime = 0.1f;
+    [SerializeField] private float coyoteTime = 0.1f; // Jump in this time after off ledge
+    [SerializeField] private float jumpBufferTime = 0.1f; // Buffer jumps for a lil bit
     private float coyoteTimer;
     private float jumpBufferTimer;
 
     // So stick on ramp
-    [SerializeField] private float groundedStickVelocity = -2f;
+    [SerializeField] private float groundedStickVelocity = -2f; // Make player stick better to ramps by pushing down into them
 
     Vector2 moveInput;
     Vector2 lookInput;
-    private float yaw;
-    private float pitch;
+    private float lookX; // Horizontal look angle
+    private float lookY; // Vertical look angle
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        capsule = GetComponentInChildren<CapsuleCollider>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         spawnPos = transform.position;
-        yaw = transform.eulerAngles.y;
+        lookX = transform.eulerAngles.y; // Start looking the way the player object is facing
         prefabGun = mainCamera.gameObject.GetComponent<PrefabGun>();
     }
 
@@ -78,12 +73,12 @@ public class PlayerControl : MonoBehaviour
     void FixedUpdate()
     {
         DoMovement();
-        rb.MoveRotation(Quaternion.Euler(0f, yaw, 0f));
+        rb.MoveRotation(Quaternion.Euler(0f, lookX, 0f)); // Turn the body to match the horizontal look angle
     }
 
     public void PushPlayer(Vector3 force)
     {
-        rb.linearVelocity += force;
+        rb.linearVelocity += force; // Big velocity change boom
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -92,6 +87,7 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
+        // Buffer jump
         if (context.performed)
             jumpBufferTimer = jumpBufferTime;
     }
@@ -101,21 +97,15 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnCrouch(InputAction.CallbackContext context)
     {
-
     }
 
     void DoLook()
     {
-        float mouseX = lookInput.x * lookSensitivity;
-        float mouseY = lookInput.y * lookSensitivity;
 
-        yaw += lookInput.x * lookSensitivity;
-        pitch = Mathf.Clamp(pitch - lookInput.y * lookSensitivity, -lookXLimit, lookXLimit);
+        lookX += lookInput.x * lookSensitivity; // Turn left/right
+        lookY = Mathf.Clamp(lookY - lookInput.y * lookSensitivity, -lookXLimit, lookXLimit); // Look up/down
 
-        cameraRotation -= mouseY;
-        cameraRotation = Mathf.Clamp(cameraRotation, -lookXLimit, lookXLimit);
-
-        mainCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        mainCamera.transform.rotation = Quaternion.Euler(lookY, lookX, 0f);
     }
 
     void CheckGround()
@@ -124,124 +114,127 @@ public class PlayerControl : MonoBehaviour
         isGrounded = false;
         groundNormal = Vector3.up;
 
-        if (jumpGroundIgnoreTimer > 0f)
+        Vector3 center = groundCheckOrigin.position + Vector3.up * groundSkin; // Center  foot check, slight lift so rays don't start inside the floor
+        float rayLength = groundSkin + groundCheckDistance;
+        float bestUp = -1f; // Tracks the flattest surface hit so far
+
+        for (int i = -1; i < footGroundRays; i++)
         {
-            jumpGroundIgnoreTimer -= Time.fixedDeltaTime;
-            return;
-        }
+            Vector3 origin = center;
 
-        float radius = capsule.radius * Mathf.Max(Mathf.Abs(capsule.transform.lossyScale.x), Mathf.Abs(capsule.transform.lossyScale.z)) * 0.95f;
-
-        Vector3 origin = capsule.bounds.center;
-        origin.y = capsule.bounds.min.y + radius + groundSkin;
-
-        if (Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, groundSkin + groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
-        {           
-            if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle)
+            if (i >= 0)
             {
-                isGrounded = true;
-                groundNormal = hit.normal;
+                float footAngle = i * Mathf.PI * 2f / footGroundRays; // Spread the ring rays in a circle to detect areas around player
+                origin += new Vector3(Mathf.Cos(footAngle), 0f, Mathf.Sin(footAngle)) * groundCheckRadius * footGroundRingRadius; // Push ray out
+            }
+
+            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, rayLength, groundMask, QueryTriggerInteraction.Ignore))
+            {
+                if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle && hit.normal.y > bestUp) // Make sure not walking up something too steep so we can have like ramps but some slight slopes don't allow the player to climb right up
+                {
+                    bestUp = hit.normal.y;
+                    groundNormal = hit.normal;
+                    isGrounded = true;
+                }
             }
         }
     }
 
     void DoMovement()
     {
-        Velocity = rb.linearVelocity;
+        Velocity = rb.linearVelocity; // Start up from the Rigidbody's current velocity
 
         CheckGround();
-        bool justLanded = isGrounded && !wasGrounded;
 
+        // Coyote timer, counts down once we leave the ground
         if (isGrounded)
             coyoteTimer = coyoteTime;
         else
-            coyoteTimer -= Time.fixedDeltaTime; ;
+            coyoteTimer -= Time.fixedDeltaTime;
 
+        // Jump buffer timer, counts down when jump pressed
         if (jumpBufferTimer > 0f)
-            jumpBufferTimer -= Time.fixedDeltaTime; ;
+            jumpBufferTimer -= Time.fixedDeltaTime;
 
+        // Find the direction that we are trying to go to
         Quaternion facing = transform.rotation;
         moveDirection = facing * Vector3.right * moveInput.x;
         moveDirection += facing * Vector3.forward * moveInput.y;
 
         if (moveDirection.sqrMagnitude > 0.001f)
-            moveDirection.Normalize();
+            moveDirection.Normalize(); // MAKE SURE THAT DIAGONAL IS NOT FASTER
 
-        flatVelocity = new Vector3(Velocity.x, 0f, Velocity.z);
+        horVelocity = new Vector3(Velocity.x, 0f, Velocity.z); // Horizontal velocity
 
         maxSpeed = walkSpeed;
         acceleration = groundAcceleration;
 
+        // We have different speed and acceleration in the air, make it do that
         if (!isGrounded)
         {
             maxSpeed = airSpeed;
             acceleration = airAcceleration;
         }
 
-        if (justLanded)
-            flatVelocity *= landSpeedKeep;
-
-        Accelerate(ref flatVelocity, moveDirection, maxSpeed, acceleration);
+        Accelerate(ref horVelocity, moveDirection, maxSpeed, acceleration);
 
         if (isGrounded)
-            ApplyFriction(ref flatVelocity);
+            ApplyFriction(ref horVelocity); // Friction only applies while we are on the ground
 
-        float speedCap = maxSpeed * speedMult;
+        // Hard cap the horizontal speed
+        if (horVelocity.magnitude > maxSpeed)
+            horVelocity = horVelocity.normalized * maxSpeed;
 
-        if (flatVelocity.magnitude > speedCap)
-            flatVelocity = flatVelocity.normalized * speedCap;
+        // Specific for if a jump happens when a buffered press and coyote time overlap
         bool jumping = false;
         if (jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
             jumping = true;
-            JumpFrame = true;
-            jumpBufferTimer = 0f;
+            jumpBufferTimer = 0f; // Use up the press and the coyote time so we can't double jump
             coyoteTimer = 0f;
         }
 
         if (jumping)
         {
-            Velocity.x = flatVelocity.x;
-            Velocity.z = flatVelocity.z;
-            Velocity.y = Mathf.Sqrt(jumpStrength * -2f * gravity);
+            Velocity.x = horVelocity.x;
+            Velocity.z = horVelocity.z;
+            // The speed needed to reach the jump strength height
+            Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
         }
         else if (isGrounded)
         {
-            Vector3 slopeVelocity = Vector3.ProjectOnPlane(flatVelocity, groundNormal);
-            if (slopeVelocity.sqrMagnitude > 0.0001f)
-                slopeVelocity = slopeVelocity.normalized * flatVelocity.magnitude;
+            // Tips up to ground normal
+            Quaternion slopeRotation = Quaternion.FromToRotation(Vector3.up, groundNormal);
 
-            Velocity = slopeVelocity;
-            Velocity.y += groundedStickVelocity;
+            // Rotating keeps the length, so speed stays the same on slopes
+            Velocity = slopeRotation * horVelocity;
         }
         else
         {
-            Velocity.x = flatVelocity.x;
-            Velocity.z = flatVelocity.z;
-            Velocity.y += gravity * Time.fixedDeltaTime;
+            Velocity.x = horVelocity.x;
+            Velocity.z = horVelocity.z;
         }
 
         rb.linearVelocity = Velocity;
-    }
 
-    public void LateUpdate()
-    {
-        JumpFrame = false;
+        // Gravity only in the air cuz it would just push us down into the floor a bit and then makes it weird to jump? so it works better if we just have it in air
+        rb.useGravity = !isGrounded || jumping;
     }
 
     private void Accelerate(ref Vector3 velocity, Vector3 direction, float maxSpeed, float acceleration)
     {
         if (direction.sqrMagnitude < 0.001f)
-            return;
+            return; // No input means there is nothing to accelerate
 
-        float speedInDirection = Vector3.Dot(velocity, direction);
+        float speedInDirection = Vector3.Dot(velocity, direction); // How fast we're already going the direction we going in
         float speedLeft = maxSpeed - speedInDirection;
 
         if (speedLeft <= 0f)
-            return;
+            return; // Already at max speed in this direction
 
         float accelerationThisFrame = acceleration * maxSpeed * Time.fixedDeltaTime;
 
+        // Do NOT overshoot max speed
         if (accelerationThisFrame > speedLeft)
             accelerationThisFrame = speedLeft;
 
@@ -252,28 +245,28 @@ public class PlayerControl : MonoBehaviour
     {
         float currentSpeed = velocity.magnitude;
 
+        // Snap to a stop when nearly still so that we can avoid sliding forever
         if (currentSpeed < 0.01f)
         {
             velocity = Vector3.zero;
             return;
         }
 
-        float speedLost = currentSpeed * friction * Time.fixedDeltaTime;
+        float speedLost = currentSpeed * friction * Time.fixedDeltaTime; // Faster means more friction
         float newSpeed = Mathf.Max(currentSpeed - speedLost, 0f);
 
-        velocity *= newSpeed / currentSpeed;
+        velocity *= newSpeed / currentSpeed; // Keep direction but scale it all down
     }
 
-    void ResetPlayer()
+    void ResetPlayer() // Reset player on death
     {
         Debug.Log(spawnPos);
         rb.position = spawnPos;
         rb.linearVelocity = Vector3.zero;
         Velocity = Vector3.zero;
-        Physics.SyncTransforms();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other) // Hazard collision
     {
         if (other.tag == "Hazard")
         {
@@ -281,3 +274,5 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
+
+

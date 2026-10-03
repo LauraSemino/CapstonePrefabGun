@@ -183,6 +183,8 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   groundedStickVelocity: -2
+  footRingRadius: 0.9
+  footRays: 8
 --- !u!114 &8837608948090298816
 MonoBehaviour:
   m_ObjectHideFlags: 0
