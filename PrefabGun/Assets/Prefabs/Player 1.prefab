@@ -394,7 +394,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 63
   groundCheckDistance: 0.15
-  maxSlopeAngle: 70
+  maxSlopeAngle: 50
   groundSkin: 0.05
   footGroundRingRadius: 0.9
   footGroundRays: 8
