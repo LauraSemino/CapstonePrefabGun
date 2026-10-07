@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class DoubleDoor : MonoBehaviour
 {
+    [SerializeField] float distanceToMove;
     [SerializeField] float timeToOpen;
     [SerializeField] GameObject doorL;
     [SerializeField] GameObject doorR;
@@ -16,10 +17,10 @@ public class DoubleDoor : MonoBehaviour
             timeToOpen -= Time.deltaTime;
         }
 
-        if (timeToOpen <= 0 && timeToOpen >= -5)
+        if (timeToOpen <= 0 && timeToOpen >= -distanceToMove)
         {
-            doorL.transform.position -= new Vector3(Time.deltaTime, 0, 0);
-            doorR.transform.position += new Vector3(Time.deltaTime, 0, 0);
+            doorL.transform.position -= new Vector3(doorSpeed*Time.deltaTime, 0, 0);
+            doorR.transform.position += new Vector3(doorSpeed*Time.deltaTime, 0, 0);
             timeToOpen -= Time.deltaTime;
         }
     }
