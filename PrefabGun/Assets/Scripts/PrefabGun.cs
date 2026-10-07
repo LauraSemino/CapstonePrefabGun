@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Material green;
     [SerializeField] Material red;
     [SerializeField] Material canBePlaced;
+    public Material invalidMat;
 
     [Header("Object Storage")]
     public List<GenericObject> savedObjects;
@@ -70,7 +72,6 @@ public class PrefabGun : MonoBehaviour
             {
                 rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
             }
-            
             UpdatePlacement();
         }
     }
@@ -154,7 +155,7 @@ public class PrefabGun : MonoBehaviour
         UpdateDisplay();
     }
 
-    
+
 
     // Start the object placement process
     public void StartPlace()
@@ -228,32 +229,137 @@ public class PrefabGun : MonoBehaviour
         if (toPlace == null)
             return;
 
-        Vector3 position = transform.position + transform.forward * objProjectionDistance;
-        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
-        toPlace.transform.SetPositionAndRotation(position, rotation);
+        // Where object should go
+        Vector3 wantedPosition = transform.position + transform.forward * objProjectionDistance;
+        Quaternion wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
 
-        // No more clipping into the floor stuff
+        // Is there a wall or floor between the gun and that spot? :thinking emoji:
 
-        // Gets all the renderers
-        Renderer[] renderers = toPlace.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0) return;
+        bool somethingInTheWay = Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, objProjectionDistance, placementBlockMask, QueryTriggerInteraction.Ignore);
 
-        // Checks bounds of renderers
-        Bounds boundies = renderers[0].bounds;
-        foreach (Renderer renderer in renderers)
+        if (somethingInTheWay == true)
         {
-            boundies.Encapsulate(renderer.bounds);
+            // Put the object on the open side of what we hit
+            wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
         }
 
-        // Checks if tryna place in the bounds then moves it up to avoid placing stuff inside the floor
-        Vector3 rayStartin = new Vector3(position.x, boundies.max.y + 0.5f, position.z);
-        if (Physics.Raycast(rayStartin, Vector3.down, out RaycastHit groundHit, boundies.size.y + maxDistancePlace, placementBlockMask))
+        toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
+        Physics.SyncTransforms();
+
+        // Push it out
+        PushOutOfFloor();
+        PushOutOfWalls();
+
+
+    }
+    
+    // Big box that covers the object
+    Bounds GetObjectBox()
+    {
+        Physics.SyncTransforms();
+
+        Renderer[] allRenderers = toPlace.GetComponentsInChildren<Renderer>();
+
+        // Start with the first renderer's box, then grow it to fit the rest
+        Bounds box = allRenderers[0].bounds;
+
+        foreach (Renderer oneRenderer in allRenderers)
         {
-            if (boundies.min.y < groundHit.point.y)
+            box.Encapsulate(oneRenderer.bounds);
+        }
+
+        return box;
+    }
+
+    // No more clipping into the floor stuff
+    void PushOutOfFloor()
+    {
+        Bounds box = GetObjectBox();
+
+        // Start a ray above the object and shoot it straight down
+        Vector3 rayStart = new Vector3(box.center.x, box.max.y + 0.5f, box.center.z);
+        float rayLength = box.size.y + maxDistancePlace;
+
+        RaycastHit floorHit;
+        bool foundFloor = Physics.Raycast(rayStart, Vector3.down, out floorHit, rayLength, placementBlockMask, QueryTriggerInteraction.Ignore);
+
+        if (foundFloor == true)
+        {
+            float bottomOfObject = box.min.y;
+            float floorHeight = floorHit.point.y;
+
+            if (bottomOfObject < floorHeight)
             {
-                toPlace.transform.position += Vector3.up * (groundHit.point.y - boundies.min.y + placementSurfaceOffset);
+                float amountToLift = floorHeight - bottomOfObject + placementSurfaceOffset;
+                toPlace.transform.position += Vector3.up * amountToLift;
             }
         }
+    }
+
+    // Push the object away from walls on all four sides
+    void PushOutOfWalls()
+    {
+        Bounds box = GetObjectBox();
+
+        // How far inside a wall are we on each side?
+        float insideRightWall = HowDeepInWall(Vector3.right, box.extents.x, box);
+        float insideLeftWall = HowDeepInWall(Vector3.left, box.extents.x, box);
+        float insideFrontWall = HowDeepInWall(Vector3.forward, box.extents.z, box);
+        float insideBackWall = HowDeepInWall(Vector3.back, box.extents.z, box);
+
+        // Move the opposite way of each wall
+        Vector3 pushAmount = Vector3.zero;
+        pushAmount = pushAmount - Vector3.right * insideRightWall;
+        pushAmount = pushAmount - Vector3.left * insideLeftWall;
+        pushAmount = pushAmount - Vector3.forward * insideFrontWall;
+        pushAmount = pushAmount - Vector3.back * insideBackWall;
+
+        toPlace.transform.position += pushAmount;
+    }
+
+    // Looks in one direction for a wall. Returns how far into the wall we are
+    float HowDeepInWall(Vector3 direction, float distanceToEdge, Bounds box)
+    {
+        float deepestAmount = 0f;
+
+        // The three places the rays start from
+        Vector3 bottomPoint = new Vector3(box.center.x, box.min.y + 0.2f, box.center.z);
+        Vector3 middlePoint = new Vector3(box.center.x, box.center.y, box.center.z);
+        Vector3 topPoint = new Vector3(box.center.x, box.max.y - 0.2f, box.center.z);
+
+        RaycastHit hit;
+
+        // Bottom ray
+        if (Physics.Raycast(bottomPoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
+        {
+            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
+            if (amount > deepestAmount)
+            {
+                deepestAmount = amount;
+            }
+        }
+
+        // Middle ray
+        if (Physics.Raycast(middlePoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
+        {
+            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
+            if (amount > deepestAmount)
+            {
+                deepestAmount = amount;
+            }
+        }
+
+        // Top ray
+        if (Physics.Raycast(topPoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
+        {
+            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
+            if (amount > deepestAmount)
+            {
+                deepestAmount = amount;
+            }
+        }
+
+        return deepestAmount;
     }
 
     // Goes to the next object
@@ -440,4 +546,5 @@ public class PrefabGun : MonoBehaviour
         Display(displayedObject);
     }
 }
+
 
