@@ -130,9 +130,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExplosiveBarrel
   boomRadius: 5
-  boomForce: 50
-  playerForce: 25
-  upwardForce: 10
+  boomForce: 20
+  respawnTime: 5
 --- !u!54 &5327780471141792033
 Rigidbody:
   m_ObjectHideFlags: 0

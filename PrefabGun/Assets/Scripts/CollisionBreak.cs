@@ -5,17 +5,17 @@ public class CollisionBreak : MonoBehaviour
     bool exploded = false;
     public bool activate = false;
 
-    float velMin = 5f;
+    float velMin = 8f;
 
     public Door door;
     private void OnCollisionEnter(Collision collision)
     {
         if (exploded) return;
 
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            return;
-        }
+        //if (collision.gameObject.CompareTag("Player"))
+        //{
+        //    return;
+        //}
 
         Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
 
