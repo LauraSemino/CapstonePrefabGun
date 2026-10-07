@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,14 +23,16 @@ public class PlayerControl : MonoBehaviour
 
     [Header("Ground Check")]
     [SerializeField] private LayerMask groundMask = 0; // Lowkey just to make player ignore themself as ground mask
-    [SerializeField] private float groundCheckDistance = 0.15f; // How far below the feet we look for ground
+    [SerializeField] private float groundCheckDistance = 0.3f; // How far below the feet we look for ground
     [SerializeField] private float maxSlopeAngle = 50f; // Steeper surfaces don't count as ground
-    private Vector3 groundNormal = Vector3.up; // What is the normal of the ground we currently on
+    private Vector3 groundUp = Vector3.up; // What is direction of the ground we currently on
     [SerializeField] private float groundSkin = 0.05f; // make the rays start a bit above the feet
     [SerializeField] private float footGroundRingRadius = 0.9f; // Ring of rays as a fraction of the collider radius
     [SerializeField] private int footGroundRays = 8; // rayRings
     [SerializeField] private Transform groundCheckOrigin; // Point from which ground check occurs
     [SerializeField] private float groundCheckRadius = 0.4f; // Radius for the ground check
+    private Vector3 steepDirection; // Direction of the too steep thingy
+    private bool touchingSteep; // Did we touch too steep thing?
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength; // How big we be jumping
@@ -55,6 +58,7 @@ public class PlayerControl : MonoBehaviour
     Vector2 lookInput;
     private float lookX; // Horizontal look angle
     private float lookY; // Vertical look angle
+    private float groundIgnoreTimer;
 
     void Start()
     {
@@ -112,7 +116,7 @@ public class PlayerControl : MonoBehaviour
     {
         wasGrounded = isGrounded;
         isGrounded = false;
-        groundNormal = Vector3.up;
+        groundUp = Vector3.up;
 
         Vector3 center = groundCheckOrigin.position + Vector3.up * groundSkin; // Center  foot check, slight lift so rays don't start inside the floor
         float rayLength = groundSkin + groundCheckDistance;
@@ -133,7 +137,7 @@ public class PlayerControl : MonoBehaviour
                 if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle && hit.normal.y > bestUp) // Make sure not walking up something too steep so we can have like ramps but some slight slopes don't allow the player to climb right up
                 {
                     bestUp = hit.normal.y;
-                    groundNormal = hit.normal;
+                    groundUp = hit.normal;
                     isGrounded = true;
                 }
             }
@@ -146,13 +150,20 @@ public class PlayerControl : MonoBehaviour
 
         CheckGround();
 
+        // With new grounded code we need to disable for a lil bit so we can actually jump (no trigger ground check state)
+        if (groundIgnoreTimer > 0f)
+        {
+            groundIgnoreTimer -= Time.fixedDeltaTime;
+            isGrounded = false;
+        }
+
         // Coyote timer, counts down once we leave the ground
         if (isGrounded)
             coyoteTimer = coyoteTime;
         else
             coyoteTimer -= Time.fixedDeltaTime;
 
-        // Jump buffer timer, counts down when jump pressed
+        // Jump buffer timer
         if (jumpBufferTimer > 0f)
             jumpBufferTimer -= Time.fixedDeltaTime;
 
@@ -164,56 +175,69 @@ public class PlayerControl : MonoBehaviour
         if (moveDirection.sqrMagnitude > 0.001f)
             moveDirection.Normalize(); // MAKE SURE THAT DIAGONAL IS NOT FASTER
 
-        horVelocity = new Vector3(Velocity.x, 0f, Velocity.z); // Horizontal velocity
-
-        maxSpeed = walkSpeed;
-        acceleration = groundAcceleration;
-
-        // We have different speed and acceleration in the air, make it do that
-        if (!isGrounded)
-        {
-            maxSpeed = airSpeed;
-            acceleration = airAcceleration;
-        }
-
-        Accelerate(ref horVelocity, moveDirection, maxSpeed, acceleration);
-
-        if (isGrounded)
-            ApplyFriction(ref horVelocity); // Friction only applies while we are on the ground
-
-        // Hard cap the horizontal speed
-        if (horVelocity.magnitude > maxSpeed)
-            horVelocity = horVelocity.normalized * maxSpeed;
-
         // Specific for if a jump happens when a buffered press and coyote time overlap
-        bool jumping = false;
-        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
-        {
-            jumping = true;
-            jumpBufferTimer = 0f; // Use up the press and the coyote time so we can't double jump
-            coyoteTimer = 0f;
-        }
-
+        bool jumping = jumpBufferTimer > 0f && coyoteTimer > 0f;
         if (jumping)
         {
-            Velocity.x = horVelocity.x;
-            Velocity.z = horVelocity.z;
-            // The speed needed to reach the jump strength height
-            Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
+            jumpBufferTimer = 0f; // Use up the press and the coyote time so we can't double jump
+            coyoteTimer = 0f;
+            groundIgnoreTimer = 0.15f;
         }
-        else if (isGrounded)
-        {
-            // Tips up to ground normal
-            Quaternion slopeRotation = Quaternion.FromToRotation(Vector3.up, groundNormal);
 
-            // Rotating keeps the length, so speed stays the same on slopes
-            Velocity = slopeRotation * horVelocity;
+        if (isGrounded)
+        {
+            // Slide down the slope in direction and make speeds same
+            Vector3 slopeDirection = moveDirection - Vector3.Dot(moveDirection, groundUp) * groundUp;
+            if (slopeDirection.sqrMagnitude > 0.001f)
+                slopeDirection.Normalize();
+
+            // Work with the velocity along the surface
+            Vector3 groundVelocity = Velocity - Vector3.Dot(Velocity, groundUp) * groundUp;
+
+            Accelerate(ref groundVelocity, slopeDirection, walkSpeed, groundAcceleration);
+            ApplyFriction(ref groundVelocity); // Friction only applies while we are on the ground
+
+            if (groundVelocity.magnitude > walkSpeed)
+                groundVelocity = groundVelocity.normalized * walkSpeed;
+
+            Velocity = groundVelocity;
         }
         else
         {
+            // Move horizontal in air cuz gravity is vert
+            horVelocity = new Vector3(Velocity.x, 0f, Velocity.z);
+
+            Accelerate(ref horVelocity, moveDirection, airSpeed, airAcceleration);
+
+            if (horVelocity.magnitude > airSpeed)
+                horVelocity = horVelocity.normalized * airSpeed;
+
             Velocity.x = horVelocity.x;
             Velocity.z = horVelocity.z;
         }
+
+        // Nonono can't climb too sleep slope
+        if (touchingSteep)
+        {
+            Vector3 flatDir = new Vector3(steepDirection.x, 0f, steepDirection.z);
+            if (flatDir.sqrMagnitude > 0.001f)
+            {
+                flatDir.Normalize();
+                float into = Velocity.x * flatDir.x + Velocity.z * flatDir.z;
+                if (into < 0f)
+                {
+                    Velocity.x -= flatDir.x * into;
+                    Velocity.z -= flatDir.z * into;
+                }
+            }
+        }
+        touchingSteep = false;
+
+        // The speed needed to reach the jump strength height
+        if (jumping)
+            Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
+        else if (isGrounded)
+            Velocity += groundUp * groundedStickVelocity;
 
         rb.linearVelocity = Velocity;
 
