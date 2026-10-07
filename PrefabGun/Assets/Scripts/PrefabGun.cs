@@ -16,7 +16,6 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Material green;
     [SerializeField] Material red;
     [SerializeField] Material canBePlaced;
-    public Material invalidMat;
 
     [Header("Object Storage")]
     public List<GenericObject> savedObjects;
@@ -45,6 +44,19 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Scrollbar budgetBar;
     public float curBudget;
 
+    [Header("Placement Smoothing")]
+    public float positionSmoothTime = 0.06f;
+    public float rotationSmoothSpeed = 15f;
+    public float distanceSmoothSpeed = 12f;
+    Vector3 smoothVelocity;
+    Vector3 smoothedPosition;
+    Quaternion smoothedRotation;
+    Vector3 targetPosition;
+    Quaternion targetRotation;
+    float targetProjectionDistance;
+    bool snapTo;
+
+
 
     // Game default settings
     private void Awake()
@@ -57,7 +69,6 @@ public class PrefabGun : MonoBehaviour
                 savedIDs.Add(obj.id);
         }
         instance = this;
-        SetGunMode(false);
         UpdateDisplay();
 
     }
@@ -76,14 +87,18 @@ public class PrefabGun : MonoBehaviour
         }
     }
 
-    public void UpdateBudgetUI()
+ public void UpdateBudgetUI()
     {
-        if (budgetBar != null || maxBudget <= 0f)
-        {
-            budgetBar.size = Mathf.Clamp01(curBudget / maxBudget);
-            //budgetBar.colors.normalColor = Color.green;
-        }
+        if (budgetBar == null || maxBudget <= 0f) return;
+        float percent = Mathf.Clamp01(curBudget / maxBudget);
+        Debug.Log(percent);
+        budgetBar.size = percent;
+        Image img = budgetBar.GetComponent<Image>();
+        if (percent > 0.6f && percent < 0.8) img.color = Color.yellow;
+        else if (percent < 0.4 && percent < 0.6) img.color = Color.green;
+        else if (percent > 0.8f) img.color = Color.red;
     }
+
 
     bool TrySpend(float cost)
     {
@@ -169,11 +184,11 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = true;
         rotationInput = Vector3.zero;
         rotationOffset = Vector3.zero;
-        objProjectionDistance = minDistancePlace;
+        objProjectionDistance = targetProjectionDistance = minDistancePlace;
+        snapTo = true;
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab);
         toPlace.transform.SetParent(transform, true);
-        SetGunMode(true);
         Preview(toPlace);
         UpdatePlacement();
     }
@@ -183,8 +198,8 @@ public class PrefabGun : MonoBehaviour
     {
         if (!isPlaceMode || toPlace == null) return;
 
-        Vector3 placePos = toPlace.transform.position;
-        Quaternion placeRot = toPlace.transform.rotation;
+        Vector3 placePos = targetPosition;
+        Quaternion placeRot = targetRotation;
         Destroy(toPlace);
         toPlace = null;
         GenericObject OG = savedObjects[curObjIndex];
@@ -208,8 +223,7 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         rotationInput = Vector3.zero;
         rotationOffset = Vector3.zero;
-        objProjectionDistance = minDistancePlace;
-        SetGunMode(false);
+        objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
     // Stop the placement
@@ -229,30 +243,44 @@ public class PrefabGun : MonoBehaviour
         if (toPlace == null)
             return;
 
-        // Where object should go
+        // LERPINGGGGGGG lerp the distance
+        objProjectionDistance = Mathf.Lerp(objProjectionDistance, targetProjectionDistance, 1f - Mathf.Exp(-distanceSmoothSpeed * Time.deltaTime));
+
         Vector3 wantedPosition = transform.position + transform.forward * objProjectionDistance;
         Quaternion wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
 
-        // Is there a wall or floor between the gun and that spot? :thinking emoji:
-
-        bool somethingInTheWay = Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, objProjectionDistance, placementBlockMask, QueryTriggerInteraction.Ignore);
-
-        if (somethingInTheWay == true)
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo,
+            objProjectionDistance, placementBlockMask, QueryTriggerInteraction.Ignore))
         {
-            // Put the object on the open side of what we hit
             wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
         }
 
+        // Figure out the target using position we wanna reach
         toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
         Physics.SyncTransforms();
-
-        // Push it out
         PushOutOfFloor();
         PushOutOfWalls();
 
+        targetPosition = toPlace.transform.position;
+        targetRotation = wantedRotation;
 
+        // Smooth toward where we wanna go
+        if (snapTo)
+        {
+            snapTo = false;
+            smoothVelocity = Vector3.zero;
+            smoothedPosition = targetPosition;
+            smoothedRotation = targetRotation;
+        }
+        else
+        {
+            smoothedPosition = Vector3.SmoothDamp(smoothedPosition, targetPosition, ref smoothVelocity, positionSmoothTime);
+            smoothedRotation = Quaternion.Slerp(smoothedRotation, targetRotation, 1f - Mathf.Exp(-rotationSmoothSpeed * Time.deltaTime));
+        }
+
+        toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
     }
-    
+
     // Big box that covers the object
     Bounds GetObjectBox()
     {
@@ -392,10 +420,7 @@ public class PrefabGun : MonoBehaviour
 
         float i = context.ReadValue<float>();
         objProjectionDistance += i;
-        objProjectionDistance = Mathf.Clamp(objProjectionDistance, minDistancePlace, maxDistancePlace);
-        UpdatePlacement();
-        Debug.Log(objProjectionDistance);
-
+        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + i, minDistancePlace, maxDistancePlace);
     }
 
     // remove objects that player placed
@@ -457,15 +482,6 @@ public class PrefabGun : MonoBehaviour
             rotationInput.y = 0f;
 
         }
-    }
-
-    // Changes the guns mode
-    public void SetGunMode(bool placing)
-    {
-        if (colour == null)
-            return;
-
-        colour.sharedMaterial = placing ? red : green;
     }
 
     // Displays the object in gun
