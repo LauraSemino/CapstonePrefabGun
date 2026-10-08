@@ -292,6 +292,10 @@ public class PrefabGun : MonoBehaviour
 
         foreach (Renderer oneRenderer in allRenderers)
         {
+            Collider c = oneRenderer.GetComponent<Collider>();
+            if (c != null && c.isTrigger)
+                continue;
+
             box.Encapsulate(oneRenderer.bounds);
         }
 
