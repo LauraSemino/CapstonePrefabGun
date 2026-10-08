@@ -55,6 +55,7 @@ public class PrefabGun : MonoBehaviour
     Quaternion targetRotation;
     float targetProjectionDistance;
     bool snapTo;
+    readonly Collider[] overlaps = new Collider[16];
 
 
 
@@ -257,8 +258,7 @@ public class PrefabGun : MonoBehaviour
         // Figure out the target using position we wanna reach
         toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
         Physics.SyncTransforms();
-        PushOutOfFloor();
-        PushOutOfWalls();
+        PushOutOfObstacles();
 
         targetPosition = toPlace.transform.position;
         targetRotation = wantedRotation;
@@ -280,119 +280,40 @@ public class PrefabGun : MonoBehaviour
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
     }
 
-    // Big box that covers the object
-    Bounds GetObjectBox()
+    void PushOutOfObstacles()
     {
-        Physics.SyncTransforms();
+        // Get all colliders
+        Collider[] myCols = toPlace.GetComponentsInChildren<Collider>();
 
-        Renderer[] allRenderers = toPlace.GetComponentsInChildren<Renderer>();
-
-        // Start with the first renderer's box, then grow it to fit the rest
-        Bounds box = allRenderers[0].bounds;
-
-        foreach (Renderer oneRenderer in allRenderers)
+        // Try multiple times to ensure success
+        for (int passAttemptTry = 0; passAttemptTry < 4; passAttemptTry++)
         {
-            Collider c = oneRenderer.GetComponent<Collider>();
-            if (c != null && c.isTrigger)
-                continue;
+            bool moved = false;
 
-            box.Encapsulate(oneRenderer.bounds);
-        }
-
-        return box;
-    }
-
-    // No more clipping into the floor stuff
-    void PushOutOfFloor()
-    {
-        Bounds box = GetObjectBox();
-
-        // Start a ray above the object and shoot it straight down
-        float startHeight = Mathf.Min(0.5f, box.size.y * 0.5f);
-        Vector3 rayStart = new Vector3(box.center.x, box.min.y + startHeight, box.center.z);
-        float rayLength = startHeight + maxDistancePlace;
-
-
-        RaycastHit floorHit;
-        bool foundFloor = Physics.Raycast(rayStart, Vector3.down, out floorHit, rayLength, placementBlockMask, QueryTriggerInteraction.Ignore);
-
-        if (foundFloor == true)
-        {
-            float bottomOfObject = box.min.y;
-            float floorHeight = floorHit.point.y;
-
-            if (bottomOfObject < floorHeight)
+            foreach (Collider mine in myCols)
             {
-                float amountToLift = floorHeight - bottomOfObject + placementSurfaceOffset;
-                toPlace.transform.position += Vector3.up * amountToLift;
+                // Get bounds and make an overlap box for collision
+                Bounds b = mine.bounds;
+                int count = Physics.OverlapBoxNonAlloc(b.center, b.extents, overlaps, Quaternion.identity, placementBlockMask, QueryTriggerInteraction.Ignore);
+
+                for (int i = 0; i < count; i++)
+                {
+                    // Find overlaps
+                    Collider other = overlaps[i];
+                    if (other.transform.IsChildOf(toPlace.transform)) continue;
+
+                    // Find wall penetration for avoiding collision with walls
+                    if (Physics.ComputePenetration(mine, mine.transform.position, mine.transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 dir, out float dist))
+                    {
+                        toPlace.transform.position += dir * (dist + placementSurfaceOffset);
+                        Physics.SyncTransforms();
+                        moved = true;
+                    }
+                }
             }
+
+            if (!moved) break;
         }
-    }
-
-    // Push the object away from walls on all four sides
-    void PushOutOfWalls()
-    {
-        Bounds box = GetObjectBox();
-
-        // How far inside a wall are we on each side?
-        float insideRightWall = HowDeepInWall(Vector3.right, box.extents.x, box);
-        float insideLeftWall = HowDeepInWall(Vector3.left, box.extents.x, box);
-        float insideFrontWall = HowDeepInWall(Vector3.forward, box.extents.z, box);
-        float insideBackWall = HowDeepInWall(Vector3.back, box.extents.z, box);
-
-        // Move the opposite way of each wall
-        Vector3 pushAmount = Vector3.zero;
-        pushAmount = pushAmount - Vector3.right * insideRightWall;
-        pushAmount = pushAmount - Vector3.left * insideLeftWall;
-        pushAmount = pushAmount - Vector3.forward * insideFrontWall;
-        pushAmount = pushAmount - Vector3.back * insideBackWall;
-
-        toPlace.transform.position += pushAmount;
-    }
-
-    // Looks in one direction for a wall. Returns how far into the wall we are
-    float HowDeepInWall(Vector3 direction, float distanceToEdge, Bounds box)
-    {
-        float deepestAmount = 0f;
-
-        // The three places the rays start from
-        Vector3 bottomPoint = new Vector3(box.center.x, box.min.y + 0.2f, box.center.z);
-        Vector3 middlePoint = new Vector3(box.center.x, box.center.y, box.center.z);
-        Vector3 topPoint = new Vector3(box.center.x, box.max.y - 0.2f, box.center.z);
-
-        RaycastHit hit;
-
-        // Bottom ray
-        if (Physics.Raycast(bottomPoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
-        {
-            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
-            if (amount > deepestAmount)
-            {
-                deepestAmount = amount;
-            }
-        }
-
-        // Middle ray
-        if (Physics.Raycast(middlePoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
-        {
-            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
-            if (amount > deepestAmount)
-            {
-                deepestAmount = amount;
-            }
-        }
-
-        // Top ray
-        if (Physics.Raycast(topPoint, direction, out hit, distanceToEdge, placementBlockMask, QueryTriggerInteraction.Ignore))
-        {
-            float amount = distanceToEdge - hit.distance + placementSurfaceOffset;
-            if (amount > deepestAmount)
-            {
-                deepestAmount = amount;
-            }
-        }
-
-        return deepestAmount;
     }
 
     // Goes to the next object
@@ -517,7 +438,9 @@ public class PrefabGun : MonoBehaviour
         // Removes the functionality of the prefabs
         foreach (Collider col in prev.GetComponentsInChildren<Collider>())
         {
-            col.enabled = false;
+            if (col.isTrigger)
+                col.enabled = false;
+            col.isTrigger = true;
         }
 
         foreach (Rigidbody body in prev.GetComponentsInChildren<Rigidbody>())
