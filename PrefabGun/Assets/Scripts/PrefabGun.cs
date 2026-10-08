@@ -188,7 +188,6 @@ public class PrefabGun : MonoBehaviour
         snapTo = true;
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab);
-        toPlace.transform.SetParent(transform, true);
         Preview(toPlace);
         UpdatePlacement();
     }
