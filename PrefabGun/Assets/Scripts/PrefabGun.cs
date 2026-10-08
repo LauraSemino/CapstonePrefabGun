@@ -56,6 +56,10 @@ public class PrefabGun : MonoBehaviour
     float targetProjectionDistance;
     bool snapTo;
     readonly Collider[] overlaps = new Collider[16];
+    [SerializeField] float maxPushDistance = 1.5f;
+    Renderer[] previewRenderers;
+    bool placementValid = true;
+
 
 
 
@@ -197,6 +201,11 @@ public class PrefabGun : MonoBehaviour
     public void ConfirmPlace()
     {
         if (!isPlaceMode || toPlace == null) return;
+        if (!placementValid)
+        {
+            CancelPlace();
+            return;
+        }
 
         Vector3 placePos = targetPosition;
         Quaternion placeRot = targetRotation;
@@ -258,7 +267,18 @@ public class PrefabGun : MonoBehaviour
         // Figure out the target using position we wanna reach
         toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
         Physics.SyncTransforms();
-        PushOutOfObstacles();
+
+        bool success = PushOutOfObstacles();
+        bool wentTooFaar = (toPlace.transform.position - wantedPosition).sqrMagnitude
+                            > maxPushDistance * maxPushDistance;
+        bool valid = success && !wentTooFaar;
+
+        if (!valid)
+        {
+            toPlace.transform.position = wantedPosition;
+        }
+
+        SetPlacementValid(valid);
 
         targetPosition = toPlace.transform.position;
         targetRotation = wantedRotation;
@@ -280,13 +300,26 @@ public class PrefabGun : MonoBehaviour
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
     }
 
-    void PushOutOfObstacles()
+    void SetPlacementValid(bool valid)
+    {
+        if (valid == placementValid) return;
+        placementValid = valid;
+
+        Material mat = valid ? canBePlaced : red;
+        if (mat == null || previewRenderers == null) return;
+
+        foreach (Renderer r in previewRenderers)
+            if (r != null) r.sharedMaterial = mat;
+    }
+
+
+    bool PushOutOfObstacles()
     {
         // Get all colliders
         Collider[] myCols = toPlace.GetComponentsInChildren<Collider>();
 
         // Try multiple times to ensure success
-        for (int passAttemptTry = 0; passAttemptTry < 4; passAttemptTry++)
+        for (int passAttemptTry = 0; passAttemptTry < 6; passAttemptTry++)
         {
             bool moved = false;
 
@@ -295,6 +328,7 @@ public class PrefabGun : MonoBehaviour
                 // Get bounds and make an overlap box for collision
                 Bounds b = mine.bounds;
                 int count = Physics.OverlapBoxNonAlloc(b.center, b.extents, overlaps, Quaternion.identity, placementBlockMask, QueryTriggerInteraction.Ignore);
+
 
                 for (int i = 0; i < count; i++)
                 {
@@ -312,8 +346,10 @@ public class PrefabGun : MonoBehaviour
                 }
             }
 
-            if (!moved) break;
+            if (!moved) return true;
         }
+
+        return false;
     }
 
     // Goes to the next object
@@ -455,14 +491,14 @@ public class PrefabGun : MonoBehaviour
             behaviour.enabled = false;
         }
 
+        previewRenderers = prev.GetComponentsInChildren<Renderer>();
+        placementValid = true;
         if (canBePlaced != null)
         {
-            foreach (Renderer renderer in
-                     prev.GetComponentsInChildren<Renderer>())
-            {
+            foreach (Renderer renderer in previewRenderers)
                 renderer.sharedMaterial = canBePlaced;
-            }
         }
+
     }
 
     // Update the prefab gun's UI
