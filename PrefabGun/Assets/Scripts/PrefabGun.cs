@@ -308,8 +308,10 @@ public class PrefabGun : MonoBehaviour
         Bounds box = GetObjectBox();
 
         // Start a ray above the object and shoot it straight down
-        Vector3 rayStart = new Vector3(box.center.x, box.max.y + 0.5f, box.center.z);
-        float rayLength = box.size.y + maxDistancePlace;
+        float startHeight = Mathf.Min(0.5f, box.size.y * 0.5f);
+        Vector3 rayStart = new Vector3(box.center.x, box.min.y + startHeight, box.center.z);
+        float rayLength = startHeight + maxDistancePlace;
+
 
         RaycastHit floorHit;
         bool foundFloor = Physics.Raycast(rayStart, Vector3.down, out floorHit, rayLength, placementBlockMask, QueryTriggerInteraction.Ignore);
