@@ -168,7 +168,7 @@ MonoBehaviour:
   placementSurfaceOffset: 0.05
   displayIndex: {fileID: 5513989560480766802}
   displayPoint: {fileID: 2591577116099612640}
-  maxBudget: 50
+  maxBudget: 10
   budgetBar: {fileID: 1536902188979867680}
   curBudget: 0
   positionSmoothTime: 0.06
