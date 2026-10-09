@@ -339,6 +339,9 @@ public class PrefabGun : MonoBehaviour
                     // Find wall penetration for avoiding collision with walls
                     if (Physics.ComputePenetration(mine, mine.transform.position, mine.transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 dir, out float dist))
                     {
+                        if (dir.y < 0f) dir.y = 0f;
+                        if (dir.sqrMagnitude < 0.0001f) return false;
+                        dir.Normalize();
                         toPlace.transform.position += dir * (dist + placementSurfaceOffset);
                         Physics.SyncTransforms();
                         moved = true;
