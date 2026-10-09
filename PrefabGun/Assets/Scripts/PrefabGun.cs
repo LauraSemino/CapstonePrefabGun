@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -43,6 +44,24 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Scrollbar budgetBar;
     public float curBudget;
 
+    [Header("Placement Smoothing")]
+    public float positionSmoothTime = 0.06f;
+    public float rotationSmoothSpeed = 15f;
+    public float distanceSmoothSpeed = 12f;
+    Vector3 smoothVelocity;
+    Vector3 smoothedPosition;
+    Quaternion smoothedRotation;
+    Vector3 targetPosition;
+    Quaternion targetRotation;
+    float targetProjectionDistance;
+    bool snapTo;
+    readonly Collider[] overlaps = new Collider[16];
+    [SerializeField] float maxPushDistance = 1.5f;
+    Renderer[] previewRenderers;
+    bool placementValid = true;
+
+
+
 
     // Game default settings
     private void Awake()
@@ -55,7 +74,6 @@ public class PrefabGun : MonoBehaviour
                 savedIDs.Add(obj.id);
         }
         instance = this;
-        SetGunMode(false);
         UpdateDisplay();
 
     }
@@ -70,19 +88,22 @@ public class PrefabGun : MonoBehaviour
             {
                 rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
             }
-            
             UpdatePlacement();
         }
     }
 
     public void UpdateBudgetUI()
     {
-        if (budgetBar != null || maxBudget <= 0f)
-        {
-            budgetBar.size = Mathf.Clamp01(curBudget / maxBudget);
-            //budgetBar.colors.normalColor = Color.green;
-        }
+        if (budgetBar == null || maxBudget <= 0f) return;
+        float percent = Mathf.Clamp01(curBudget / maxBudget);
+        Debug.Log(percent);
+        budgetBar.size = percent;
+        Image img = budgetBar.GetComponentInChildren<Image>();
+        if (percent > 0.5f && percent < 0.75) img.color = Color.yellow;
+        else if (percent < 0.5) img.color = Color.green;
+        else if (percent > 0.75f) img.color = Color.red;
     }
+
 
     bool TrySpend(float cost)
     {
@@ -154,7 +175,7 @@ public class PrefabGun : MonoBehaviour
         UpdateDisplay();
     }
 
-    
+
 
     // Start the object placement process
     public void StartPlace()
@@ -168,11 +189,10 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = true;
         rotationInput = Vector3.zero;
         rotationOffset = Vector3.zero;
-        objProjectionDistance = minDistancePlace;
+        objProjectionDistance = targetProjectionDistance = minDistancePlace;
+        snapTo = true;
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab);
-        toPlace.transform.SetParent(transform, true);
-        SetGunMode(true);
         Preview(toPlace);
         UpdatePlacement();
     }
@@ -181,9 +201,14 @@ public class PrefabGun : MonoBehaviour
     public void ConfirmPlace()
     {
         if (!isPlaceMode || toPlace == null) return;
+        if (!placementValid)
+        {
+            CancelPlace();
+            return;
+        }
 
-        Vector3 placePos = toPlace.transform.position;
-        Quaternion placeRot = toPlace.transform.rotation;
+        Vector3 placePos = targetPosition;
+        Quaternion placeRot = targetRotation;
         Destroy(toPlace);
         toPlace = null;
         GenericObject OG = savedObjects[curObjIndex];
@@ -207,8 +232,7 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         rotationInput = Vector3.zero;
         rotationOffset = Vector3.zero;
-        objProjectionDistance = minDistancePlace;
-        SetGunMode(false);
+        objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
     // Stop the placement
@@ -227,33 +251,107 @@ public class PrefabGun : MonoBehaviour
     {
         if (toPlace == null)
             return;
+        // LERPINGGGGGGG lerp the distance
+        objProjectionDistance = Mathf.Lerp(objProjectionDistance, targetProjectionDistance, 1f - Mathf.Exp(-distanceSmoothSpeed * Time.deltaTime));
 
-        Vector3 position = transform.position + transform.forward * objProjectionDistance;
-        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
-        toPlace.transform.SetPositionAndRotation(position, rotation);
+        Vector3 wantedPosition = transform.position + transform.forward * objProjectionDistance;
+        Quaternion wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
 
-        // No more clipping into the floor stuff
-
-        // Gets all the renderers
-        Renderer[] renderers = toPlace.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0) return;
-
-        // Checks bounds of renderers
-        Bounds boundies = renderers[0].bounds;
-        foreach (Renderer renderer in renderers)
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo,
+            objProjectionDistance, placementBlockMask, QueryTriggerInteraction.Ignore))
         {
-            boundies.Encapsulate(renderer.bounds);
+            wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
         }
 
-        // Checks if tryna place in the bounds then moves it up to avoid placing stuff inside the floor
-        Vector3 rayStartin = new Vector3(position.x, boundies.max.y + 0.5f, position.z);
-        if (Physics.Raycast(rayStartin, Vector3.down, out RaycastHit groundHit, boundies.size.y + maxDistancePlace, placementBlockMask))
+        // Figure out the target using position we wanna reach
+        toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
+        Physics.SyncTransforms();
+
+        bool success = PushOutOfObstacles();
+        bool wentTooFaar = (toPlace.transform.position - wantedPosition).sqrMagnitude
+                            > maxPushDistance * maxPushDistance;
+        bool valid = success && !wentTooFaar;
+
+        if (!valid)
         {
-            if (boundies.min.y < groundHit.point.y)
+            toPlace.transform.position = wantedPosition;
+        }
+
+        SetPlacementValid(valid);
+
+        targetPosition = toPlace.transform.position;
+        targetRotation = wantedRotation;
+
+        // Smooth toward where we wanna go
+        if (snapTo)
+        {
+            snapTo = false;
+            smoothVelocity = Vector3.zero;
+            smoothedPosition = targetPosition;
+            smoothedRotation = targetRotation;
+        }
+        else
+        {
+            smoothedPosition = Vector3.SmoothDamp(smoothedPosition, targetPosition, ref smoothVelocity, positionSmoothTime);
+            smoothedRotation = Quaternion.Slerp(smoothedRotation, targetRotation, 1f - Mathf.Exp(-rotationSmoothSpeed * Time.deltaTime));
+        }
+
+        toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
+    }
+
+    void SetPlacementValid(bool valid)
+    {
+        if (valid == placementValid) return;
+        placementValid = valid;
+
+        Material mat = valid ? canBePlaced : red;
+        if (mat == null || previewRenderers == null) return;
+
+        foreach (Renderer r in previewRenderers)
+            if (r != null) r.sharedMaterial = mat;
+    }
+
+
+    bool PushOutOfObstacles()
+    {
+        // Get all colliders
+        Collider[] myCols = toPlace.GetComponentsInChildren<Collider>();
+
+        // Try multiple times to ensure success
+        for (int passAttemptTry = 0; passAttemptTry < 6; passAttemptTry++)
+        {
+            bool moved = false;
+
+            foreach (Collider mine in myCols)
             {
-                toPlace.transform.position += Vector3.up * (groundHit.point.y - boundies.min.y + placementSurfaceOffset);
+                // Get bounds and make an overlap box for collision
+                Bounds b = mine.bounds;
+                int count = Physics.OverlapBoxNonAlloc(b.center, b.extents, overlaps, Quaternion.identity, placementBlockMask, QueryTriggerInteraction.Ignore);
+
+
+                for (int i = 0; i < count; i++)
+                {
+                    // Find overlaps
+                    Collider other = overlaps[i];
+                    if (other.transform.IsChildOf(toPlace.transform)) continue;
+
+                    // Find wall penetration for avoiding collision with walls
+                    if (Physics.ComputePenetration(mine, mine.transform.position, mine.transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 dir, out float dist))
+                    {
+                        if (dir.y < 0f) dir.y = 0f;
+                        if (dir.sqrMagnitude < 0.0001f) return false;
+                        dir.Normalize();
+                        toPlace.transform.position += dir * (dist + placementSurfaceOffset);
+                        Physics.SyncTransforms();
+                        moved = true;
+                    }
+                }
             }
+
+            if (!moved) return true;
         }
+
+        return false;
     }
 
     // Goes to the next object
@@ -286,10 +384,7 @@ public class PrefabGun : MonoBehaviour
 
         float i = context.ReadValue<float>();
         objProjectionDistance += i;
-        objProjectionDistance = Mathf.Clamp(objProjectionDistance, minDistancePlace, maxDistancePlace);
-        UpdatePlacement();
-        Debug.Log(objProjectionDistance);
-
+        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + i, minDistancePlace, maxDistancePlace);
     }
 
     // remove objects that player placed
@@ -353,15 +448,6 @@ public class PrefabGun : MonoBehaviour
         }
     }
 
-    // Changes the guns mode
-    public void SetGunMode(bool placing)
-    {
-        if (colour == null)
-            return;
-
-        colour.sharedMaterial = placing ? red : green;
-    }
-
     // Displays the object in gun
     public void Display(GameObject display)
     {
@@ -390,7 +476,9 @@ public class PrefabGun : MonoBehaviour
         // Removes the functionality of the prefabs
         foreach (Collider col in prev.GetComponentsInChildren<Collider>())
         {
-            col.enabled = false;
+            if (col.isTrigger)
+                col.enabled = false;
+            col.isTrigger = true;
         }
 
         foreach (Rigidbody body in prev.GetComponentsInChildren<Rigidbody>())
@@ -405,14 +493,14 @@ public class PrefabGun : MonoBehaviour
             behaviour.enabled = false;
         }
 
+        previewRenderers = prev.GetComponentsInChildren<Renderer>();
+        placementValid = true;
         if (canBePlaced != null)
         {
-            foreach (Renderer renderer in
-                     prev.GetComponentsInChildren<Renderer>())
-            {
+            foreach (Renderer renderer in previewRenderers)
                 renderer.sharedMaterial = canBePlaced;
-            }
         }
+
     }
 
     // Update the prefab gun's UI
@@ -440,4 +528,5 @@ public class PrefabGun : MonoBehaviour
         Display(displayedObject);
     }
 }
+
 
