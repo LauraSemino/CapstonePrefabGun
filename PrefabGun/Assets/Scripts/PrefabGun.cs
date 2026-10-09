@@ -21,6 +21,7 @@ public class PrefabGun : MonoBehaviour
     public List<GenericObject> savedObjects;
     public HashSet<int> savedIDs;
     public int curObjIndex = 0;
+    public List<GameObject> placedObjects;
 
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
@@ -96,7 +97,6 @@ public class PrefabGun : MonoBehaviour
     {
         if (budgetBar == null || maxBudget <= 0f) return;
         float percent = Mathf.Clamp01(curBudget / maxBudget);
-        Debug.Log(percent);
         budgetBar.size = percent;
         Image img = budgetBar.GetComponentInChildren<Image>();
         if (percent > 0.5f && percent < 0.75) img.color = Color.yellow;
@@ -217,12 +217,12 @@ public class PrefabGun : MonoBehaviour
         if (TrySpend(OG.cost))
         {
             GameObject placedDownObject = Instantiate(OG.prefab, placePos, placeRot);
+            placedObjects.Add(placedDownObject);
             placedDownObject.SetActive(true);
 
             ObjectData data = placedDownObject.GetComponent<ObjectData>();
             data.createdByPlayer = true;
         }
-
         ExitPlace();
     }
 
