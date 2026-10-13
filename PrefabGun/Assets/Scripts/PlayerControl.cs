@@ -60,6 +60,11 @@ public class PlayerControl : MonoBehaviour
     private float lookY; // Vertical look angle
     private float groundIgnoreTimer;
 
+    [Header("Stepping")]
+    [SerializeField] private float maxStepHeight = 0.4f;   // Tallest step the player can climb
+    [SerializeField] private float minStepHeight = 0.02f;  // Ignore the tiny lil bumps
+    [SerializeField] private float stepReachPadding = 0.1f; // How far past the collider we look for steps
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -142,6 +147,53 @@ public class PlayerControl : MonoBehaviour
                 }
             }
         }
+    }
+
+    void TryStepUp(Vector3 dir)
+    {
+        if (dir.sqrMagnitude < 0.001f) return;
+        dir.y = 0f;
+        dir.Normalize();
+
+        Vector3 feet = groundCheckOrigin.position;
+        float reach = groundCheckRadius + stepReachPadding;
+        Vector3 side = Vector3.Cross(Vector3.up, dir) * groundCheckRadius * 0.8f;
+        float bestHeight = 0f;
+
+        // Shoot rays so don't miss step
+        for (int i = -1; i <= 1; i++)
+        {
+            Vector3 offset = side * i;
+
+            // Is something blocking us at foot level?
+            Vector3 lowOrigin = feet + offset + Vector3.up * 0.05f;
+            if (!Physics.Raycast(lowOrigin, dir, out RaycastHit low, reach, groundMask, QueryTriggerInteraction.Ignore))
+                continue;
+
+            // Walkable slope is ramp
+            if (Vector3.Angle(low.normal, Vector3.up) <= maxSlopeAngle)
+                continue;
+
+            // Can we clear it at max step height?
+            Vector3 highOrigin = feet + offset + Vector3.up * (maxStepHeight + 0.05f);
+            if (Physics.Raycast(highOrigin, dir, reach + 0.05f, groundMask, QueryTriggerInteraction.Ignore))
+                continue;
+
+            // Shoot down past lip to detect step
+            Vector3 downOrigin = new Vector3(low.point.x, highOrigin.y, low.point.z) + dir * 0.05f;
+            if (!Physics.Raycast(downOrigin, Vector3.down, out RaycastHit top, maxStepHeight + 0.05f, groundMask, QueryTriggerInteraction.Ignore))
+                continue;
+
+            if (Vector3.Angle(top.normal, Vector3.up) > maxSlopeAngle)
+                continue; // Top isn't walkable
+
+            float height = top.point.y - feet.y;
+            if (height > minStepHeight && height <= maxStepHeight)
+                bestHeight = Mathf.Max(bestHeight, height);
+        }
+
+        if (bestHeight > 0f)
+            rb.position += Vector3.up * (bestHeight + 0.01f);
     }
 
     void DoMovement()
@@ -239,6 +291,8 @@ public class PlayerControl : MonoBehaviour
         else if (isGrounded)
             Velocity += groundUp * groundedStickVelocity;
 
+        if (isGrounded && !jumping)
+            TryStepUp(moveDirection);
         rb.linearVelocity = Velocity;
 
         // Gravity only in the air cuz it would just push us down into the floor a bit and then makes it weird to jump? so it works better if we just have it in air
@@ -298,5 +352,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
+
+
 
 
