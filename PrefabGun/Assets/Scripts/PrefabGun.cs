@@ -16,6 +16,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Material green;
     [SerializeField] Material red;
     [SerializeField] Material canBePlaced;
+    public bool hasGun;
 
     [Header("Object Storage")]
     public List<GenericObject> savedObjects;
@@ -39,6 +40,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] TextMeshProUGUI displayIndex;
     public Transform displayPoint;
     private GameObject displayedObject;
+    [SerializeField] GameObject prefabGunModel;
 
     [Header("Budget")]
     [SerializeField] float maxBudget;
@@ -77,6 +79,8 @@ public class PrefabGun : MonoBehaviour
         instance = this;
         UpdateDisplay();
 
+        //eventually this is gonna need to be saved per file
+        hasGun = false;
     }
 
     // Update is called once per frame
@@ -91,6 +95,8 @@ public class PrefabGun : MonoBehaviour
             }
             UpdatePlacement();
         }
+        //prolly unoptimal cause its setting it every frame
+        prefabGunModel.SetActive(hasGun);
     }
 
     public void UpdateBudgetUI()
@@ -124,6 +130,7 @@ public class PrefabGun : MonoBehaviour
     //scanning
     public void OnLeftClick(InputAction.CallbackContext context)
     {
+        if (!hasGun) { return; }
         if (context.started)
         {
             if (isPlaceMode)
@@ -141,6 +148,7 @@ public class PrefabGun : MonoBehaviour
     //placing
     public void OnRightClick(InputAction.CallbackContext context)
     {
+        if(!hasGun) { return; }
         if (context.started)
         {
             StartPlace();
@@ -379,6 +387,7 @@ public class PrefabGun : MonoBehaviour
     // Move objects pre-place with mouse wheel
     public void OnPushPullObject(InputAction.CallbackContext context)
     {
+
         if (!isPlaceMode && toPlace == null)
             return;
 
@@ -390,6 +399,7 @@ public class PrefabGun : MonoBehaviour
     // remove objects that player placed
     public void OnRemoveObject(InputAction.CallbackContext context)
     {
+        if (!hasGun) { return; }
         if (context.performed)
         {
             if (isPlaceMode)
@@ -413,6 +423,7 @@ public class PrefabGun : MonoBehaviour
     // Rotate the object positive
     public void OnPlusIndex(InputAction.CallbackContext context)
     {
+        if (!hasGun) { return; }
         if (context.started)
         {
             if (isPlaceMode)
@@ -432,6 +443,7 @@ public class PrefabGun : MonoBehaviour
     // Rotate the object negative
     public void OnMinusIndex(InputAction.CallbackContext context)
     {
+        if (!hasGun) { return; }
         if (context.started)
         {
             if (isPlaceMode)
