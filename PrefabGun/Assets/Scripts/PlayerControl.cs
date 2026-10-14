@@ -64,6 +64,11 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float maxStepHeight = 0.4f;   // Tallest step the player can climb
     [SerializeField] private float minStepHeight = 0.02f;  // Ignore the tiny lil bumps
     [SerializeField] private float stepReachPadding = 0.1f; // How far past the collider we look for steps
+    [SerializeField] private float stepCooldown = 0.15f;
+    [SerializeField] private float stepForwardNudge = 0.1f;  // Push onto the step
+    [SerializeField] private float stepGiveTime = 0.12f;    // Stay grounded after step
+    private float stepCooldownTimer;
+    private float stepGiveTimer;
 
     void Start()
     {
@@ -151,6 +156,7 @@ public class PlayerControl : MonoBehaviour
 
     void TryStepUp(Vector3 dir)
     {
+        if (stepCooldownTimer > 0f) return;
         if (dir.sqrMagnitude < 0.001f) return;
         dir.y = 0f;
         dir.Normalize();
@@ -193,7 +199,11 @@ public class PlayerControl : MonoBehaviour
         }
 
         if (bestHeight > 0f)
-            rb.position += Vector3.up * (bestHeight + 0.01f);
+        {
+            rb.position += Vector3.up * (bestHeight + 0.01f) + dir * stepForwardNudge;
+            stepCooldownTimer = stepCooldown;
+            stepGiveTimer = stepGiveTime;
+        }
     }
 
     void DoMovement()
@@ -201,6 +211,13 @@ public class PlayerControl : MonoBehaviour
         Velocity = rb.linearVelocity; // Start up from the Rigidbody's current velocity
 
         CheckGround();
+
+        if (stepCooldownTimer > 0f) stepCooldownTimer -= Time.fixedDeltaTime;
+        if (stepGiveTimer > 0f)
+        {
+            stepGiveTimer -= Time.fixedDeltaTime;
+            isGrounded = true;
+        }
 
         // With new grounded code we need to disable for a lil bit so we can actually jump (no trigger ground check state)
         if (groundIgnoreTimer > 0f)
@@ -288,7 +305,7 @@ public class PlayerControl : MonoBehaviour
         // The speed needed to reach the jump strength height
         if (jumping)
             Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
-        else if (isGrounded)
+        else if (isGrounded && stepGiveTimer <= 0f)
             Velocity += groundUp * groundedStickVelocity;
 
         if (isGrounded && !jumping)
@@ -352,7 +369,3 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
-
-
-
-
