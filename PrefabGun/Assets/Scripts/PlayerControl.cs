@@ -39,7 +39,7 @@ public class PlayerControl : MonoBehaviour
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength; // How big we be jumping
-    private Vector3 spawnPos; // Where we respawn after dying
+    public Vector3 spawnPos; // Where we respawn after dying
     public Rigidbody rb;
     public MeshCollider capsule;
     public bool isGrounded; // we on ground?

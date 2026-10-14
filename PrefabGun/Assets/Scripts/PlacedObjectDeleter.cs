@@ -18,6 +18,7 @@ public class PlacedObjectDeleter : MonoBehaviour
                 }
             }
             pg.placedObjects.Clear();
+            other.GetComponent<PlayerControl>().spawnPos = transform.position;
         }
     }
 }
