@@ -176,37 +176,35 @@ public class PlayerControl : MonoBehaviour
         Vector3 side = Vector3.Cross(Vector3.up, dir) * groundCheckRadius * 0.8f;
         float bestHeight = 0f;
 
-        // Shoot rays so don't miss step
+        bool blocked = false;
+
         for (int i = -1; i <= 1; i++)
         {
             Vector3 offset = side * i;
 
-            // Is something blocking us at foot level?
             Vector3 lowOrigin = feet + offset + Vector3.up * 0.05f;
             if (!Physics.Raycast(lowOrigin, dir, out RaycastHit low, reach, groundMask, QueryTriggerInteraction.Ignore))
                 continue;
 
-            // Walkable slope is ramp
             if (Vector3.Angle(low.normal, Vector3.up) <= maxSlopeAngle)
                 continue;
 
             // Can we clear it at max step height?
             Vector3 highOrigin = feet + offset + Vector3.up * (maxStepHeight + 0.05f);
             if (Physics.Raycast(highOrigin, dir, reach + 0.05f, groundMask, QueryTriggerInteraction.Ignore))
-                continue;
+            { blocked = true; break; }
 
-            // Shoot down past lip to detect step
             Vector3 downOrigin = new Vector3(low.point.x, highOrigin.y, low.point.z) + dir * 0.05f;
-            if (!Physics.Raycast(downOrigin, Vector3.down, out RaycastHit top, maxStepHeight + 0.05f, groundMask, QueryTriggerInteraction.Ignore))
-                continue;
-
-            if (Vector3.Angle(top.normal, Vector3.up) > maxSlopeAngle)
-                continue; // Top isn't walkable
+            if (!Physics.Raycast(downOrigin, Vector3.down, out RaycastHit top, maxStepHeight + 0.05f, groundMask, QueryTriggerInteraction.Ignore) || Vector3.Angle(top.normal, Vector3.up) > maxSlopeAngle)
+            { blocked = true; break; } // Top isn't walkable
 
             float height = top.point.y - feet.y;
-            if (height > minStepHeight && height <= maxStepHeight)
+            if (height > maxStepHeight) { blocked = true; break; }
+            if (height > minStepHeight)
                 bestHeight = Mathf.Max(bestHeight, height);
         }
+
+        if (blocked) return;
 
         if (bestHeight > 0f)
         {

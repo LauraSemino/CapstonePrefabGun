@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6798825333733277964}
   - component: {fileID: 1014207266462430775}
   - component: {fileID: 3059690025070761662}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -177,6 +177,9 @@ MonoBehaviour:
   rotationSmoothSpeed: 15
   distanceSmoothSpeed: 12
   maxPushDistance: 1.5
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &816314101361653108
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4480301132933069582}
   - component: {fileID: 2429091489123052161}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FloorCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,7 +247,7 @@ GameObject:
   - component: {fileID: 3685947266200390871}
   - component: {fileID: 5388620978262218238}
   - component: {fileID: 5605094364657836602}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,7 +350,7 @@ GameObject:
   - component: {fileID: 8264978827200449705}
   - component: {fileID: 7874853003789864787}
   - component: {fileID: 7483509472313917793}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RAMBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -437,7 +440,7 @@ GameObject:
   - component: {fileID: 2577129633336951151}
   - component: {fileID: 2872386478007708774}
   - component: {fileID: 4817576191316045000}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -527,7 +530,7 @@ GameObject:
   - component: {fileID: 3410361747677005458}
   - component: {fileID: 3741715929120386165}
   - component: {fileID: 3076163845289771946}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Gun2DPlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +600,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1762599907481880889}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +631,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1154776594251036227}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ObjectDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -662,7 +665,7 @@ GameObject:
   - component: {fileID: 1867695123704069832}
   - component: {fileID: 2540502354553073134}
   - component: {fileID: 2887642511173776932}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PrefabGunModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -758,7 +761,7 @@ GameObject:
   - component: {fileID: 6347704212264493490}
   - component: {fileID: 8488045130319061281}
   - component: {fileID: 7660401859769028909}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -904,6 +907,7 @@ MonoBehaviour:
   mainCamera: {fileID: 1329405914471651511}
   lookSensitivity: 0.2
   lookXLimit: 90
+  stepCameraSpeed: 4
   walkSpeed: 6.7
   airSpeed: 3
   groundAcceleration: 5
@@ -920,6 +924,7 @@ MonoBehaviour:
   groundCheckOrigin: {fileID: 1762599907481880889}
   groundCheckRadius: 0.4
   jumpStrength: 1.5
+  spawnPos: {x: 0, y: 0, z: 0}
   rb: {fileID: 6347704212264493490}
   capsule: {fileID: 2429091489123052161}
   isGrounded: 0
@@ -928,6 +933,12 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   groundedStickVelocity: -2
+  maxStepHeight: 0.4
+  minStepHeight: 0.02
+  stepReachPadding: 0.1
+  stepCooldown: 0.15
+  stepForwardNudge: 0.1
+  stepGiveTime: 0.12
 --- !u!114 &7660401859769028909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1169,7 +1180,7 @@ GameObject:
   - component: {fileID: 7254587355253497647}
   - component: {fileID: 3712434620720063381}
   - component: {fileID: 5513989560480766802}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1306,7 +1317,7 @@ GameObject:
   - component: {fileID: 2182066701730134691}
   - component: {fileID: 7212976405196448006}
   - component: {fileID: 5262149599615238799}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1381,7 +1392,7 @@ GameObject:
   - component: {fileID: 1951811562670100497}
   - component: {fileID: 4886335326168065395}
   - component: {fileID: 3737539129749837179}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1456,7 +1467,7 @@ GameObject:
   - component: {fileID: 4782087286504522142}
   - component: {fileID: 5187813460804136429}
   - component: {fileID: 1536902188979867680}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BudgetBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1552,7 +1563,7 @@ GameObject:
   - component: {fileID: 2755184390349000709}
   - component: {fileID: 2087588898226672589}
   - component: {fileID: 2174123291160462949}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: prefabgun_firstpass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1642,7 +1653,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2591577116099612640}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DisplayPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

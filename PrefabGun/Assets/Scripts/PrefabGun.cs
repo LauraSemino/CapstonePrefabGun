@@ -63,6 +63,9 @@ public class PrefabGun : MonoBehaviour
     Renderer[] previewRenderers;
     bool placementValid = true;
 
+    [Header("Player Ignore")]
+    [SerializeField] LayerMask playerMask;
+    readonly RaycastHit[] rayHits = new RaycastHit[16];
 
 
 
@@ -265,8 +268,10 @@ public class PrefabGun : MonoBehaviour
         Vector3 wantedPosition = transform.position + transform.forward * objProjectionDistance;
         Quaternion wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
 
+        int rayMask = placementBlockMask & ~playerMask;
+
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo,
-            objProjectionDistance, placementBlockMask, QueryTriggerInteraction.Ignore))
+            objProjectionDistance, rayMask, QueryTriggerInteraction.Ignore))
         {
             wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
         }
@@ -343,6 +348,18 @@ public class PrefabGun : MonoBehaviour
                     Collider other = overlaps[i];
                     if (other.transform.IsChildOf(toPlace.transform)) continue;
 
+                    // Don't push on player
+                    if (((1 << other.gameObject.layer) & playerMask) != 0)
+                    {
+                        if (Physics.ComputePenetration(mine, mine.transform.position, mine.transform.rotation,
+                            other, other.transform.position, other.transform.rotation, out _, out _))
+                        {
+                            return false;
+                        }
+                        continue;
+                    }
+
+
                     // Find wall penetration for avoiding collision with walls
                     if (Physics.ComputePenetration(mine, mine.transform.position, mine.transform.rotation, other, other.transform.position, other.transform.rotation, out Vector3 dir, out float dist))
                     {
@@ -387,12 +404,10 @@ public class PrefabGun : MonoBehaviour
     // Move objects pre-place with mouse wheel
     public void OnPushPullObject(InputAction.CallbackContext context)
     {
-
         if (!isPlaceMode && toPlace == null)
             return;
 
         float i = context.ReadValue<float>();
-        objProjectionDistance += i;
         targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + i, minDistancePlace, maxDistancePlace);
     }
 
@@ -540,5 +555,6 @@ public class PrefabGun : MonoBehaviour
         Display(displayedObject);
     }
 }
+
 
 
