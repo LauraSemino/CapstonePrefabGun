@@ -8,6 +8,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float lookSensitivity;
     [SerializeField] private float lookXLimit;
+    [SerializeField] private float stepCameraSpeed = 4f;
+    float cameraStepOffset;
+    Vector3 camBaseLocalPos;
 
     [Header("Movement")]
     [SerializeField] public float walkSpeed; //Player's  max speed on the ground
@@ -77,6 +80,13 @@ public class PlayerControl : MonoBehaviour
         spawnPos = transform.position;
         lookX = transform.eulerAngles.y; // Start looking the way the player object is facing
         prefabGun = mainCamera.gameObject.GetComponent<PrefabGun>();
+        camBaseLocalPos = mainCamera.transform.localPosition;
+    }
+
+    void LateUpdate()
+    {
+        cameraStepOffset = Mathf.MoveTowards(cameraStepOffset, 0f, stepCameraSpeed * Time.deltaTime);
+        mainCamera.transform.localPosition = camBaseLocalPos + Vector3.up * cameraStepOffset;
     }
 
     void Update()
@@ -200,6 +210,7 @@ public class PlayerControl : MonoBehaviour
 
         if (bestHeight > 0f)
         {
+            cameraStepOffset -= bestHeight;
             rb.position += Vector3.up * (bestHeight + 0.01f) + dir * stepForwardNudge;
             stepCooldownTimer = stepCooldown;
             stepGiveTimer = stepGiveTime;
