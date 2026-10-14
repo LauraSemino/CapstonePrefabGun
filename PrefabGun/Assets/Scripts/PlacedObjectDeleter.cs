@@ -19,6 +19,8 @@ public class PlacedObjectDeleter : MonoBehaviour
             }
             pg.placedObjects.Clear();
             other.GetComponent<PlayerControl>().spawnPos = transform.position;
+            //adjust rotation as well so the player is facking the right way
+            //other.GetComponent<PlayerControl>().spawnPos = transform.rotation;
         }
     }
 }
