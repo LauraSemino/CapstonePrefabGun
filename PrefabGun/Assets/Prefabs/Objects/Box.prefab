@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8778485058249557944}
   - component: {fileID: 1382760158874666370}
   - component: {fileID: 5924543787993088854}
+  - component: {fileID: -4395918928699812382}
   m_Layer: 3
   m_Name: Box
   m_TagString: Untagged
@@ -70,6 +71,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -155,3 +157,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: 902b0a7df2e3ac9428f26ee1dc44050c, type: 2}
   createdByPlayer: 0
+--- !u!114 &-4395918928699812382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2513977179908992717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline
+  normalMaterial: {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}

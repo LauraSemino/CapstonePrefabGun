@@ -69,7 +69,7 @@ public class PrefabGun : MonoBehaviour
     [Header("Player Ignore")]
     [SerializeField] LayerMask playerMask;
     readonly RaycastHit[] rayHits = new RaycastHit[16];
-
+    private ObjectOutline currentOutlined;
 
 
     // Game default settings
@@ -105,11 +105,29 @@ public class PrefabGun : MonoBehaviour
         prefabGunModel.SetActive(hasGun);
 
         //applies shaders //heavy on performance
-        LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
-        RaycastHit hit;
-        if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
+        ObjectOutline hitOutline = null;
+
+        if (hasGun && !isPlaceMode)
         {
-            //hit.transform.gameObject.GetComponent<MeshRenderer>().materials[] = new Material[1];
+            LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+
+            if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out RaycastHit hit, 5f, grabObjectsLayer))
+            {
+                hitOutline = hit.collider.GetComponentInParent<ObjectOutline>();
+            }
+        }
+
+        // Turn off the old outline when aiming elsewhere
+        if (currentOutlined != hitOutline)
+        {
+            if (currentOutlined != null)
+                currentOutlined.SetOutline(false);
+
+            currentOutlined = hitOutline;
+
+            // Turn on the new outline
+            if (currentOutlined != null)
+                currentOutlined.SetOutline(true);
         }
     }
 
@@ -335,7 +353,18 @@ public class PrefabGun : MonoBehaviour
         if (mat == null || previewRenderers == null) return;
 
         foreach (Renderer r in previewRenderers)
-            if (r != null) r.sharedMaterial = mat;
+        {
+            if (r == null) continue;
+
+            Material[] materials = r.sharedMaterials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = mat;
+            }
+
+            r.sharedMaterials = materials;
+        }
     }
 
 
@@ -492,33 +521,59 @@ public class PrefabGun : MonoBehaviour
     // Displays the object in gun
     public void Display(GameObject display)
     {
-        // Removes the functionality of the prefabs
+        // Remove the outline material from the gun display
+        foreach (Renderer renderer in display.GetComponentsInChildren<Renderer>())
+        {
+            Material[] materials = renderer.sharedMaterials;
+
+            if (materials.Length > 1)
+            {
+                Material[] normalMaterials = new Material[materials.Length - 1];
+
+                for (int i = 0; i < normalMaterials.Length; i++)
+                {
+                    normalMaterials[i] = materials[i];
+                }
+
+                renderer.sharedMaterials = normalMaterials;
+            }
+        }
+
+        // Disable the prefab's colliders
         foreach (Collider col in display.GetComponentsInChildren<Collider>())
         {
             col.enabled = false;
         }
 
+        // Disable physics
         foreach (Rigidbody body in display.GetComponentsInChildren<Rigidbody>())
         {
             body.isKinematic = true;
             body.detectCollisions = false;
         }
 
-        foreach (MonoBehaviour behaviour in
-                 display.GetComponentsInChildren<MonoBehaviour>())
+        // Disable prefab behaviours
+        foreach (MonoBehaviour behaviour in display.GetComponentsInChildren<MonoBehaviour>())
         {
             behaviour.enabled = false;
+        }
+
+        // disable particles
+        foreach (ParticleSystem ps in display.GetComponentsInChildren<ParticleSystem>())
+        {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.GetComponent<ParticleSystemRenderer>().enabled = false;
         }
     }
 
     // Shows the object at place location before placement
     public void Preview(GameObject prev)
     {
-        // Removes the functionality of the prefabs
         foreach (Collider col in prev.GetComponentsInChildren<Collider>())
         {
             if (col.isTrigger)
                 col.enabled = false;
+
             col.isTrigger = true;
         }
 
@@ -528,20 +583,32 @@ public class PrefabGun : MonoBehaviour
             body.detectCollisions = false;
         }
 
-        foreach (MonoBehaviour behaviour in
-                 prev.GetComponentsInChildren<MonoBehaviour>())
+        foreach (MonoBehaviour behaviour in prev.GetComponentsInChildren<MonoBehaviour>())
         {
             behaviour.enabled = false;
         }
 
-        previewRenderers = prev.GetComponentsInChildren<Renderer>();
-        placementValid = true;
-        if (canBePlaced != null)
+        foreach (ParticleSystem ps in prev.GetComponentsInChildren<ParticleSystem>())
         {
-            foreach (Renderer renderer in previewRenderers)
-                renderer.sharedMaterial = canBePlaced;
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.GetComponent<ParticleSystemRenderer>().enabled = false;
         }
 
+        previewRenderers = prev.GetComponentsInChildren<Renderer>();
+        placementValid = true;
+
+        // Remove the outline and apply the green material
+        foreach (Renderer renderer in previewRenderers)
+        {
+            Material[] materials = renderer.sharedMaterials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = canBePlaced;
+            }
+
+            renderer.sharedMaterials = materials;
+        }
     }
 
     // Update the prefab gun's UI

@@ -168,3 +168,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fba536c096f84846865a7caea7cf23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionBreak
+  activate: 0
+  door: {fileID: 0}

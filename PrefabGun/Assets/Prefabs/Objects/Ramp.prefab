@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7819716665038669802}
   - component: {fileID: 6925888548092463211}
   - component: {fileID: 4866240973963131310}
+  - component: {fileID: -5491195576627717014}
   m_Layer: 3
   m_Name: Ramp
   m_TagString: Untagged
@@ -70,6 +71,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -156,3 +158,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: 9c56a2bf49f9052498be5476189215d6, type: 2}
   createdByPlayer: 0
+--- !u!114 &-5491195576627717014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6078136517662743872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline

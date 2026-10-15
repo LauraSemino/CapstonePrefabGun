@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5981747257833210654}
   - component: {fileID: 5401430444993567157}
   - component: {fileID: 6945336983746751505}
+  - component: {fileID: -3928905043962711973}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -71,6 +72,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d8b4f3f790b8987458dd0ca641838367, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -170,3 +172,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: 6f35b53c5535c9c41a809e57c99e28f8, type: 2}
   createdByPlayer: 0
+--- !u!114 &-3928905043962711973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5550227568021287291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline

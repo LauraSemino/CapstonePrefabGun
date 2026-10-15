@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3577006597703746323}
   - component: {fileID: 243694835577357177}
   - component: {fileID: 9024925602157128299}
+  - component: {fileID: -8537252918392467212}
   m_Layer: 3
   m_Name: Ball
   m_TagString: Untagged
@@ -155,3 +156,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: 29596eaa5d7268045b03a229fd7a5711, type: 2}
   createdByPlayer: 0
+--- !u!114 &-8537252918392467212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4488011553362235629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline
+  normalMaterial: {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
