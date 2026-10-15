@@ -71,6 +71,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 98733c012877dde4cb62b91501956510, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -168,5 +169,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline
-  normalMaterial: {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
-  outlineMaterial: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
