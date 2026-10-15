@@ -934,7 +934,9 @@ MonoBehaviour:
   Velocity: {x: 0, y: 0, z: 0}
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  groundedStickVelocity: -2
+  groundedStickVelocity: -0.5
+  slopeSnapExtra: 0.3
+  airGroundCheckDistance: 0.08
   maxStepHeight: 0.4
   minStepHeight: 0.02
   stepReachPadding: 0.1

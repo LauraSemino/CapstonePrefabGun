@@ -56,12 +56,14 @@ public class PlayerControl : MonoBehaviour
 
     // So stick on ramp
     [SerializeField] private float groundedStickVelocity = -2f; // Make player stick better to ramps by pushing down into them
+    [SerializeField] private float slopeSnapExtra = 0.3f;
 
     Vector2 moveInput;
     Vector2 lookInput;
     private float lookX; // Horizontal look angle
     private float lookY; // Vertical look angle
     private float groundIgnoreTimer;
+    [SerializeField] private float airGroundCheckDistance = 0.08f;
 
     [Header("Stepping")]
     [SerializeField] private float maxStepHeight = 0.4f;   // Tallest step the player can climb
@@ -139,7 +141,8 @@ public class PlayerControl : MonoBehaviour
         groundUp = Vector3.up;
 
         Vector3 center = groundCheckOrigin.position + Vector3.up * groundSkin; // Center  foot check, slight lift so rays don't start inside the floor
-        float rayLength = groundSkin + groundCheckDistance;
+        float reach = wasGrounded ? groundCheckDistance : airGroundCheckDistance;
+        float rayLength = groundSkin + reach;
         float bestUp = -1f; // Tracks the flattest surface hit so far
 
         for (int i = -1; i < footGroundRays; i++)
@@ -160,6 +163,28 @@ public class PlayerControl : MonoBehaviour
                     groundUp = hit.normal;
                     isGrounded = true;
                 }
+            }
+        }
+        if (moveDirection.sqrMagnitude > 0.001f)
+        {
+            Vector3 aheadOrigin = center + moveDirection * (groundCheckRadius + 0.1f);
+            float aheadLength = rayLength + slopeSnapExtra;
+
+            if (Physics.Raycast(aheadOrigin, Vector3.down, out RaycastHit ahead, aheadLength, groundMask, QueryTriggerInteraction.Ignore) && Vector3.Angle(ahead.normal, Vector3.up) <= maxSlopeAngle && (wasGrounded || isGrounded))
+            {
+                // Moving toward the direction the surface faces means we going downhill
+                bool downhill = Vector3.Dot(moveDirection, ahead.normal) > 0.01f;
+
+                if (!downhill)
+                    groundUp = ahead.normal; // tilt early so climb up
+
+                isGrounded = true;
+            }
+            if (isGrounded && !wasGrounded && rb.linearVelocity.y < -0.5f)
+            {
+                float landDistance = groundSkin + 0.05f;
+                if (!Physics.Raycast(center, Vector3.down, landDistance, groundMask, QueryTriggerInteraction.Ignore))
+                    isGrounded = false;
             }
         }
     }
