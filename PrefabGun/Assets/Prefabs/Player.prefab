@@ -170,6 +170,8 @@ MonoBehaviour:
   displayIndex: {fileID: 5513989560480766802}
   displayPoint: {fileID: 2591577116099612640}
   prefabGunModel: {fileID: 4069804065010821513}
+  highlightMat: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
+  placeVisual: {fileID: 4026340136938510059, guid: 5b1a13095d389db468bd916383dc7814, type: 3}
   maxBudget: 10
   budgetBar: {fileID: 1536902188979867680}
   curBudget: 0

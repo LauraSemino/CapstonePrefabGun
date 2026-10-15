@@ -32,6 +32,7 @@ public class PrefabGun : MonoBehaviour
     public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
+    GameObject placeIndicator = null;
     bool isPlaceMode;
     [SerializeField] LayerMask placementBlockMask;
     [SerializeField] float placementSurfaceOffset = 0.05f;
@@ -41,7 +42,9 @@ public class PrefabGun : MonoBehaviour
     public Transform displayPoint;
     private GameObject displayedObject;
     [SerializeField] GameObject prefabGunModel;
-
+    [SerializeField] Material highlightMat;
+    [SerializeField] GameObject placeVisual;
+ 
     [Header("Budget")]
     [SerializeField] float maxBudget;
     [SerializeField] Scrollbar budgetBar;
@@ -100,6 +103,14 @@ public class PrefabGun : MonoBehaviour
         }
         //prolly unoptimal cause its setting it every frame
         prefabGunModel.SetActive(hasGun);
+
+        //applies shaders //heavy on performance
+        LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+        RaycastHit hit;
+        if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
+        {
+            //hit.transform.gameObject.GetComponent<MeshRenderer>().materials[] = new Material[1];
+        }
     }
 
     public void UpdateBudgetUI()
@@ -203,8 +214,11 @@ public class PrefabGun : MonoBehaviour
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
         snapTo = true;
         GenericObject OG = savedObjects[curObjIndex];
-        toPlace = Instantiate(OG.prefab);
+        toPlace = Instantiate(OG.prefab); 
         Preview(toPlace);
+        //needs to be fixed in order to not display on roof
+        placeIndicator = Instantiate(placeVisual, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), toPlace.transform);
+        placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y ,1 / toPlace.transform.localScale.z);
         UpdatePlacement();
     }
 
