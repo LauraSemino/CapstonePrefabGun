@@ -113,6 +113,7 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (DeleteMenuManager.IsOpen) return;
         // Buffer jump
         if (context.performed)
             jumpBufferTimer = jumpBufferTime;

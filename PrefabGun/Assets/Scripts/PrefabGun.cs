@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -70,6 +71,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] LayerMask playerMask;
     readonly RaycastHit[] rayHits = new RaycastHit[16];
     private ObjectOutline currentOutlined;
+    [SerializeField] LayerMask noBuildZone;
 
 
     // Game default settings
@@ -104,30 +106,34 @@ public class PrefabGun : MonoBehaviour
         //prolly unoptimal cause its setting it every frame
         prefabGunModel.SetActive(hasGun);
 
-        //applies shaders //heavy on performance
-        ObjectOutline hitOutline = null;
 
-        if (hasGun && !isPlaceMode)
+        if (!DeleteMenuManager.IsOpen)
         {
-            LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+            //applies shaders //heavy on performance
+            ObjectOutline hitOutline = null;
 
-            if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out RaycastHit hit, 5f, grabObjectsLayer))
+            if (hasGun && !isPlaceMode)
             {
-                hitOutline = hit.collider.GetComponentInParent<ObjectOutline>();
+                LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
+
+                if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out RaycastHit hit, 5f, grabObjectsLayer))
+                {
+                    hitOutline = hit.collider.GetComponentInParent<ObjectOutline>();
+                }
             }
-        }
 
-        // Turn off the old outline when aiming elsewhere
-        if (currentOutlined != hitOutline)
-        {
-            if (currentOutlined != null)
-                currentOutlined.SetOutline(false);
+            // Turn off the old outline when aiming elsewhere
+            if (currentOutlined != hitOutline)
+            {
+                if (currentOutlined != null)
+                    currentOutlined.SetOutline(false);
 
-            currentOutlined = hitOutline;
+                currentOutlined = hitOutline;
 
-            // Turn on the new outline
-            if (currentOutlined != null)
-                currentOutlined.SetOutline(true);
+                // Turn on the new outline
+                if (currentOutlined != null)
+                    currentOutlined.SetOutline(true);
+            }
         }
     }
 
@@ -141,7 +147,12 @@ public class PrefabGun : MonoBehaviour
         else if (percent < 0.5) img.color = Color.green;
         else if (percent > 0.75f) img.color = Color.red;
     }
-
+    void ClearAimOutline()
+    {
+        if (currentOutlined != null)
+            currentOutlined.SetOutline(false);
+        currentOutlined = null;
+    }
 
     bool TrySpend(float cost)
     {
@@ -163,6 +174,7 @@ public class PrefabGun : MonoBehaviour
     public void OnLeftClick(InputAction.CallbackContext context)
     {
         if (!hasGun) { return; }
+        if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
             if (isPlaceMode)
@@ -181,6 +193,7 @@ public class PrefabGun : MonoBehaviour
     public void OnRightClick(InputAction.CallbackContext context)
     {
         if(!hasGun) { return; }
+        if (context.started && DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
             StartPlace();
@@ -315,7 +328,7 @@ public class PrefabGun : MonoBehaviour
         bool success = PushOutOfObstacles();
         bool wentTooFaar = (toPlace.transform.position - wantedPosition).sqrMagnitude
                             > maxPushDistance * maxPushDistance;
-        bool valid = success && !wentTooFaar;
+        bool valid = success && !wentTooFaar & !TouchingNoBuildZone();
 
         if (!valid)
         {
@@ -465,23 +478,17 @@ public class PrefabGun : MonoBehaviour
                 CancelPlace();
                 return;
             }
-            LayerMask grabObjectsLayer = LayerMask.GetMask("Prefab");
-            RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out hit, 5f, grabObjectsLayer))
-            {
-                if (hit.collider.gameObject.GetComponent<ObjectData>().createdByPlayer == true)
-                {
-                    Refund(hit.collider.gameObject.GetComponent<ObjectData>().objData.cost);
-                    Destroy(hit.collider.gameObject);
-                }
-            }
+            ClearAimOutline();
+            DeleteMenuManager.instance.Toggle();
         }
     }
+
 
     // Rotate the object positive
     public void OnPlusIndex(InputAction.CallbackContext context)
     {
         if (!hasGun) { return; }
+        if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
             if (isPlaceMode)
@@ -502,6 +509,7 @@ public class PrefabGun : MonoBehaviour
     public void OnMinusIndex(InputAction.CallbackContext context)
     {
         if (!hasGun) { return; }
+        if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
             if (isPlaceMode)
@@ -564,6 +572,17 @@ public class PrefabGun : MonoBehaviour
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             ps.GetComponent<ParticleSystemRenderer>().enabled = false;
         }
+    }
+
+    bool TouchingNoBuildZone()
+    {
+        foreach (Collider mine in toPlace.GetComponentsInChildren<Collider>())
+        {
+            Bounds b = mine.bounds;
+            if (Physics.CheckBox(b.center, b.extents, Quaternion.identity, noBuildZone, QueryTriggerInteraction.Collide))
+                return true;
+        }
+        return false;
     }
 
     // Shows the object at place location before placement
