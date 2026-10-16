@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -56,7 +57,7 @@ public class DeleteMenuManager : MonoBehaviour
         if (scroll < 0) selected++;
 
         // Space deletes the selected object
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             DeleteSelected();
             if (list.Count == 0) return;
@@ -100,7 +101,7 @@ public class DeleteMenuManager : MonoBehaviour
 
         ClearOutline();
         currentOutline = outline;
-        if (currentOutline != null) currentOutline.SetOutline(true);
+        if (currentOutline != null) currentOutline.SetOutline(true, true);
     }
 
     void ClearOutline()

@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 1851293914924374581}
   - component: {fileID: 1278350642509588837}
   m_Layer: 6
-  m_Name: Text (TMP)
+  m_Name: deleteList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 3550372290606709009}
   - component: {fileID: 1346132438371876818}
   m_Layer: 6
-  m_Name: Panel
+  m_Name: deletePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -820,7 +820,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1762599907481880889}
   m_Layer: 6
-  m_Name: GameObject
+  m_Name: PlayerGroundCheckPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1403,7 +1403,7 @@ GameObject:
   - component: {fileID: 3712434620720063381}
   - component: {fileID: 5513989560480766802}
   m_Layer: 6
-  m_Name: Text (TMP)
+  m_Name: objectIndex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1540,7 +1540,7 @@ GameObject:
   - component: {fileID: 7212976405196448006}
   - component: {fileID: 5262149599615238799}
   m_Layer: 6
-  m_Name: Image
+  m_Name: budgetFillImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1615,7 +1615,7 @@ GameObject:
   - component: {fileID: 4886335326168065395}
   - component: {fileID: 3737539129749837179}
   m_Layer: 6
-  m_Name: Image (1)
+  m_Name: budgetBackImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5,6 +5,7 @@ public class ObjectOutline : MonoBehaviour
     private Renderer[] renderers;
     private Material[][] normalMaterials;
     private Material[][] outlineMaterials;
+    private Material[][] xrayMaterials;
 
     void Awake()
     {
@@ -12,34 +13,40 @@ public class ObjectOutline : MonoBehaviour
 
         normalMaterials = new Material[renderers.Length][];
         outlineMaterials = new Material[renderers.Length][];
+        xrayMaterials = new Material[renderers.Length][];
 
         for (int i = 0; i < renderers.Length; i++)
         {
-            Material[] materials = renderers[i].sharedMaterials;
+            Material[] all = renderers[i].sharedMaterials;
 
-            // Save both materials
-            outlineMaterials[i] = materials;
+            xrayMaterials[i] = all;
+            normalMaterials[i] = new Material[] { all[0] };
+
+            // Save materials but xray
+            if (all.Length >= 2)
+                outlineMaterials[i] = new Material[] { all[0], all[1] };
 
             // Save only the first material
-            normalMaterials[i] = new Material[] { 
-                materials[0] 
-            };
+            else
+                outlineMaterials[i] = normalMaterials[i];
 
             // Hide the outline
             renderers[i].sharedMaterials = normalMaterials[i];
         }
     }
 
-    public void SetOutline(bool show)
+    public void SetOutline(bool show, bool seeThrough = false)
     {
         if (renderers == null) return;
 
         for (int i = 0; i < renderers.Length; i++)
         {
-            if (show)
-                renderers[i].sharedMaterials = outlineMaterials[i];
-            else
+            if (!show)
                 renderers[i].sharedMaterials = normalMaterials[i];
+            else if (seeThrough)
+                renderers[i].sharedMaterials = xrayMaterials[i];
+            else
+                renderers[i].sharedMaterials = outlineMaterials[i];
         }
     }
 }
