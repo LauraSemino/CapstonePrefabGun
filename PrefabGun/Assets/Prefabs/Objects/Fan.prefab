@@ -157,6 +157,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -209,8 +210,8 @@ Transform:
   m_GameObject: {fileID: 4403290075535708779}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 23.9, z: 0}
-  m_LocalScale: {x: 1, y: 48.08, z: 1}
+  m_LocalPosition: {x: 0, y: 40, z: 0}
+  m_LocalScale: {x: 1, y: 75, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1749286177466853012}
@@ -305,8 +306,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ca0eba5dab3f74f8aaeb84dd2bdf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FanWind
-  upwardForce: 15
-  windness: 15
+  upwardForce: 20
+  windness: 20
 --- !u!1 &6640388683596098132
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,7 +356,7 @@ GameObject:
   - component: {fileID: 4601865737159196417}
   - component: {fileID: 7518185890161987621}
   - component: {fileID: 8643942117756612761}
-  - component: {fileID: 8465370728540731846}
+  - component: {fileID: 2049848103704989044}
   m_Layer: 3
   m_Name: Fan
   m_TagString: Untagged
@@ -373,7 +374,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 0.07, z: 1.5}
+  m_LocalScale: {x: 2, y: 0.07, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4354091437753535495}
@@ -414,7 +415,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
-  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -500,7 +500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: b009ee234719f0d42a0f2f6ddd8cae28, type: 2}
   createdByPlayer: 0
---- !u!114 &8465370728540731846
+--- !u!114 &2049848103704989044
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

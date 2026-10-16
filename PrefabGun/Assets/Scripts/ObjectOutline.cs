@@ -8,7 +8,7 @@ public class ObjectOutline : MonoBehaviour
 
     void Awake()
     {
-        renderers = GetComponentsInChildren<Renderer>();
+        renderers = GetComponentsInChildren<MeshRenderer>();
 
         normalMaterials = new Material[renderers.Length][];
         outlineMaterials = new Material[renderers.Length][];
