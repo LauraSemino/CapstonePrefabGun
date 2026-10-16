@@ -157,6 +157,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -355,7 +356,7 @@ GameObject:
   - component: {fileID: 4601865737159196417}
   - component: {fileID: 7518185890161987621}
   - component: {fileID: 8643942117756612761}
-  - component: {fileID: 8465370728540731846}
+  - component: {fileID: 2049848103704989044}
   m_Layer: 3
   m_Name: Fan
   m_TagString: Untagged
@@ -414,7 +415,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
-  - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -500,7 +500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectData
   objData: {fileID: 11400000, guid: b009ee234719f0d42a0f2f6ddd8cae28, type: 2}
   createdByPlayer: 0
---- !u!114 &8465370728540731846
+--- !u!114 &2049848103704989044
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
