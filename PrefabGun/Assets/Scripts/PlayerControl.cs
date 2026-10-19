@@ -113,7 +113,6 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (DeleteMenuManager.IsOpen) return;
         // Buffer jump
         if (context.performed)
             jumpBufferTimer = jumpBufferTime;
@@ -298,11 +297,18 @@ public class PlayerControl : MonoBehaviour
             // Work with the velocity along the surface
             Vector3 groundVelocity = Velocity - Vector3.Dot(Velocity, groundUp) * groundUp;
 
+            // Just landed on a ramp try to push player forward
+            if (!wasGrounded && groundUp != Vector3.up && Velocity.y < 0f)
+            {
+                Vector3 flat = new Vector3(Velocity.x, 0f, Velocity.z);
+                bool downhill = Vector3.Dot(flat, groundUp) > 0.01f; // moving using the slope's direction
+
+                if (downhill && groundVelocity.sqrMagnitude > 0.001f)
+                    groundVelocity = groundVelocity.normalized * Velocity.magnitude;
+            }
+
             Accelerate(ref groundVelocity, slopeDirection, walkSpeed, groundAcceleration);
             ApplyFriction(ref groundVelocity); // Friction only applies while we are on the ground
-
-            if (groundVelocity.magnitude > walkSpeed)
-                groundVelocity = groundVelocity.normalized * walkSpeed;
 
             Velocity = groundVelocity;
         }
@@ -312,9 +318,6 @@ public class PlayerControl : MonoBehaviour
             horVelocity = new Vector3(Velocity.x, 0f, Velocity.z);
 
             Accelerate(ref horVelocity, moveDirection, airSpeed, airAcceleration);
-
-            if (horVelocity.magnitude > airSpeed)
-                horVelocity = horVelocity.normalized * airSpeed;
 
             Velocity.x = horVelocity.x;
             Velocity.z = horVelocity.z;
@@ -356,19 +359,17 @@ public class PlayerControl : MonoBehaviour
         if (direction.sqrMagnitude < 0.001f)
             return; // No input means there is nothing to accelerate
 
-        float speedInDirection = Vector3.Dot(velocity, direction); // How fast we're already going the direction we going in
-        float speedLeft = maxSpeed - speedInDirection;
+        float currentSpeed = velocity.magnitude;
 
-        if (speedLeft <= 0f)
-            return; // Already at max speed in this direction
+        // Input can never push you past the normal cap
+        float limit = Mathf.Max(maxSpeed, currentSpeed);
 
-        float accelerationThisFrame = acceleration * maxSpeed * Time.fixedDeltaTime;
+        Vector3 newVelocity = velocity + direction * acceleration * maxSpeed * Time.fixedDeltaTime;
 
-        // Do NOT overshoot max speed
-        if (accelerationThisFrame > speedLeft)
-            accelerationThisFrame = speedLeft;
+        if (newVelocity.magnitude > limit)
+            newVelocity = newVelocity.normalized * limit;
 
-        velocity += direction * accelerationThisFrame;
+        velocity = newVelocity;
     }
 
     private void ApplyFriction(ref Vector3 velocity)
@@ -404,3 +405,5 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
+
+

@@ -2088,6 +2088,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7782558269599483913, guid: da2912f6b6c428241b44753d1c6cf147, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8112778043456826619, guid: da2912f6b6c428241b44753d1c6cf147, type: 3}
       propertyPath: m_Name
       value: Glass
