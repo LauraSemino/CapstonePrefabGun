@@ -116,6 +116,7 @@ public class PlayerControl : MonoBehaviour
         // Buffer jump
         if (context.performed)
             jumpBufferTimer = jumpBufferTime;
+        
     }
     public void OnLook(InputAction.CallbackContext context)
     {
@@ -157,7 +158,11 @@ public class PlayerControl : MonoBehaviour
 
             if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, rayLength, groundMask, QueryTriggerInteraction.Ignore))
             {
-                if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle && hit.normal.y > bestUp) // Make sure not walking up something too steep so we can have like ramps but some slight slopes don't allow the player to climb right up
+                bool sloped = hit.normal.y < 0.999f;
+                bool close = hit.distance <= groundSkin + airGroundCheckDistance;
+
+                // Only v close ground and slope count
+                if ((close || sloped) && Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle && hit.normal.y > bestUp) // Make sure not walking up something too steep so we can have like ramps but some slight slopes don't allow the player to climb right up
                 {
                     bestUp = hit.normal.y;
                     groundUp = hit.normal;
@@ -170,7 +175,7 @@ public class PlayerControl : MonoBehaviour
             Vector3 aheadOrigin = center + moveDirection * (groundCheckRadius + 0.1f);
             float aheadLength = rayLength + slopeSnapExtra;
 
-            if (Physics.Raycast(aheadOrigin, Vector3.down, out RaycastHit ahead, aheadLength, groundMask, QueryTriggerInteraction.Ignore) && Vector3.Angle(ahead.normal, Vector3.up) <= maxSlopeAngle && (wasGrounded || isGrounded))
+            if (Physics.Raycast(aheadOrigin, Vector3.down, out RaycastHit ahead, aheadLength, groundMask, QueryTriggerInteraction.Ignore) && Vector3.Angle(ahead.normal, Vector3.up) <= maxSlopeAngle && (wasGrounded || isGrounded) && (ahead.normal.y < 0.999f || ahead.distance <= groundSkin + airGroundCheckDistance))
             {
                 // Moving toward the direction the surface faces means we going downhill
                 bool downhill = Vector3.Dot(moveDirection, ahead.normal) > 0.01f;
@@ -282,6 +287,8 @@ public class PlayerControl : MonoBehaviour
         bool jumping = jumpBufferTimer > 0f && coyoteTimer > 0f;
         if (jumping)
         {
+            if (DeleteMenuManager.IsOpen)
+                DeleteMenuManager.instance.Toggle();
             jumpBufferTimer = 0f; // Use up the press and the coyote time so we can't double jump
             coyoteTimer = 0f;
             groundIgnoreTimer = 0.15f;
