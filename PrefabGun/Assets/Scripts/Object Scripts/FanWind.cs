@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class FanWind : MonoBehaviour
 {
-    public float upwardForce = 15f;
-    public float windness = 15f;
-    public void OnTriggerStay(Collider other)
-    {
-        Rigidbody rb = other.GetComponent<Rigidbody>();
+    public float windness = 20f; // How wind the wind is
+    public float range = 10f;    // How far the wind blows
+    public float radius = 1f;    // Width of the wind
 
-        if (rb != null)
+    void FixedUpdate()
+    {
+        Vector3 origin = transform.position - transform.up * radius;
+
+        if (Physics.SphereCast(origin, radius, transform.up, out RaycastHit hit, range + radius))
         {
-            rb.AddForce(transform.up * windness, ForceMode.Force);
+            if (hit.rigidbody != null)
+                hit.rigidbody.AddForce(transform.up * windness, ForceMode.Acceleration);
         }
     }
 }
