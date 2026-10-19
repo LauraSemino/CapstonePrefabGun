@@ -14,13 +14,15 @@ public class TextManager : MonoBehaviour
     {
         _instance = this;
     }
-    private void FixedUpdate()
+
+    private void Update()
     {
         if (timer > 0)
         {
-            timer--;
+            timer -= Time.deltaTime;
+            Debug.Log(timer);
         }
-        else if(timer < 0)
+        else if (timer < 0)
         {
             timer = 0;
         }
@@ -36,8 +38,8 @@ public class TextManager : MonoBehaviour
     {
         Debug.Log("fading");
         timer = timeToFade;
-        //tryna make it fade out properly but it doesnt 
-        popUp.color = new Color(255, 255, 255, Mathf.Lerp(0,255,timer));
+        //tryna make it fade out properly but it only instantly removes it currently
+        popUp.alpha = Mathf.Lerp(255,0,timer);
         yield return new WaitForSeconds(timeToFade);
     }
 }

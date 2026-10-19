@@ -500,10 +500,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5427733314390375769, guid: 34c6660748ca7924cb2a2035d9d92ffc, type: 3}
-      propertyPath: m_fontColor.a
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5427733314390375769, guid: 34c6660748ca7924cb2a2035d9d92ffc, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 16777215
       objectReference: {fileID: 0}
@@ -2137,7 +2133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: fadeTime
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: displayText
