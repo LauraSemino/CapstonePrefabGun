@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 8117437008440281275}
   - component: {fileID: 4806574621180156448}
   - component: {fileID: 1645921206384663148}
+  - component: {fileID: 3281416397681679373}
   m_Layer: 0
   m_Name: SmallFishtankWall
   m_TagString: Untagged
@@ -272,3 +273,24 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3281416397681679373
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5016769016925695630}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 27, y: 11.167586, z: 1.9500073}
+  m_Center: {x: -0.00000047683716, y: 1.1167579, z: 0.0000027418137}
