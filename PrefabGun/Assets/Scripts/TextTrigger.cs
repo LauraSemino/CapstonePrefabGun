@@ -27,7 +27,7 @@ public class TextTrigger : MonoBehaviour
             TextManager.Instance.DisplayText(displayText);
             if (timeUntilFadeOut > 0)
             {
-                Debug.Log("waiting for fade");
+                //Debug.Log("waiting for fade");
                 StartCoroutine(WaitForFade(timeUntilFadeOut));
             }
         }

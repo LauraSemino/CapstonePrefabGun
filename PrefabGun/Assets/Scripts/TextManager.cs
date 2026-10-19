@@ -20,7 +20,7 @@ public class TextManager : MonoBehaviour
         if (timer > 0)
         {
             timer -= Time.deltaTime;
-            Debug.Log(timer);
+            //Debug.Log(timer);
         }
         else if (timer < 0)
         {
@@ -36,7 +36,7 @@ public class TextManager : MonoBehaviour
 
     public IEnumerator TextFadeOut(float timeToFade)
     {
-        Debug.Log("fading");
+       // Debug.Log("fading");
         timer = timeToFade;
         //tryna make it fade out properly but it only instantly removes it currently
         popUp.alpha = Mathf.Lerp(255,0,timer);
