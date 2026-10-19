@@ -248,9 +248,10 @@ public class PrefabGun : MonoBehaviour
         GenericObject OG = savedObjects[curObjIndex];
         toPlace = Instantiate(OG.prefab); 
         Preview(toPlace);
-        //needs to be fixed in order to not display on roof
+
         placeIndicator = Instantiate(placeVisual, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), toPlace.transform);
         placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y ,1 / toPlace.transform.localScale.z);
+        placeIndicator.transform.localPosition = new Vector3(0f, -placeIndicator.transform.localScale.y * 0.5f, 0f);
         UpdatePlacement();
     }
 
