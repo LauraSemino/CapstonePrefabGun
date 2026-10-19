@@ -72,6 +72,7 @@ public class PrefabGun : MonoBehaviour
     readonly RaycastHit[] rayHits = new RaycastHit[16];
     private ObjectOutline currentOutlined;
     [SerializeField] LayerMask noBuildZone;
+    [SerializeField] private PlayerControl player;
 
 
     // Game default settings
@@ -86,7 +87,7 @@ public class PrefabGun : MonoBehaviour
         }
         instance = this;
         UpdateDisplay();
-
+        player = GetComponentInParent<PlayerControl>();
         //eventually this is gonna need to be saved per file
         hasGun = false;
     }
@@ -470,7 +471,7 @@ public class PrefabGun : MonoBehaviour
     // remove objects that player placed
     public void OnRemoveObject(InputAction.CallbackContext context)
     {
-        if (!hasGun) { return; }
+        if (!hasGun || !player.isGrounded) { return; }
         if (context.performed)
         {
             if (isPlaceMode)
