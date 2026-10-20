@@ -41,7 +41,9 @@ public class PrefabGun : MonoBehaviour
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
-    [SerializeField] TextMeshProUGUI costIndex;
+    [SerializeField] GameObject cost1;
+    [SerializeField] GameObject cost2;
+
     public Transform displayPoint;
     private GameObject displayedObject;
     [SerializeField] GameObject prefabGunModel;
@@ -84,6 +86,13 @@ public class PrefabGun : MonoBehaviour
     Vector2 budgetBasePos;
     Coroutine budgetShakeRoutine;
     private bool shaking = false;
+    [SerializeField] RectTransform budgetPreview;
+    Image previewImage;
+    [SerializeField] RectTransform budgBar;
+    [SerializeField] Image linePrefab;
+    [SerializeField] float lineThickness = 2f;
+    [SerializeField] Color lineColor;
+    readonly List<RectTransform> budgetLines = new List<RectTransform>();
 
     // Game default settings
     private void Awake()
@@ -98,11 +107,13 @@ public class PrefabGun : MonoBehaviour
         budgetBasePos = ((RectTransform)budgetBar.transform).anchoredPosition;
         budgetBaseScale = ((RectTransform)budgetBar.transform).localScale;
         budgetBaseRotation = ((RectTransform)budgetBar.transform).rotation;
+        if (budgetPreview != null) previewImage = budgetPreview.GetComponent<Image>();
         instance = this;
         UpdateDisplay();
         player = GetComponentInParent<PlayerControl>();
         //eventually this is gonna need to be saved per file
         hasGun = false;
+        BuildBudgetLines();
     }
 
     // Update is called once per frame
@@ -155,62 +166,8 @@ public class PrefabGun : MonoBehaviour
                     currentOutlined.SetOutline(true);
             }
         }
+        UpdateCostPreview();
     }
-
-    public void UpdateBudgetUI()
-    {
-        if (budgetBar == null || maxBudget <= 0f) return;
-        float percent = Mathf.Clamp01(curBudget / maxBudget);
-        budgetBar.size = percent;
-        Image img = budgetBar.GetComponentInChildren<Image>();
-        if (percent > 0.5f && percent < 0.75) img.color = Color.yellow;
-        else if (percent < 0.5) img.color = Color.green;
-        else if (percent > 0.75f) img.color = Color.red;
-    }
-
-    void ShowNotEnoughBudget()
-    {
-        StopCoroutine(budgetShakeRoutine);
-        budgetShakeRoutine = StartCoroutine(BudgetShake());
-    }
-
-    IEnumerator BudgetShake()
-    {
-        shaking = true;
-        RectTransform rt = (RectTransform)budgetBar.transform;
-        Image[] imgs = budgetBar.GetComponentsInChildren<Image>(); // Get bar image
-        Image img = imgs[1];
-
-        UpdateBudgetUI();
-        img.color = Color.Lerp(img.color, Color.red, 0.7f); // Change color
-
-        float timed = 0f;
-        while (timed < shakeDuration)
-        {
-            timed += Time.deltaTime;
-            float going = timed / shakeDuration;
-            float fade = 1f - going;         
-
-            Vector2 offset = Vector2.zero;
-            float angle = 0f;
-            angle = Mathf.Sin(going * Mathf.PI * 2f * 3f) * 7f * Mathf.Exp(-4f * going); // Change angle for shake
-            offset.y = Mathf.Abs(Mathf.Sin(going * Mathf.PI * 2f * 3f)) * 0.4f * fade; // Change offset for shake
-            rt.anchoredPosition = budgetBasePos + offset; // Set pos and orot to offset and angle
-            rt.localRotation = budgetBaseRotation * Quaternion.Euler(0f, 0f, angle);
-            yield return null;
-        }
-
-        // Put everything back to the norm
-        rt.anchoredPosition = budgetBasePos;
-        rt.localRotation = budgetBaseRotation;
-        rt.localScale = budgetBaseScale;
-        img.color = Color.Lerp(img.color, Color.white, 1f);
-        UpdateBudgetUI();
-        shaking = false;
-        budgetShakeRoutine = null;
-    }
-
-
 
     void ClearAimOutline()
     {
@@ -643,6 +600,114 @@ public class PrefabGun : MonoBehaviour
             ps.GetComponent<ParticleSystemRenderer>().enabled = false;
         }
     }
+    public void BuildBudgetLines()
+    {
+        if (budgBar == null || linePrefab == null || maxBudget <= 0f) return;
+
+        int needed = Mathf.Max(0, Mathf.CeilToInt(maxBudget) - 1);
+
+        while (budgetLines.Count < needed)
+        {
+            Image img = Instantiate(linePrefab, budgBar);
+            img.color = lineColor;
+            budgetLines.Add(img.rectTransform);
+        }
+
+        for (int i = 0; i < budgetLines.Count; i++)
+        {
+            bool active = i < needed;
+            budgetLines[i].gameObject.SetActive(active);
+            if (!active) continue;
+
+            float t = (i + 1) / maxBudget;
+
+            RectTransform rt = budgetLines[i];
+            rt.anchorMin = new Vector2(0.11f, t);
+            rt.anchorMax = new Vector2(0.89f, t);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(0f, lineThickness);
+        }
+    }
+
+
+    void UpdateCostPreview()
+    {
+        bool placing = isPlaceMode && toPlace != null && savedObjects.Count > 0;
+        float flash = (Mathf.Sin(Time.time * 8f) + 1f) * 0.5f;
+        if (budgetPreview == null) return;
+        budgetPreview.gameObject.SetActive(placing);
+        if (!placing || maxBudget <= 0f) return;
+
+        float from = Mathf.Clamp01(curBudget / maxBudget);
+        float to = Mathf.Clamp01((curBudget + savedObjects[curObjIndex].cost) / maxBudget);
+
+        budgetPreview.anchorMin = new Vector2(0f, from);
+        budgetPreview.anchorMax = new Vector2(1f, to);
+        budgetPreview.offsetMin = new Vector2(3, -0.3f);
+        budgetPreview.offsetMax = new Vector2(-3, 0.3f);
+
+        if (previewImage != null)
+        {
+            Color c = Color.yellow;
+            c.a = Mathf.Lerp(0.25f, 0.7f, flash);
+            previewImage.color = c;
+        }
+    }
+
+    public void UpdateBudgetUI()
+    {
+        if (budgetBar == null || maxBudget <= 0f) return;
+        float percent = Mathf.Clamp01(curBudget / maxBudget);
+        budgetBar.size = percent;
+        Image img = budgetBar.GetComponentInChildren<Image>();
+        if (percent > 0.5f && percent < 0.75) img.color = Color.yellow;
+        else if (percent < 0.5) img.color = Color.green;
+        else if (percent > 0.75f) img.color = Color.red;
+    }
+
+    void ShowNotEnoughBudget()
+    {
+        if (budgetShakeRoutine != null)
+            StopCoroutine(budgetShakeRoutine);
+        budgetShakeRoutine = StartCoroutine(BudgetShake());
+    }
+
+    IEnumerator BudgetShake()
+    {
+        shaking = true;
+        RectTransform rt = (RectTransform)budgetBar.transform;
+        Image[] imgs = budgetBar.GetComponentsInChildren<Image>(); // Get bar image
+        Image img = imgs[1];
+
+        UpdateBudgetUI();
+        img.color = Color.Lerp(img.color, Color.red, 0.7f); // Change color
+
+        float timed = 0f;
+        while (timed < shakeDuration)
+        {
+            timed += Time.deltaTime;
+            float going = timed / shakeDuration;
+            float fade = 1f - going;
+
+            Vector2 offset = Vector2.zero;
+            float angle = 0f;
+            angle = Mathf.Sin(going * Mathf.PI * 2f * 3f) * 7f * Mathf.Exp(-4f * going); // Change angle for shake
+            offset.y = Mathf.Abs(Mathf.Sin(going * Mathf.PI * 2f * 3f)) * 0.4f * fade; // Change offset for shake
+            rt.anchoredPosition = budgetBasePos + offset; // Set pos and orot to offset and angle
+            rt.localRotation = budgetBaseRotation * Quaternion.Euler(0f, 0f, angle);
+            yield return null;
+        }
+
+        // Put everything back to the norm
+        rt.anchoredPosition = budgetBasePos;
+        rt.localRotation = budgetBaseRotation;
+        rt.localScale = budgetBaseScale;
+        img.color = Color.Lerp(img.color, Color.white, 1f);
+        UpdateBudgetUI();
+        shaking = false;
+        budgetShakeRoutine = null;
+    }
 
     bool TouchingNoBuildZone()
     {
@@ -714,9 +779,17 @@ public class PrefabGun : MonoBehaviour
         if (savedObjects.Count == 0) return;
 
         GenericObject OG = savedObjects[curObjIndex];
-        costIndex.text = OG.cost.ToString();
         displayedObject = Instantiate(OG.prefab, displayPoint);
-
+        if(OG.cost == 1)
+        {
+           cost1.SetActive(true);
+           cost2.SetActive(false);
+        }
+        else
+        {
+            cost2.SetActive(true);
+            cost1.SetActive(false);
+        }
         displayedObject.SetActive(true);
         displayedObject.transform.localPosition = Vector3.zero;
         displayedObject.transform.localRotation = Quaternion.identity;

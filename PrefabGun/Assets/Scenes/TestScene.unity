@@ -1768,10 +1768,6 @@ PrefabInstance:
       value: This is distance example text
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
-      propertyPath: delayActivation
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: distanceThreshold
       value: 5
       objectReference: {fileID: 0}
@@ -1920,6 +1916,30 @@ PrefabInstance:
     - target: {fileID: 1951811562670100497, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: lineColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: lineColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: lineColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: lineThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4285233441969218173, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -5.8700047
+      objectReference: {fileID: 0}
+    - target: {fileID: 4285233441969218173, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.054998398
       objectReference: {fileID: 0}
     - target: {fileID: 5643591006055324216, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2321,10 +2341,6 @@ PrefabInstance:
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: displayText
       value: This is timer example text
-      objectReference: {fileID: 0}
-    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
-      propertyPath: delayActivation
-      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 1104820965241330731, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: m_Name
