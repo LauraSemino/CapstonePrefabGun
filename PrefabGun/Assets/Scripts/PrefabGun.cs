@@ -47,6 +47,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject prefabGunModel;
     [SerializeField] Material highlightMat;
     [SerializeField] GameObject placeVisual;
+    [SerializeField] GameObject arrows;
  
     [Header("Budget")]
     [SerializeField] float maxBudget;
@@ -119,6 +120,12 @@ public class PrefabGun : MonoBehaviour
         //prolly unoptimal cause its setting it every frame
         prefabGunModel.SetActive(hasGun);
 
+        //display control arrows
+        if(savedObjects.Count > 1)
+        {
+            arrows.SetActive(true);
+        }
+        else { arrows.SetActive(false); }
 
         if (!DeleteMenuManager.IsOpen)
         {
