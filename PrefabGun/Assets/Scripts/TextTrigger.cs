@@ -22,7 +22,7 @@ public class TextTrigger : MonoBehaviour
     public bool oneUse;
 
     bool hasUsed;
-    public bool doDistanceCheck;
+    bool doDistanceCheck;
     GameObject player;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
