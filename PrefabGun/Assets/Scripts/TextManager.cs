@@ -1,13 +1,14 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 
 public class TextManager : MonoBehaviour
 {
     public static TextManager Instance { get { return _instance; } }
     private static TextManager _instance;
-
     public TextMeshProUGUI popUp;
+    public bool displaying;
    // float timer;
 
     private void Start()
@@ -22,8 +23,12 @@ public class TextManager : MonoBehaviour
 
     public void DisplayText(string text)
     {
-        popUp.text = text;
-        popUp.color = Color.white;
+        if(displaying == false)
+        {
+            popUp.text = text;
+            popUp.alpha = 1;
+            displaying = true;
+        }
     }
 
     public IEnumerator TextFadeOut(float timeToFade)
@@ -35,8 +40,11 @@ public class TextManager : MonoBehaviour
             popUp.alpha = (timer/timeToFade);
             yield return null;
             timer = Mathf.Clamp(timer - Time.deltaTime, 0, 999);
-            Debug.Log(timer);
-            
-        }     
+            //Debug.Log(timer);            
+        }
+        if(timer == 0)
+        {
+            displaying = false;
+        }
     }
 }

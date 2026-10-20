@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TextTrigger : MonoBehaviour
 {
+    
     public string displayText;
     [Tooltip("time it takes until the fade out starts, 0 for no auto fade")]
     public float timeUntilFadeOut;
@@ -22,9 +23,9 @@ public class TextTrigger : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Player" && hasUsed == false)
+        if (other.gameObject.tag == "Player" && !hasUsed && !TextManager.Instance.displaying)
         {
             TextManager.Instance.DisplayText(displayText);
             if (timeUntilFadeOut > 0)
