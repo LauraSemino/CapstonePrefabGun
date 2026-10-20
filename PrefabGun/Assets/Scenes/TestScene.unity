@@ -2129,19 +2129,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: oneUse
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
-      propertyPath: fadeTime
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: displayText
       value: This is example text
-      objectReference: {fileID: 0}
-    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
-      propertyPath: timeUntilFadeOut
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1104820965241330731, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: m_Name

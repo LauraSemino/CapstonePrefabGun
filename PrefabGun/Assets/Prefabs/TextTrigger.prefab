@@ -126,5 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextTrigger
   displayText: 
-  timeUntilFadeOut: 0
-  fadeTime: 0
+  timeUntilFadeOut: 5
+  fadeTime: 1
+  oneUse: 0

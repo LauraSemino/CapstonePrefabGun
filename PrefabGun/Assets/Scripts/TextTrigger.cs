@@ -10,10 +10,12 @@ public class TextTrigger : MonoBehaviour
     [Tooltip("duration of the fade when the text is removed")]
     public float fadeTime;
     public bool oneUse;
+    bool hasUsed;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GetComponent<MeshRenderer>().enabled = false;
+        hasUsed = false;
     }
     private void FixedUpdate()
     {
@@ -22,7 +24,7 @@ public class TextTrigger : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && hasUsed == false)
         {
             TextManager.Instance.DisplayText(displayText);
             if (timeUntilFadeOut > 0)
@@ -37,6 +39,6 @@ public class TextTrigger : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
         StartCoroutine(TextManager.Instance.TextFadeOut(fadeTime));
-        if (oneUse) { gameObject.SetActive(false); }
+        if (oneUse) { hasUsed = true; }
     }
 }

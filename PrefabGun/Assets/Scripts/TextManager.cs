@@ -8,7 +8,7 @@ public class TextManager : MonoBehaviour
     private static TextManager _instance;
 
     public TextMeshProUGUI popUp;
-    float timer;
+   // float timer;
 
     private void Start()
     {
@@ -17,15 +17,7 @@ public class TextManager : MonoBehaviour
 
     private void Update()
     {
-        if (timer > 0)
-        {
-            timer -= Time.deltaTime;
-            //Debug.Log(timer);
-        }
-        else if (timer < 0)
-        {
-            timer = 0;
-        }
+      
     }
 
     public void DisplayText(string text)
@@ -35,11 +27,16 @@ public class TextManager : MonoBehaviour
     }
 
     public IEnumerator TextFadeOut(float timeToFade)
-    {
-       // Debug.Log("fading");
-        timer = timeToFade;
+    {        
+        float timer = timeToFade;
         //tryna make it fade out properly but it only instantly removes it currently
-        popUp.alpha = Mathf.Lerp(255,0,timer);
-        yield return new WaitForSeconds(timeToFade);
+        while (timer > 0) 
+        {      
+            popUp.alpha = (timer/timeToFade);
+            yield return null;
+            timer = Mathf.Clamp(timer - Time.deltaTime, 0, 999);
+            Debug.Log(timer);
+            
+        }     
     }
 }
