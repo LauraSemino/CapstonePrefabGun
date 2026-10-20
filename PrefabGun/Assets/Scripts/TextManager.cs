@@ -42,7 +42,7 @@ public class TextManager : MonoBehaviour
             timer = Mathf.Clamp(timer - Time.deltaTime, 0, 999);
             //Debug.Log(timer);            
         }
-        if(timer == 0)
+        if (timer == 0)
         {
             displaying = false;
         }

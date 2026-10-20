@@ -1768,6 +1768,10 @@ PrefabInstance:
       value: This is distance example text
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
+      propertyPath: delayActivation
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: distanceThreshold
       value: 5
       objectReference: {fileID: 0}
@@ -2317,6 +2321,10 @@ PrefabInstance:
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: displayText
       value: This is timer example text
+      objectReference: {fileID: 0}
+    - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
+      propertyPath: delayActivation
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 1104820965241330731, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: m_Name

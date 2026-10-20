@@ -14,6 +14,8 @@ public class TextTrigger : MonoBehaviour
     public float timeUntilFadeOut;
     [Tooltip("duration of the fade when the text is removed")]
     public float fadeTime;
+    [Tooltip("Waits this long before the text can start displaying")]
+    public float delayActivation;
 
     [Header("Distance Settings")]
     public float distanceThreshold;
@@ -24,6 +26,7 @@ public class TextTrigger : MonoBehaviour
     bool hasUsed;
     bool doDistanceCheck;
     GameObject player;
+    float delayTimer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -42,22 +45,36 @@ public class TextTrigger : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player" && !hasUsed && !TextManager.Instance.displaying)
         {
-            TextManager.Instance.DisplayText(displayText);
-            if (mode == DisappearMode.Time)
+            delayTimer = 0;   
+        }
+     }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player" && !hasUsed && !TextManager.Instance.displaying)
+        {         
+            if (delayTimer < delayActivation)
             {
-                //Debug.Log("waiting for fade");
-                StartCoroutine(WaitForFade(timeUntilFadeOut));
+                //happens instantly for some reason?
+                delayTimer += Time.deltaTime;
+                Debug.Log(delayTimer);
             }
-            else if (mode == DisappearMode.Distance)
+            if(delayTimer >= delayActivation)
             {
-                doDistanceCheck = true;
-                player = other.gameObject;
+                TextManager.Instance.DisplayText(displayText);
+                if (mode == DisappearMode.Time)
+                {
+                    //Debug.Log("waiting for fade");
+                    StartCoroutine(WaitForFade(timeUntilFadeOut));
+                }
+                else if (mode == DisappearMode.Distance)
+                {
+                    doDistanceCheck = true;
+                    player = other.gameObject;
+                }
             }
         }
     }
