@@ -1,25 +1,46 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TextTrigger : MonoBehaviour
 {
-    
+    public enum DisappearMode { Time, Distance}
+    public DisappearMode mode = DisappearMode.Time; 
     public string displayText;
+
+    [Header("Timer Settings")]
     [Tooltip("time it takes until the fade out starts, 0 for no auto fade")]
     public float timeUntilFadeOut;
     [Tooltip("duration of the fade when the text is removed")]
     public float fadeTime;
+
+    [Header("Distance Settings")]
+    public float distanceThreshold;
+
+    [Header("General Settings")]
     public bool oneUse;
+
     bool hasUsed;
+    public bool doDistanceCheck;
+    GameObject player;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GetComponent<MeshRenderer>().enabled = false;
         hasUsed = false;
     }
-    private void FixedUpdate()
+    private void Update()
     {
+        if(doDistanceCheck)
+        {
+            Debug.Log((gameObject.transform.position - player.transform.position).magnitude);
+            if (distanceThreshold < (gameObject.transform.position - player.transform.position).magnitude)
+            {
+                StartCoroutine(WaitForFade(0));
+                doDistanceCheck = false;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -28,16 +49,22 @@ public class TextTrigger : MonoBehaviour
         if (other.gameObject.tag == "Player" && !hasUsed && !TextManager.Instance.displaying)
         {
             TextManager.Instance.DisplayText(displayText);
-            if (timeUntilFadeOut > 0)
+            if (mode == DisappearMode.Time)
             {
                 //Debug.Log("waiting for fade");
                 StartCoroutine(WaitForFade(timeUntilFadeOut));
+            }
+            else if (mode == DisappearMode.Distance)
+            {
+                doDistanceCheck = true;
+                player = other.gameObject;
             }
         }
     }
 
     IEnumerator WaitForFade(float seconds)
     {
+        Debug.Log("running");
         yield return new WaitForSeconds(seconds);
         StartCoroutine(TextManager.Instance.TextFadeOut(fadeTime));
         if (oneUse) { hasUsed = true; }
