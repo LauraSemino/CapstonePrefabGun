@@ -1,4 +1,5 @@
 
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -40,6 +41,7 @@ public class PrefabGun : MonoBehaviour
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
+    [SerializeField] TextMeshProUGUI costIndex;
     public Transform displayPoint;
     private GameObject displayedObject;
     [SerializeField] GameObject prefabGunModel;
@@ -74,6 +76,13 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] LayerMask noBuildZone;
     [SerializeField] private PlayerControl player;
 
+    [Header("Budget Feedback")]
+    [SerializeField] float shakeDuration = 0.4f;
+    Vector3 budgetBaseScale = Vector3.one;
+    Quaternion budgetBaseRotation = Quaternion.identity;
+    Vector2 budgetBasePos;
+    Coroutine budgetShakeRoutine;
+    private bool shaking = false;
 
     // Game default settings
     private void Awake()
@@ -85,6 +94,9 @@ public class PrefabGun : MonoBehaviour
             if (obj != null)
                 savedIDs.Add(obj.id);
         }
+        budgetBasePos = ((RectTransform)budgetBar.transform).anchoredPosition;
+        budgetBaseScale = ((RectTransform)budgetBar.transform).localScale;
+        budgetBaseRotation = ((RectTransform)budgetBar.transform).rotation;
         instance = this;
         UpdateDisplay();
         player = GetComponentInParent<PlayerControl>();
@@ -148,6 +160,51 @@ public class PrefabGun : MonoBehaviour
         else if (percent < 0.5) img.color = Color.green;
         else if (percent > 0.75f) img.color = Color.red;
     }
+
+    void ShowNotEnoughBudget()
+    {
+        StopCoroutine(budgetShakeRoutine);
+        budgetShakeRoutine = StartCoroutine(BudgetShake());
+    }
+
+    IEnumerator BudgetShake()
+    {
+        shaking = true;
+        RectTransform rt = (RectTransform)budgetBar.transform;
+        Image[] imgs = budgetBar.GetComponentsInChildren<Image>(); // Get bar image
+        Image img = imgs[1];
+
+        UpdateBudgetUI();
+        img.color = Color.Lerp(img.color, Color.red, 0.7f); // Change color
+
+        float timed = 0f;
+        while (timed < shakeDuration)
+        {
+            timed += Time.deltaTime;
+            float going = timed / shakeDuration;
+            float fade = 1f - going;         
+
+            Vector2 offset = Vector2.zero;
+            float angle = 0f;
+            angle = Mathf.Sin(going * Mathf.PI * 2f * 3f) * 7f * Mathf.Exp(-4f * going); // Change angle for shake
+            offset.y = Mathf.Abs(Mathf.Sin(going * Mathf.PI * 2f * 3f)) * 0.4f * fade; // Change offset for shake
+            rt.anchoredPosition = budgetBasePos + offset; // Set pos and orot to offset and angle
+            rt.localRotation = budgetBaseRotation * Quaternion.Euler(0f, 0f, angle);
+            yield return null;
+        }
+
+        // Put everything back to the norm
+        rt.anchoredPosition = budgetBasePos;
+        rt.localRotation = budgetBaseRotation;
+        rt.localScale = budgetBaseScale;
+        img.color = Color.Lerp(img.color, Color.white, 1f);
+        UpdateBudgetUI();
+        shaking = false;
+        budgetShakeRoutine = null;
+    }
+
+
+
     void ClearAimOutline()
     {
         if (currentOutlined != null)
@@ -234,26 +291,30 @@ public class PrefabGun : MonoBehaviour
     // Start the object placement process
     public void StartPlace()
     {
-        if (savedObjects.Count == 0)
+        if (savedObjects.Count == 0) return;
+        if (isPlaceMode) return;
+        GenericObject OG = savedObjects[curObjIndex];
+        if (curBudget + OG.cost > maxBudget)
+        {
+            if (!shaking)
+               ShowNotEnoughBudget();
             return;
-        if (isPlaceMode)
-            return;
-
+        }
         // Set stats to default and show preview
         isPlaceMode = true;
         rotationInput = Vector3.zero;
         rotationOffset = Vector3.zero;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
         snapTo = true;
-        GenericObject OG = savedObjects[curObjIndex];
-        toPlace = Instantiate(OG.prefab); 
+        toPlace = Instantiate(OG.prefab);
         Preview(toPlace);
 
         placeIndicator = Instantiate(placeVisual, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), toPlace.transform);
-        placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y ,1 / toPlace.transform.localScale.z);
+        placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y, 1 / toPlace.transform.localScale.z);
         placeIndicator.transform.localPosition = new Vector3(0f, -placeIndicator.transform.localScale.y * 0.5f, 0f);
         UpdatePlacement();
     }
+
 
     // Place down object
     public void ConfirmPlace()
@@ -636,7 +697,7 @@ public class PrefabGun : MonoBehaviour
     void UpdateDisplay()
     {
         displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
-
+        
         if (displayedObject != null)
         {
             Destroy(displayedObject);
@@ -646,7 +707,7 @@ public class PrefabGun : MonoBehaviour
         if (savedObjects.Count == 0) return;
 
         GenericObject OG = savedObjects[curObjIndex];
-
+        costIndex.text = OG.cost.ToString();
         displayedObject = Instantiate(OG.prefab, displayPoint);
 
         displayedObject.SetActive(true);

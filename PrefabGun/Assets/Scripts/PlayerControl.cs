@@ -41,7 +41,6 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float jumpStrength; // How big we be jumping
     public Vector3 spawnPos; // Where we respawn after dying
     public Rigidbody rb;
-    public MeshCollider capsule;
     public bool isGrounded; // we on ground?
     private bool wasGrounded; // Were we grounded?
     public float originalWalkSpeed;
