@@ -167,6 +167,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   placementSurfaceOffset: 0.05
+  placeCooldown: 0.15
   displayIndex: {fileID: 5513989560480766802}
   cost1: {fileID: 8595289894018260149}
   cost2: {fileID: 3755663460677446645}

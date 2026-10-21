@@ -38,6 +38,7 @@ public class PrefabGun : MonoBehaviour
     bool isPlaceMode;
     [SerializeField] LayerMask placementBlockMask;
     [SerializeField] float placementSurfaceOffset = 0.05f;
+    public float placeCooldown = 2f;
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
@@ -93,6 +94,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] float lineThickness = 2f;
     [SerializeField] Color lineColor;
     readonly List<RectTransform> budgetLines = new List<RectTransform>();
+    private float timer;
 
     // Game default settings
     private void Awake()
@@ -167,6 +169,7 @@ public class PrefabGun : MonoBehaviour
             }
         }
         UpdateCostPreview();
+        timer += Time.deltaTime;
     }
 
     void ClearAimOutline()
@@ -255,6 +258,7 @@ public class PrefabGun : MonoBehaviour
     // Start the object placement process
     public void StartPlace()
     {
+        if (timer < placeCooldown) return;
         if (savedObjects.Count == 0) return;
         if (isPlaceMode) return;
         GenericObject OG = savedObjects[curObjIndex];
@@ -306,6 +310,7 @@ public class PrefabGun : MonoBehaviour
             ObjectData data = placedDownObject.GetComponent<ObjectData>();
             data.createdByPlayer = true;
         }
+        timer = 0;
         ExitPlace();
     }
 
