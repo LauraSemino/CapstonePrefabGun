@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/POCBuildLevel.unity
+    guid: 9754e145c728bc140bf5b5609054884f
+  - enabled: 0
     path: Assets/Scenes/LauraTestPuzzle.unity
     guid: 009d066ee38704642845a4bd3ad84806
   - enabled: 0
