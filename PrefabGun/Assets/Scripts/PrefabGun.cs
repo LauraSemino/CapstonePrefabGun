@@ -604,6 +604,11 @@ public class PrefabGun : MonoBehaviour
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             ps.GetComponent<ParticleSystemRenderer>().enabled = false;
         }
+
+        foreach (Transform trs in display.GetComponentsInChildren<Transform>())
+        {
+            trs.gameObject.layer = 8;
+        }
     }
     public void BuildBudgetLines()
     {
