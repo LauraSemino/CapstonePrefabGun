@@ -2,51 +2,38 @@ using UnityEngine;
 
 public class ObjectOutline : MonoBehaviour
 {
-    private Renderer[] renderers;
-    private Material[][] normalMaterials;
-    private Material[][] outlineMaterials;
-    private Material[][] xrayMaterials;
+    private MeshRenderer[] renderers;
+    private Material[][] original;
 
     void Awake()
     {
         renderers = GetComponentsInChildren<MeshRenderer>();
-
-        normalMaterials = new Material[renderers.Length][];
-        outlineMaterials = new Material[renderers.Length][];
-        xrayMaterials = new Material[renderers.Length][];
+        original = new Material[renderers.Length][];
 
         for (int i = 0; i < renderers.Length; i++)
-        {
-            Material[] all = renderers[i].sharedMaterials;
+            original[i] = renderers[i].sharedMaterials;
 
-            xrayMaterials[i] = all;
-            normalMaterials[i] = new Material[] { all[0] };
-
-            // Save materials but xray
-            if (all.Length >= 2)
-                outlineMaterials[i] = new Material[] { all[0], all[1] };
-
-            // Save only the first material
-            else
-                outlineMaterials[i] = normalMaterials[i];
-
-            // Hide the outline
-            renderers[i].sharedMaterials = normalMaterials[i];
-        }
+        SetOutline(false);
     }
 
-    public void SetOutline(bool show, bool seeThrough = false)
+    public void SetOutline(bool show, bool seeThrough = false, Material outlineOverride = null)
     {
-        if (renderers == null) return;
-
         for (int i = 0; i < renderers.Length; i++)
         {
-            if (!show)
-                renderers[i].sharedMaterials = normalMaterials[i];
-            else if (seeThrough)
-                renderers[i].sharedMaterials = xrayMaterials[i];
-            else
-                renderers[i].sharedMaterials = outlineMaterials[i];
+            Material[] mats = original[i];
+
+            int count = 1;
+            if (show) count = seeThrough ? 3 : 2;
+            count = Mathf.Min(count, mats.Length);
+
+            Material[] result = new Material[count];
+            for (int j = 0; j < count; j++)
+                result[j] = mats[j];
+
+            if (show && outlineOverride != null && count >= 2)
+                result[1] = outlineOverride;
+
+            renderers[i].sharedMaterials = result;
         }
     }
 }

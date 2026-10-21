@@ -1918,6 +1918,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: maxBudget
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: lineColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -1933,6 +1937,14 @@ PrefabInstance:
       propertyPath: lineThickness
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: outlineNewMat
+      value: 
+      objectReference: {fileID: 2100000, guid: 3507b9f1b96b2634abc4937228b88ea4, type: 2}
+    - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
+      propertyPath: outlineScannedMat
+      value: 
+      objectReference: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
     - target: {fileID: 4285233441969218173, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: m_SizeDelta.x
       value: -5.8700047
@@ -2806,6 +2818,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fan
       objectReference: {fileID: 0}
+    - target: {fileID: 9063584267466488080, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
+      propertyPath: CollisionModule.type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063584267466488080, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
+      propertyPath: CollisionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063584267466488080, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
+      propertyPath: CollisionModule.minKillSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063584267466488080, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
+      propertyPath: CollisionModule.m_Dampen.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063584267466488080, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
+      propertyPath: CollisionModule.m_EnergyLossOnCollision.scalar
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8465370728540731846, guid: a81a4b7c747cae8408ad14620b7da903, type: 3}
     m_RemovedGameObjects: []
@@ -3360,6 +3392,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box
       objectReference: {fileID: 0}
+    - target: {fileID: 3110418430174412610, guid: 959a9e998cddcb84699202c461f50659, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3110418430174412610, guid: 959a9e998cddcb84699202c461f50659, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
+    - target: {fileID: 3110418430174412610, guid: 959a9e998cddcb84699202c461f50659, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c4c7444c037d7a742bfa9c4eb2933b0f, type: 2}
     - target: {fileID: 5559014992645945498, guid: 959a9e998cddcb84699202c461f50659, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

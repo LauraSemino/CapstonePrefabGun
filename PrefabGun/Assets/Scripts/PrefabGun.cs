@@ -95,6 +95,11 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Color lineColor;
     readonly List<RectTransform> budgetLines = new List<RectTransform>();
     private float timer;
+    [SerializeField] Material scannedOutlineMat;
+    bool currentScanned;
+    bool alreadyScanned = false;
+    ObjectOutline hitOutline = null;
+
 
     bool doneBudgetTutorial;
 
@@ -154,23 +159,27 @@ public class PrefabGun : MonoBehaviour
                 if (Physics.SphereCast(transform.position, 0.25f, transform.forward, out RaycastHit hit, 5f, grabObjectsLayer))
                 {
                     hitOutline = hit.collider.GetComponentInParent<ObjectOutline>();
+
+                    ObjectData hitData = hit.collider.GetComponentInParent<ObjectData>();
+                    if (hitData != null && hitData.objData != null)
+                        alreadyScanned = savedIDs.Contains(hitData.objData.id);
                 }
             }
 
-            // Turn off the old outline when aiming elsewhere
-            if (currentOutlined != hitOutline)
+            if (currentOutlined != hitOutline || currentScanned != alreadyScanned)
             {
-                if (currentOutlined != null)
+                if (currentOutlined != null && currentOutlined != hitOutline)
                     currentOutlined.SetOutline(false);
 
                 currentOutlined = hitOutline;
+                currentScanned = alreadyScanned;
 
-                // Turn on the new outline
                 if (currentOutlined != null)
-                    currentOutlined.SetOutline(true);
+                    currentOutlined.SetOutline(true, false, alreadyScanned ? scannedOutlineMat : null);
             }
         }
-        UpdateCostPreview();
+
+            UpdateCostPreview();
         timer += Time.deltaTime;
     }
 
