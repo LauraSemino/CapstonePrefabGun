@@ -33,8 +33,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1096492994243502793}
   - {fileID: 1867695123704069832}
-  - {fileID: 2591577116099612640}
   m_Father: {fileID: 5643591006055324216}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &1329405914471651511
@@ -112,7 +112,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 7766578111622128333}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -262,7 +263,7 @@ GameObject:
   - component: {fileID: 5580592694723194542}
   - component: {fileID: 1851293914924374581}
   - component: {fileID: 1278350642509588837}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: deleteList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -399,7 +400,7 @@ GameObject:
   - component: {fileID: 3593942718290277856}
   - component: {fileID: 3550372290606709009}
   - component: {fileID: 1346132438371876818}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: deletePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -476,7 +477,7 @@ GameObject:
   - component: {fileID: 5142433777688313220}
   - component: {fileID: 3149839397551076142}
   - component: {fileID: 9060061648643749119}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,7 +615,7 @@ GameObject:
   - component: {fileID: 3685947266200390871}
   - component: {fileID: 5388620978262218238}
   - component: {fileID: 5605094364657836602}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -721,7 +722,7 @@ GameObject:
   - component: {fileID: 3410361747677005458}
   - component: {fileID: 3741715929120386165}
   - component: {fileID: 3076163845289771946}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Gun2DPlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -822,7 +823,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1154776594251036227}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: ObjectDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -854,7 +855,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9089701842289206303}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Image 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -893,7 +894,7 @@ GameObject:
   - component: {fileID: 7233014482945338293}
   - component: {fileID: 3963517968710067255}
   - component: {fileID: 3132151597760519760}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1030,7 +1031,7 @@ GameObject:
   - component: {fileID: 1867695123704069832}
   - component: {fileID: 2540502354553073134}
   - component: {fileID: 2887642511173776932}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: PrefabGunModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1045,13 +1046,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4069804065010821513}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.413, y: -0.23, z: 0.551}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.4130001, y: -0.23000002, z: 0.5510001}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1154776594251036227}
   - {fileID: 609031995634768382}
+  - {fileID: 2591577116099612640}
   m_Father: {fileID: 3141674384931724114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2540502354553073134
@@ -1122,7 +1124,7 @@ GameObject:
   - component: {fileID: 1287556691676941250}
   - component: {fileID: 3160872775603331240}
   - component: {fileID: 4159306999560390019}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1197,7 +1199,7 @@ GameObject:
   - component: {fileID: 2071076705359847109}
   - component: {fileID: 3036675569078795618}
   - component: {fileID: 2506501306543700546}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1697,7 +1699,7 @@ GameObject:
   - component: {fileID: 7254587355253497647}
   - component: {fileID: 3712434620720063381}
   - component: {fileID: 5513989560480766802}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: objectIndex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1720,7 +1722,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.15, y: 0.16}
+  m_AnchoredPosition: {x: -1.719, y: 0.16}
   m_SizeDelta: {x: 15, y: 7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3712434620720063381
@@ -1834,7 +1836,7 @@ GameObject:
   - component: {fileID: 2182066701730134691}
   - component: {fileID: 7212976405196448006}
   - component: {fileID: 5262149599615238799}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: budgetFillImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1909,7 +1911,7 @@ GameObject:
   - component: {fileID: 1951811562670100497}
   - component: {fileID: 4886335326168065395}
   - component: {fileID: 3737539129749837179}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: budgetBackImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1984,7 +1986,7 @@ GameObject:
   - component: {fileID: 6465024233619627774}
   - component: {fileID: 7648333264998254121}
   - component: {fileID: 7110834484401960844}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2048,6 +2050,134 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &7654929771685436808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1096492994243502793}
+  - component: {fileID: 7766578111622128333}
+  - component: {fileID: 4245617406988351752}
+  m_Layer: 0
+  m_Name: GunCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1096492994243502793
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7654929771685436808}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 1, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3141674384931724114}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &7766578111622128333
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7654929771685436808}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 4
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 256
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!114 &4245617406988351752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7654929771685436808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 1
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &7856789028848992449
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,7 +2189,7 @@ GameObject:
   - component: {fileID: 4782087286504522142}
   - component: {fileID: 5187813460804136429}
   - component: {fileID: 1536902188979867680}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: BudgetBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2154,7 +2284,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4894380659067847760}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Arrows
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2169,7 +2299,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7864531274805230806}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.048}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2193,7 +2323,7 @@ GameObject:
   - component: {fileID: 4960019093741646598}
   - component: {fileID: 3327877823047345849}
   - component: {fileID: 7072601728519948941}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: LeftArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2313,7 +2443,7 @@ GameObject:
   - component: {fileID: 9151090117681313353}
   - component: {fileID: 636282716112367961}
   - component: {fileID: 5908362705631692251}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2388,7 +2518,7 @@ GameObject:
   - component: {fileID: 5109627934544963801}
   - component: {fileID: 2891938586217234515}
   - component: {fileID: 6990346826811371134}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: RightArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2461,7 +2591,7 @@ GameObject:
   - component: {fileID: 4237532216631247392}
   - component: {fileID: 2880260343429290914}
   - component: {fileID: 7590285116953450065}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: deleteList (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2596,7 +2726,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2591577116099612640}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: DisplayPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2611,12 +2741,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9164308814347469796}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2684, y: 0.0469, z: 0.5868}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.5783999, y: 1.1076002, z: 0.07159996}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3141674384931724114}
+  m_Father: {fileID: 1867695123704069832}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6898107158509840716
 PrefabInstance:
@@ -2626,6 +2756,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1867695123704069832}
     m_Modifications:
+    - target: {fileID: 525628380678142192, guid: d50ddd6571c8d9847b90d854d9bdd149, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6325667099098656946, guid: d50ddd6571c8d9847b90d854d9bdd149, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -2677,6 +2811,14 @@ PrefabInstance:
     - target: {fileID: 6666057638642903560, guid: d50ddd6571c8d9847b90d854d9bdd149, type: 3}
       propertyPath: m_Name
       value: prefabgun_POC
+      objectReference: {fileID: 0}
+    - target: {fileID: 6666057638642903560, guid: d50ddd6571c8d9847b90d854d9bdd149, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6714762093790817804, guid: d50ddd6571c8d9847b90d854d9bdd149, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
