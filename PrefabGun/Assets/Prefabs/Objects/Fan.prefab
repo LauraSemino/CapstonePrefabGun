@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4863221265249065138}
   - component: {fileID: 4250957455964770175}
   - component: {fileID: 4485571727969368295}
+  - component: {fileID: 3908184658436292477}
   m_Layer: 0
   m_Name: Propellers
   m_TagString: Untagged
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!95 &3908184658436292477
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2874672537376968436}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8474ca36aa476bc49b4c9d623960c32e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2932426908335612704
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,13 +420,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ca0eba5dab3f74f8aaeb84dd2bdf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FanWind
-  windStrength: 20
+  windness: 20
   range: 9.61
   radius: 1
-  blockMass: 50
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1001 &2809478563375718577
 PrefabInstance:
   m_ObjectHideFlags: 0
