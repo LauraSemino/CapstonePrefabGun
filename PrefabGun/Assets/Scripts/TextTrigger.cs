@@ -40,7 +40,7 @@ public class TextTrigger : MonoBehaviour
             Debug.Log((gameObject.transform.position - player.transform.position).magnitude);
             if (distanceThreshold < (gameObject.transform.position - player.transform.position).magnitude)
             {
-                StartCoroutine(WaitForFade(0));
+                StartCoroutine(TextManager.Instance.WaitForFade(0,fadeTime));
                 doDistanceCheck = false;
             }
         }
@@ -68,22 +68,17 @@ public class TextTrigger : MonoBehaviour
                 if (mode == DisappearMode.Time)
                 {
                     //Debug.Log("waiting for fade");
-                    StartCoroutine(WaitForFade(timeUntilFadeOut));
+                    StartCoroutine(TextManager.Instance.WaitForFade(timeUntilFadeOut, fadeTime));               
                 }
                 else if (mode == DisappearMode.Distance)
                 {
                     doDistanceCheck = true;
                     player = other.gameObject;
                 }
+                if (oneUse) { hasUsed = true; }
             }
         }
     }
 
-    IEnumerator WaitForFade(float seconds)
-    {
-        Debug.Log("running");
-        yield return new WaitForSeconds(seconds);
-        StartCoroutine(TextManager.Instance.TextFadeOut(fadeTime));
-        if (oneUse) { hasUsed = true; }
-    }
+
 }

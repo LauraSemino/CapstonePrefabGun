@@ -96,6 +96,8 @@ public class PrefabGun : MonoBehaviour
     readonly List<RectTransform> budgetLines = new List<RectTransform>();
     private float timer;
 
+    bool doneBudgetTutorial;
+
     // Game default settings
     private void Awake()
     {
@@ -678,6 +680,12 @@ public class PrefabGun : MonoBehaviour
 
     void ShowNotEnoughBudget()
     {
+        if (TextManager.Instance != null && doneBudgetTutorial == false)
+        {
+            TextManager.Instance.DisplayText("You are out of budget, press middle click to view your placed items and then press left click to delete an object");
+            StartCoroutine(TextManager.Instance.WaitForFade(10, 1));
+            doneBudgetTutorial = true;
+        }
         if (budgetShakeRoutine != null)
             StopCoroutine(budgetShakeRoutine);
         budgetShakeRoutine = StartCoroutine(BudgetShake());

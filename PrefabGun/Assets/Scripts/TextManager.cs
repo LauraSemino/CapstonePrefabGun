@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
@@ -46,5 +48,12 @@ public class TextManager : MonoBehaviour
         {
             displaying = false;
         }
+    }
+    public IEnumerator WaitForFade(float seconds, float fadeTime)
+    {
+        Debug.Log("running");
+        yield return new WaitForSeconds(seconds);
+        StartCoroutine(TextFadeOut(fadeTime));
+
     }
 }
