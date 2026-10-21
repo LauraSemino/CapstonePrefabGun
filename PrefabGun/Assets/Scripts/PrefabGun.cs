@@ -622,8 +622,8 @@ public class PrefabGun : MonoBehaviour
             float t = (i + 1) / maxBudget;
 
             RectTransform rt = budgetLines[i];
-            rt.anchorMin = new Vector2(0.11f, t);
-            rt.anchorMax = new Vector2(0.89f, t);
+            rt.anchorMin = new Vector2(0.05f, t);
+            rt.anchorMax = new Vector2(0.95f, t);
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.anchoredPosition = Vector2.zero;
             rt.sizeDelta = new Vector2(0f, lineThickness);
@@ -634,7 +634,7 @@ public class PrefabGun : MonoBehaviour
     void UpdateCostPreview()
     {
         bool placing = isPlaceMode && toPlace != null && savedObjects.Count > 0;
-        float flash = (Mathf.Sin(Time.time * 8f) + 1f) * 0.5f;
+        float flash = (Mathf.Sin(Time.time * 5f) + 1f) * 0.5f;
         if (budgetPreview == null) return;
         budgetPreview.gameObject.SetActive(placing);
         if (!placing || maxBudget <= 0f) return;
@@ -644,13 +644,13 @@ public class PrefabGun : MonoBehaviour
 
         budgetPreview.anchorMin = new Vector2(0f, from);
         budgetPreview.anchorMax = new Vector2(1f, to);
-        budgetPreview.offsetMin = new Vector2(3, -0.3f);
-        budgetPreview.offsetMax = new Vector2(-3, 0.3f);
+        budgetPreview.offsetMin = new Vector2(2f, 0f);
+        budgetPreview.offsetMax = new Vector2(-2f, 0f);
 
         if (previewImage != null)
         {
-            Color c = Color.yellow;
-            c.a = Mathf.Lerp(0.25f, 0.7f, flash);
+            Color c = Color.black;
+            c.a = Mathf.Lerp(0.25f, 1f, flash);
             previewImage.color = c;
         }
     }
@@ -703,7 +703,7 @@ public class PrefabGun : MonoBehaviour
         rt.anchoredPosition = budgetBasePos;
         rt.localRotation = budgetBaseRotation;
         rt.localScale = budgetBaseScale;
-        img.color = Color.Lerp(img.color, Color.white, 1f);
+        img.color = Color.Lerp(img.color, Color.black, 1f);
         UpdateBudgetUI();
         shaking = false;
         budgetShakeRoutine = null;
