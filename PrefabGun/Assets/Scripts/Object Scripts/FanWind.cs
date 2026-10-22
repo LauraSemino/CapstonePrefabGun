@@ -8,7 +8,7 @@ public class FanWind : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 origin = transform.position - transform.up * radius + transform.up * 0.25f;
+        Vector3 origin = transform.position - transform.up * radius;
 
         if (Physics.SphereCast(origin, radius, transform.up, out RaycastHit hit, range + radius))
         {
