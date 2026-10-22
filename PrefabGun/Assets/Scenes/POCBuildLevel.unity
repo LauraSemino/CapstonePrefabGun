@@ -312,6 +312,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+    - target: {fileID: 2489260377715256513, guid: 9f0e7c0ffc8e2ed42bfc4fccc73ad20c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -55.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2489260377715256513, guid: 9f0e7c0ffc8e2ed42bfc4fccc73ad20c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 114.818
+      objectReference: {fileID: 0}
     - target: {fileID: 2675866226751255181, guid: 9f0e7c0ffc8e2ed42bfc4fccc73ad20c, type: 3}
       propertyPath: m_Name
       value: FanIntro (1)
