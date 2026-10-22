@@ -3,7 +3,7 @@ using UnityEngine;
 public class FanWind : MonoBehaviour
 {
     public float windness = 20f; // How wind the wind is
-    public float range = 10f;    // How far the wind blows
+    public float range = 4.5f;    // How far the wind blows
     public float radius = 1f;    // Width of the wind
 
     void FixedUpdate()
