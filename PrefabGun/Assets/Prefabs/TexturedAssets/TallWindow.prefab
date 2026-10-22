@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7042925531580663095}
   - component: {fileID: 2070731444323129632}
   - component: {fileID: 1067353146567549016}
-  - component: {fileID: 7792278574720292515}
+  - component: {fileID: 6205604046682307743}
   m_Layer: 0
   m_Name: TallWindow
   m_TagString: Untagged
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7792278574720292515
-MeshCollider:
+--- !u!65 &6205604046682307743
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,7 +109,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2896377261620692506, guid: aebfad9d2c7a73f45b379daa6dd2c1d0, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.5, y: 12, z: 1.65}
+  m_Center: {x: 0, y: 0, z: 0}

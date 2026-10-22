@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 4035606294874255767}
   - component: {fileID: 2292583693415530055}
   - component: {fileID: 4973512422642312652}
+  - component: {fileID: 3880434767379402172}
   m_Layer: 0
   m_Name: RightHandComputerWall
   m_TagString: Untagged
@@ -181,3 +182,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3880434767379402172
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636024912835683094}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 341681414943341791, guid: b31bb2716bb9f91418066cdf7f1556c1, type: 3}
