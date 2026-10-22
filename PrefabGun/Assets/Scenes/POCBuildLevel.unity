@@ -4518,6 +4518,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 769829058}
     m_Modifications:
+    - target: {fileID: 1725381825368502113, guid: 87c9fa859c43486439c550fee37937d2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4487694270978126987, guid: 87c9fa859c43486439c550fee37937d2, type: 3}
       propertyPath: m_Name
       value: Bridge1
@@ -4561,6 +4565,10 @@ PrefabInstance:
     - target: {fileID: 6092277722967451601, guid: 87c9fa859c43486439c550fee37937d2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6692343915480930275, guid: 87c9fa859c43486439c550fee37937d2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
