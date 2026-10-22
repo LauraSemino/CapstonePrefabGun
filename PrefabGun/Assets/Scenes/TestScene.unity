@@ -2002,7 +2002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: maxBudget
-      value: 5
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3059690025070761662, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: lineColor.b
