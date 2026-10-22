@@ -425,7 +425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1599270307039442217, guid: 9dd634fce64d73243b12e5010df9ab78, type: 3}
       propertyPath: sceneToLoad
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2890790195975719967, guid: 9dd634fce64d73243b12e5010df9ab78, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4010,6 +4010,10 @@ PrefabInstance:
     - target: {fileID: 1590190915158016574, guid: 9dd634fce64d73243b12e5010df9ab78, type: 3}
       propertyPath: m_Name
       value: LevelLoader
+      objectReference: {fileID: 0}
+    - target: {fileID: 1599270307039442217, guid: 9dd634fce64d73243b12e5010df9ab78, type: 3}
+      propertyPath: sceneToLoad
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2890790195975719967, guid: 9dd634fce64d73243b12e5010df9ab78, type: 3}
       propertyPath: m_LocalPosition.x
