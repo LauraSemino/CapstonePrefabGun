@@ -4705,6 +4705,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lobby
       objectReference: {fileID: 0}
+    - target: {fileID: 3663666378570554051, guid: fdcddd0e677ebac47b80a145c6d91e53, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3663666378570554051, guid: fdcddd0e677ebac47b80a145c6d91e53, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3663666378570554051, guid: fdcddd0e677ebac47b80a145c6d91e53, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3697618968706927576, guid: fdcddd0e677ebac47b80a145c6d91e53, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.549
