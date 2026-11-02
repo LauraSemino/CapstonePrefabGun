@@ -51,7 +51,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject arrows;
  
     [Header("Budget")]
-    [SerializeField] float maxBudget;
+    [SerializeField] public float maxBudget;
     [SerializeField] Scrollbar budgetBar;
     public float curBudget;
 
