@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BudgetChanger : MonoBehaviour
@@ -6,11 +7,22 @@ public class BudgetChanger : MonoBehaviour
     public BudgetMode mode = BudgetMode.Add;
     public int setBudget;
     public bool isCollected = false;
+    [SerializeField] GameObject model;
+    [SerializeField] float rotationSpeed;
+    float rotation;
     private void Start()
-    {    
+    {
         if (isCollected)
         {
             gameObject.SetActive(false);
+        }
+    }
+    private void FixedUpdate()
+    {
+        if(!isCollected)
+        {
+            rotation += rotationSpeed;
+            model.transform.rotation = Quaternion.Euler(90f, rotation, 0f);
         }
     }
     private void OnCollect()
