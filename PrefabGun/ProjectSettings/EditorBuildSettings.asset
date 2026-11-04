@@ -6,16 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/POCBuildLevel.unity
+    path: Assets/Scenes/PrePoCScenes/POCBuildLevel.unity
     guid: 9754e145c728bc140bf5b5609054884f
   - enabled: 1
     path: Assets/Scenes/TestScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0
-    path: Assets/Scenes/LauraTestPuzzle.unity
+    path: Assets/Scenes/PrePoCScenes/LauraTestPuzzle.unity
     guid: 009d066ee38704642845a4bd3ad84806
   - enabled: 0
-    path: Assets/Scenes/OliviaPrototypeScene.unity
+    path: Assets/Scenes/PrePoCScenes/OliviaPrototypeScene.unity
     guid: dfa4ac5663bfde343b00024193e77597
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
