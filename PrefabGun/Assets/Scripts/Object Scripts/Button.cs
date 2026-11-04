@@ -6,6 +6,7 @@ public class PressButton : MonoBehaviour
     public LayerMask pressLayers = ~0;
     public float connectRange = 8f;
     public LineRenderer line;
+    public int frequency;
 
     List<Door> nearbyDoors = new List<Door>();
     List<Door> heldDoors = new List<Door>();
@@ -44,8 +45,11 @@ public class PressButton : MonoBehaviour
             FindDoors();
             foreach (Door door in nearbyDoors)
             {
-                door.pressCount++;
-                heldDoors.Add(door);
+                if (door.frequency == frequency)
+                {
+                    door.pressCount++;
+                    heldDoors.Add(door);
+                }
             }
         }
         else
@@ -59,8 +63,11 @@ public class PressButton : MonoBehaviour
         nearbyDoors.Clear();
         foreach (Door door in Door.All)
         {
-            if (Vector3.Distance(transform.position + Vector3.up * 0.1f, door.transform.position) <= connectRange)
-                nearbyDoors.Add(door);
+            if (door.frequency == frequency)
+            {
+                if (Vector3.Distance(transform.position + Vector3.up * 0.1f, door.transform.position) <= connectRange)
+                    nearbyDoors.Add(door);
+            }
         }
         return nearbyDoors.Count;
     }
