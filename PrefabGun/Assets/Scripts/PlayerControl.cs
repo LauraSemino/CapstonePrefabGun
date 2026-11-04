@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -91,9 +92,8 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        DoLook();
+        DoLook();  
     }
-
     void FixedUpdate()
     {
         DoMovement();
@@ -122,6 +122,10 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnCrouch(InputAction.CallbackContext context)
     {
+    }
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        //Cursor.lockState = CursorLockMode.None;
     }
 
     void DoLook()
