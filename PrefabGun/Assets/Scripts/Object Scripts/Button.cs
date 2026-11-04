@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PressButton : MonoBehaviour
@@ -7,6 +8,12 @@ public class PressButton : MonoBehaviour
     public float connectRange = 8f;
     public LineRenderer line;
     public int frequency;
+    public Transform pressurePlate;
+    public float pressDepth;
+    public float pressSpeed;
+
+    Vector3 pressPos;
+    Vector3 unpressPos;
 
     List<Door> nearbyDoors = new List<Door>();
     List<Door> heldDoors = new List<Door>();
@@ -16,6 +23,9 @@ public class PressButton : MonoBehaviour
     void Awake()
     {
         line.positionCount = 0;
+
+        unpressPos = pressurePlate.localPosition;
+        pressPos = unpressPos - pressurePlate.up * pressDepth;
     }
 
     void OnTriggerEnter(Collider other)
@@ -37,12 +47,18 @@ public class PressButton : MonoBehaviour
         pressers.RemoveWhere(c => c == null || !c.enabled || !c.gameObject.activeInHierarchy);
 
         bool nowPressed = pressers.Count > 0;
+
+        Vector3 targetPos = pressed ? pressPos : unpressPos;
+
+        pressurePlate.localPosition = Vector3.MoveTowards(pressurePlate.localPosition, targetPos, Time.deltaTime * pressSpeed);
+
         if (nowPressed == pressed) return;
         pressed = nowPressed;
 
         if (pressed)
         {
             FindDoors();
+
             foreach (Door door in nearbyDoors)
             {
                 if (door.frequency == frequency)
@@ -57,6 +73,8 @@ public class PressButton : MonoBehaviour
             ReleaseDoors();
         }
     }
+
+
 
     int FindDoors()
     {
