@@ -16,6 +16,9 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] Material green;
     [SerializeField] Material red;
     [SerializeField] Material canBePlaced;
+    [SerializeField] Material noDoorMat;
+    bool placementWarning;
+
     public bool hasGun;
 
     [Header("Object Storage")]
@@ -46,7 +49,6 @@ public class PrefabGun : MonoBehaviour
     public Transform displayPoint;
     private GameObject displayedObject;
     [SerializeField] GameObject prefabGunModel;
-    [SerializeField] Material highlightMat;
     [SerializeField] GameObject placeVisual;
     [SerializeField] GameObject arrows;
  
@@ -376,8 +378,6 @@ public class PrefabGun : MonoBehaviour
             toPlace.transform.position = wantedPosition;
         }
 
-        SetPlacementValid(valid);
-
         targetPosition = toPlace.transform.position;
         targetRotation = wantedRotation;
 
@@ -396,19 +396,24 @@ public class PrefabGun : MonoBehaviour
         }
 
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
+        PressButton btn = toPlace.GetComponent<PressButton>();
+        int doorCount = btn != null ? btn.RefreshConnections() : 1;
+        SetPlacementValid(valid, valid && doorCount == 0);
+
     }
 
-    void SetPlacementValid(bool valid)
+    void SetPlacementValid(bool valid, bool warning = false)
     {
-        if (valid == placementValid) return;
+        if (valid == placementValid && warning == placementWarning) return;
         placementValid = valid;
-
-        Material mat = valid ? canBePlaced : red;
+        placementWarning = warning;
+        Material mat = !valid ? red : (warning ? noDoorMat : canBePlaced);
         if (mat == null || previewRenderers == null) return;
 
         foreach (Renderer r in previewRenderers)
         {
-            if (r == null) continue;
+            if (r == null || r is LineRenderer) continue;
+
 
             Material[] materials = r.sharedMaterials;
 
@@ -775,10 +780,12 @@ public class PrefabGun : MonoBehaviour
 
         previewRenderers = prev.GetComponentsInChildren<Renderer>();
         placementValid = true;
+        placementWarning = false;
 
         // Remove the outline and apply the green material
         foreach (Renderer renderer in previewRenderers)
         {
+            if (renderer is LineRenderer) continue;
             Material[] materials = renderer.sharedMaterials;
 
             for (int i = 0; i < materials.Length; i++)

@@ -1,21 +1,35 @@
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public void Open()
+    public static List<Door> All = new List<Door>();
+    public Vector3 openOffset = new Vector3(0f, 3f, 0f);
+    public float openSpeed = 4f;
+    public int pressCount = 0;
+    public bool open;
+
+    Vector3 closedPos;
+
+    void Awake() 
     {
-        BoxCollider bc = gameObject.GetComponent<BoxCollider>();
-        MeshRenderer sc = gameObject.GetComponent<MeshRenderer>();
-        bc.enabled = false;
-        sc.enabled = false;
+        closedPos = transform.localPosition; 
+    }
+    void OnEnable() 
+    {
+        All.Add(this); 
+    }
+    void OnDisable() 
+    { 
+        All.Remove(this); 
     }
 
-    public void Close()
+    void Update()
     {
-        BoxCollider bc = gameObject.GetComponent<BoxCollider>();
-        MeshRenderer sc = gameObject.GetComponent<MeshRenderer>();
-        bc.enabled = true;
-        sc.enabled = true;
+        Vector3 target = pressCount > 0 || open ? closedPos + openOffset : closedPos;
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, target, openSpeed * Time.deltaTime);
     }
 }
+
+
