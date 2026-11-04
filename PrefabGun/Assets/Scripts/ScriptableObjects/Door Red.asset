@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978892d5d9e94d748bda771816e28d00, type: 3}
-  m_Name: Door
+  m_Name: Door Red
   m_EditorClassIdentifier: Assembly-CSharp::GenericObject
   id: 9
   displayName: Door
   cost: 2
-  prefab: {fileID: 8112778043456826619, guid: da2912f6b6c428241b44753d1c6cf147, type: 3}
+  prefab: {fileID: 8828036390348696631, guid: 21ee3c8e432dfa94db1494a2a516ac92, type: 3}

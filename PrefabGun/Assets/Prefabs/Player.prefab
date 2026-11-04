@@ -157,6 +157,7 @@ MonoBehaviour:
   green: {fileID: 2100000, guid: 2afa6aaa9f4b6754c9a1bac8aafa2f10, type: 2}
   red: {fileID: 2100000, guid: 974b4d7e8f432434d8a25cb4c527f05b, type: 2}
   canBePlaced: {fileID: 2100000, guid: 7ea2fb22f7b0dad49992432d49cb34ca, type: 2}
+  noDoorMat: {fileID: 2100000, guid: 00c854d4ee4e2f44095d9e4556ca2b4b, type: 2}
   hasGun: 0
   savedObjects: []
   curObjIndex: 0
@@ -174,7 +175,6 @@ MonoBehaviour:
   cost2: {fileID: 3755663460677446645}
   displayPoint: {fileID: 2591577116099612640}
   prefabGunModel: {fileID: 4069804065010821513}
-  highlightMat: {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   placeVisual: {fileID: 4026340136938510059, guid: 5b1a13095d389db468bd916383dc7814, type: 3}
   arrows: {fileID: 7864531274805230806}
   maxBudget: 5

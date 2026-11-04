@@ -39,6 +39,6 @@ public class CollisionBreak : MonoBehaviour
 
     void Activate()
     {
-        door.Open();
+        door.open = true;
     }
 }

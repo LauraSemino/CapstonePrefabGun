@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 9077102099708328706}
   - component: {fileID: 4155111158467018956}
   m_Layer: 0
-  m_Name: Door
+  m_Name: Door Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01c0135e0bdf0ae47980f388e79b4f00, type: 2}
+  - {fileID: 2100000, guid: d8b4f3f790b8987458dd0ca641838367, type: 2}
   - {fileID: 2100000, guid: bcc6783b92bedef4faf41e463cbbf018, type: 2}
   - {fileID: 2100000, guid: c4c7444c037d7a742bfa9c4eb2933b0f, type: 2}
   m_StaticBatchInfo:
@@ -157,6 +157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa249ed707cee864e8db91616c338d99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
+  openOffset: {x: 0, y: 3, z: 0}
+  openSpeed: 4
+  pressCount: 0
+  open: 0
+  frequency: 0
 --- !u!114 &9077102099708328706
 MonoBehaviour:
   m_ObjectHideFlags: 0
