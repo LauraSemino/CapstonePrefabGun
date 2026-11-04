@@ -5,7 +5,7 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     public static List<Door> All = new List<Door>();
-    public Vector3 openOffset = new Vector3(0f, 3f, 0f);
+    public Vector3 openOffset = new Vector3(0f, 4f, 0f);
     public float openSpeed = 4f;
     public int pressCount = 0;
     public bool open;

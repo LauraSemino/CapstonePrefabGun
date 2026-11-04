@@ -333,6 +333,9 @@ MonoBehaviour:
   connectRange: 8
   line: {fileID: 3030210012433860064}
   frequency: 1
+  pressurePlate: {fileID: 9026477208817788384}
+  pressDepth: 1
+  pressSpeed: 4.5
 --- !u!1 &8726641676047755247
 GameObject:
   m_ObjectHideFlags: 0
