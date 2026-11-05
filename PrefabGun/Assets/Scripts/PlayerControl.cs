@@ -318,7 +318,14 @@ public class PlayerControl : MonoBehaviour
 
             Accelerate(ref groundVelocity, slopeDirection, walkSpeed, groundAcceleration);
             ApplyFriction(ref groundVelocity); // Friction only applies while we are on the ground
+            Velocity = groundVelocity;
 
+            if (moveInput.sqrMagnitude < 0.001f && !jumping && stepGiveTimer <= 0f)
+            {
+                Vector3 slide = Velocity - Vector3.Dot(Velocity, groundUp) * groundUp;
+                if (slide.magnitude < 2f)
+                    Velocity -= slide;
+            }
             Velocity = groundVelocity;
         }
         else
@@ -352,7 +359,7 @@ public class PlayerControl : MonoBehaviour
         // The speed needed to reach the jump strength height
         if (jumping)
             Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
-        else if (isGrounded && stepGiveTimer <= 0f)
+        else if (isGrounded && stepGiveTimer <= 0f && groundUp.y < 0.999f)
             Velocity += groundUp * groundedStickVelocity;
 
         if (isGrounded && !jumping)
@@ -414,5 +421,3 @@ public class PlayerControl : MonoBehaviour
         }
     }
 }
-
-
