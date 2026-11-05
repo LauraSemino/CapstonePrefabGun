@@ -74,6 +74,7 @@ public class PlayerControl : MonoBehaviour
     private float stepCooldownTimer;
     private float stepGiveTimer;
     [SerializeField] private float groundedGrace = 0.1f;
+    private Vector3 lastVelocity;
 
     private float groundedGraceTimer;
     private Vector3 lastGroundUp = Vector3.up;
@@ -252,14 +253,16 @@ public class PlayerControl : MonoBehaviour
 
     void DoMovement()
     {
-        Velocity = rb.linearVelocity; // Start up from the Rigidbody's current velocity
+        if (isGrounded && !touchingSteep && groundIgnoreTimer <= 0f)
+            Velocity = lastVelocity;
+        else
+            Velocity = rb.linearVelocity; // Start up from the Rigidbody's current velocity
 
         CheckGround();
 
         if (isGrounded)
         {
             groundedGraceTimer = groundedGrace;
-            lastGroundUp = groundUp;
         }
         else if (groundedGraceTimer > 0f)
         {
@@ -267,6 +270,9 @@ public class PlayerControl : MonoBehaviour
             isGrounded = true;
             groundUp = lastGroundUp;
         }
+        if (isGrounded)
+            groundUp = Vector3.Slerp(lastGroundUp, groundUp, 0.3f).normalized;
+        lastGroundUp = groundUp;
 
         if (stepCooldownTimer > 0f) stepCooldownTimer -= Time.fixedDeltaTime;
         if (stepGiveTimer > 0f)
@@ -314,9 +320,12 @@ public class PlayerControl : MonoBehaviour
         if (isGrounded)
         {
             // Slide down the slope in direction and make speeds same
-            Vector3 slopeDirection = moveDirection - Vector3.Dot(moveDirection, groundUp) * groundUp;
-            if (slopeDirection.sqrMagnitude > 0.001f)
+            Vector3 slopeDirection = moveDirection;
+            if (moveDirection.sqrMagnitude > 0.001f && groundUp.y > 0.01f)
+            {
+                slopeDirection.y = -(moveDirection.x * groundUp.x + moveDirection.z * groundUp.z) / groundUp.y;
                 slopeDirection.Normalize();
+            }
 
             // Work with the velocity along the surface
             Vector3 groundVelocity = Velocity - Vector3.Dot(Velocity, groundUp) * groundUp;
@@ -378,6 +387,7 @@ public class PlayerControl : MonoBehaviour
 
         if (isGrounded && !jumping)
             TryStepUp(moveDirection);
+        lastVelocity = Velocity;
         rb.linearVelocity = Velocity;
 
         // Gravity only in the air cuz it would just push us down into the floor a bit and then makes it weird to jump? so it works better if we just have it in air
@@ -425,6 +435,20 @@ public class PlayerControl : MonoBehaviour
         rb.position = spawnPos;
         rb.linearVelocity = Vector3.zero;
         Velocity = Vector3.zero;
+    }
+    void OnCollisionStay(Collision collision)
+    {
+        float feetY = groundCheckOrigin.position.y;
+        foreach (ContactPoint c in collision.contacts)
+        {
+            if (Vector3.Angle(c.normal, Vector3.up) > maxSlopeAngle
+                && c.normal.y > -0.5f
+                && c.point.y > feetY + maxStepHeight)
+            {
+                touchingSteep = true;
+                steepDirection = c.normal;
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other) // Hazard collision
