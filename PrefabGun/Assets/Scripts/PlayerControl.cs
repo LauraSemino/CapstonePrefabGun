@@ -73,7 +73,10 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float stepGiveTime = 0.12f;    // Stay grounded after step
     private float stepCooldownTimer;
     private float stepGiveTimer;
+    [SerializeField] private float groundedGrace = 0.1f;
 
+    private float groundedGraceTimer;
+    private Vector3 lastGroundUp = Vector3.up;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -92,7 +95,7 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        DoLook();  
+        DoLook();
     }
     void FixedUpdate()
     {
@@ -114,7 +117,7 @@ public class PlayerControl : MonoBehaviour
         // Buffer jump
         if (context.performed)
             jumpBufferTimer = jumpBufferTime;
-        
+
     }
     public void OnLook(InputAction.CallbackContext context)
     {
@@ -253,6 +256,18 @@ public class PlayerControl : MonoBehaviour
 
         CheckGround();
 
+        if (isGrounded)
+        {
+            groundedGraceTimer = groundedGrace;
+            lastGroundUp = groundUp;
+        }
+        else if (groundedGraceTimer > 0f)
+        {
+            groundedGraceTimer -= Time.fixedDeltaTime;
+            isGrounded = true;
+            groundUp = lastGroundUp;
+        }
+
         if (stepCooldownTimer > 0f) stepCooldownTimer -= Time.fixedDeltaTime;
         if (stepGiveTimer > 0f)
         {
@@ -320,12 +335,11 @@ public class PlayerControl : MonoBehaviour
             ApplyFriction(ref groundVelocity); // Friction only applies while we are on the ground
             Velocity = groundVelocity;
 
-            if (moveInput.sqrMagnitude < 0.001f && !jumping && stepGiveTimer <= 0f)
-            {
-                Vector3 slide = Velocity - Vector3.Dot(Velocity, groundUp) * groundUp;
-                if (slide.magnitude < 2f)
-                    Velocity -= slide;
-            }
+            Velocity = groundVelocity;
+
+            bool idle = moveInput.sqrMagnitude < 0.001f;
+            if (idle && !jumping && stepGiveTimer <= 0f && Velocity.magnitude < 3f)
+                Velocity = Vector3.zero;
             Velocity = groundVelocity;
         }
         else
@@ -359,7 +373,7 @@ public class PlayerControl : MonoBehaviour
         // The speed needed to reach the jump strength height
         if (jumping)
             Velocity.y = Mathf.Sqrt(jumpStrength * -2f * Physics.gravity.y);
-        else if (isGrounded && stepGiveTimer <= 0f && groundUp.y < 0.999f)
+        else if (isGrounded && stepGiveTimer <= 0f && groundUp.y < 0.999f && moveInput.sqrMagnitude > 0.001f)
             Velocity += groundUp * groundedStickVelocity;
 
         if (isGrounded && !jumping)
