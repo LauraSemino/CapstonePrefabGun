@@ -11,6 +11,9 @@ public class PressButton : MonoBehaviour
     public Transform pressurePlate;
     public float pressDepth;
     public float pressSpeed;
+    public float releaseDelay = 0.15f;
+    float releaseTimer;
+
 
     Vector3 pressPos;
     Vector3 unpressPos;
@@ -25,7 +28,7 @@ public class PressButton : MonoBehaviour
         line.positionCount = 0;
 
         unpressPos = pressurePlate.localPosition;
-        pressPos = unpressPos - pressurePlate.up * pressDepth;
+        pressPos = unpressPos + Vector3.down * pressDepth;
     }
 
     void OnTriggerEnter(Collider other)
@@ -48,9 +51,27 @@ public class PressButton : MonoBehaviour
 
         bool nowPressed = pressers.Count > 0;
 
-        Vector3 targetPos = pressed ? pressPos : unpressPos;
+        if (nowPressed)
+        {
+            releaseTimer = 0f;
+        }
+        else if (pressed)
+        {
+            releaseTimer += Time.deltaTime;
 
-        pressurePlate.localPosition = Vector3.MoveTowards(pressurePlate.localPosition, targetPos, Time.deltaTime * pressSpeed);
+            if (releaseTimer < releaseDelay)
+            {
+                nowPressed = true;
+            }
+        }
+
+        Vector3 targetPos = nowPressed ? pressPos : unpressPos;
+
+        pressurePlate.localPosition = Vector3.MoveTowards(
+            pressurePlate.localPosition,
+            targetPos,
+            Time.deltaTime * pressSpeed
+        );
 
         if (nowPressed == pressed) return;
         pressed = nowPressed;
