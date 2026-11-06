@@ -5917,7 +5917,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 690683712227721268, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: displayText
-      value: In place mode, press Q&E to rotate objects, scroll wheel to adjust distance
+      value: In place mode, hold left click to enable rotation upon moving your mouse,
+        you can also use scroll wheel to adjust distance
       objectReference: {fileID: 0}
     - target: {fileID: 1104820965241330731, guid: 10ec9ce2c00514c4ca0c365fc34d1106, type: 3}
       propertyPath: m_Name
