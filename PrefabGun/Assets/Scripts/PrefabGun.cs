@@ -123,7 +123,7 @@ public class PrefabGun : MonoBehaviour
         UpdateDisplay();
         player = GetComponentInParent<PlayerControl>();
         //eventually this is gonna need to be saved per file
-        hasGun = false;
+        //hasGun = false;
         BuildBudgetLines();
     }
 
