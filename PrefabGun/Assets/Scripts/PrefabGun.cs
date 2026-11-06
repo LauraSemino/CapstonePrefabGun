@@ -30,11 +30,9 @@ public class PrefabGun : MonoBehaviour
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
-    Vector3 rotationInput;
     Quaternion rotationOffset = Quaternion.identity;
     bool hasStartedRotating;
     Quaternion placementStartRotation;
-    public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
     GameObject placeIndicator = null;
@@ -55,7 +53,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject prefabGunModel;
     [SerializeField] GameObject placeVisual;
     [SerializeField] GameObject arrows;
-
+ 
     [Header("Budget")]
     [SerializeField] public float maxBudget;
     [SerializeField] Scrollbar budgetBar;
@@ -132,13 +130,8 @@ public class PrefabGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //follows mouse better in update
         if (isPlaceMode && toPlace != null)
         {
-            if (rotationInput != Vector3.zero)
-            {
-                rotationOffset *= Quaternion.Euler(rotationInput * rotationSpeed * Time.deltaTime);
-            }
             UpdatePlacement();
         }
         //prolly unoptimal cause its setting it every frame
@@ -308,7 +301,6 @@ public class PrefabGun : MonoBehaviour
         }
         // Set stats to default and show preview
         isPlaceMode = true;
-        rotationInput = Vector3.zero;
         rotationOffset = Quaternion.identity;
         hasStartedRotating = false;
         placementStartRotation = transform.rotation;
@@ -321,6 +313,23 @@ public class PrefabGun : MonoBehaviour
         placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y, 1 / toPlace.transform.localScale.z);
         placeIndicator.transform.localPosition = new Vector3(0f, -placeIndicator.transform.localScale.y * 0.5f, 0f);
         UpdatePlacement();
+    }
+
+    public void OnScrollWheel(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        if (!hasGun || isPlaceMode || DeleteMenuManager.IsOpen) return;
+
+        Vector2 scroll = context.ReadValue<Vector2>();
+
+        if (scroll.y > 0)
+        {
+            NextObject();
+        }
+        else if (scroll.y < 0)
+        {
+            PreviousObject();
+        }
     }
 
 
@@ -360,8 +369,7 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         hasStartedRotating = false;
         rotateMode = false;
-        rotationInput = Vector3.zero;
-        rotationOffset = Quaternion.identity;
+       rotationOffset = Quaternion.identity;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
@@ -569,7 +577,6 @@ public class PrefabGun : MonoBehaviour
         }
     }
 
-
     // Rotate the object positive
     public void OnPlusIndex(InputAction.CallbackContext context)
     {
@@ -577,17 +584,7 @@ public class PrefabGun : MonoBehaviour
         if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
-            if (isPlaceMode)
-            {
-                rotationInput.y = -1;
-                return;
-            }
             NextObject();
-        }
-        if (context.canceled && isPlaceMode)
-        {
-            rotationInput.y = 0f;
-
         }
     }
 
@@ -598,20 +595,9 @@ public class PrefabGun : MonoBehaviour
         if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
-            if (isPlaceMode)
-            {
-                rotationInput.y = 1;
-                return;
-            }
             PreviousObject();
         }
-        if (context.canceled && isPlaceMode)
-        {
-            rotationInput.y = 0f;
-
-        }
     }
-
     // Displays the object in gun
     public void Display(GameObject display)
     {
@@ -841,7 +827,6 @@ public class PrefabGun : MonoBehaviour
     void UpdateDisplay()
     {
         displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
-
         if (displayedObject != null)
         {
             Destroy(displayedObject);
