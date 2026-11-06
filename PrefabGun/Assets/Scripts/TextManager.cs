@@ -37,14 +37,13 @@ public class TextManager : MonoBehaviour
         while (timer > 0) 
         {      
             popUp.alpha = (timer/timeToFade);
+
+            timer -= Time.deltaTime;
             yield return null;
-            timer = Mathf.Clamp(timer - Time.deltaTime, 0, 999);
-            //Debug.Log(timer);            
         }
-        if (timer == 0)
-        {
-            displaying = false;
-        }
+
+        popUp.alpha = 0;
+        displaying = false;
     }
     public IEnumerator WaitForFade(float seconds, float fadeTime)
     {
