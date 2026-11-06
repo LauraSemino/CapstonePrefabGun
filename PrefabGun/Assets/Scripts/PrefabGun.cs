@@ -309,9 +309,11 @@ public class PrefabGun : MonoBehaviour
         toPlace = Instantiate(OG.prefab);
         Preview(toPlace);
 
-        placeIndicator = Instantiate(placeVisual, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), toPlace.transform);
+        placeIndicator = Instantiate(placeVisual);
+
+        placeIndicator.transform.SetParent(toPlace.transform);
+
         placeIndicator.transform.localScale = new Vector3(1 / toPlace.transform.localScale.x, placeVisual.transform.localScale.y, 1 / toPlace.transform.localScale.z);
-        placeIndicator.transform.localPosition = new Vector3(0f, -placeIndicator.transform.localScale.y * 0.5f, 0f);
         UpdatePlacement();
     }
 
@@ -444,7 +446,14 @@ public class PrefabGun : MonoBehaviour
         }
 
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
-        placeIndicator.transform.rotation = Quaternion.identity;
+        if (placeIndicator != null)
+        {
+            Vector3 downPosition = toPlace.transform.position + Vector3.down * (placeIndicator.transform.localScale.y * 0.5f);
+
+            placeIndicator.transform.position = downPosition;
+            placeIndicator.transform.rotation = Quaternion.identity;
+        }
+
         PressButton btn = toPlace.GetComponent<PressButton>();
         int doorCount = btn != null ? btn.RefreshConnections() : 1;
         SetPlacementValid(valid, valid && doorCount == 0);
