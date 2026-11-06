@@ -30,11 +30,9 @@ public class PrefabGun : MonoBehaviour
     [Header("Object Placement")]
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
-    Vector3 rotationInput;
     Quaternion rotationOffset = Quaternion.identity;
     bool hasStartedRotating;
     Quaternion placementStartRotation;
-    public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
     GameObject placeIndicator = null;
@@ -132,13 +130,8 @@ public class PrefabGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //follows mouse better in update
         if (isPlaceMode && toPlace != null)
         {
-            if (rotationInput != Vector3.zero)
-            {
-                rotationOffset *= Quaternion.Euler(rotationInput * rotationSpeed * Time.deltaTime);
-            }
             UpdatePlacement();
         }
         //prolly unoptimal cause its setting it every frame
@@ -308,7 +301,6 @@ public class PrefabGun : MonoBehaviour
         }
         // Set stats to default and show preview
         isPlaceMode = true;
-        rotationInput = Vector3.zero;
         rotationOffset = Quaternion.identity;
         hasStartedRotating = false;
         placementStartRotation = transform.rotation;
@@ -360,7 +352,6 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         hasStartedRotating = false;
         rotateMode = false;
-        rotationInput = Vector3.zero;
         rotationOffset = Quaternion.identity;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
@@ -569,7 +560,6 @@ public class PrefabGun : MonoBehaviour
         }
     }
 
-
     // Rotate the object positive
     public void OnPlusIndex(InputAction.CallbackContext context)
     {
@@ -577,17 +567,8 @@ public class PrefabGun : MonoBehaviour
         if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
-            if (isPlaceMode)
-            {
-                rotationInput.y = -1;
-                return;
-            }
+         
             NextObject();
-        }
-        if (context.canceled && isPlaceMode)
-        {
-            rotationInput.y = 0f;
-
         }
     }
 
@@ -598,17 +579,7 @@ public class PrefabGun : MonoBehaviour
         if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
-            if (isPlaceMode)
-            {
-                rotationInput.y = 1;
-                return;
-            }
             PreviousObject();
-        }
-        if (context.canceled && isPlaceMode)
-        {
-            rotationInput.y = 0f;
-
         }
     }
 
