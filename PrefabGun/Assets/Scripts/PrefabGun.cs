@@ -31,7 +31,9 @@ public class PrefabGun : MonoBehaviour
     public float minDistancePlace = 2.5f;
     public float maxDistancePlace = 10f;
     Vector3 rotationInput;
-    Vector3 rotationOffset;
+    Quaternion rotationOffset = Quaternion.identity;
+    bool hasStartedRotating;
+    Quaternion placementStartRotation;
     public float rotationSpeed = 100f;
     float objProjectionDistance = 0;
     GameObject toPlace = null;
@@ -40,6 +42,8 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] LayerMask placementBlockMask;
     [SerializeField] float placementSurfaceOffset = 0.05f;
     public float placeCooldown = 2f;
+    public bool rotateMode;
+    [SerializeField] float mouseRotationSensitivity = 0.2f;
 
     [Header("Display")]
     [SerializeField] TextMeshProUGUI displayIndex;
@@ -51,7 +55,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject prefabGunModel;
     [SerializeField] GameObject placeVisual;
     [SerializeField] GameObject arrows;
- 
+
     [Header("Budget")]
     [SerializeField] public float maxBudget;
     [SerializeField] Scrollbar budgetBar;
@@ -133,7 +137,7 @@ public class PrefabGun : MonoBehaviour
         {
             if (rotationInput != Vector3.zero)
             {
-                rotationOffset += rotationInput * rotationSpeed * Time.deltaTime;
+                rotationOffset *= Quaternion.Euler(rotationInput * rotationSpeed * Time.deltaTime);
             }
             UpdatePlacement();
         }
@@ -141,7 +145,7 @@ public class PrefabGun : MonoBehaviour
         prefabGunModel.SetActive(hasGun);
 
         //display control arrows
-        if(savedObjects.Count > 1)
+        if (savedObjects.Count > 1)
         {
             arrows.SetActive(true);
         }
@@ -179,7 +183,7 @@ public class PrefabGun : MonoBehaviour
             }
         }
 
-            UpdateCostPreview();
+        UpdateCostPreview();
         timer += Time.deltaTime;
     }
 
@@ -209,26 +213,36 @@ public class PrefabGun : MonoBehaviour
     //scanning
     public void OnLeftClick(InputAction.CallbackContext context)
     {
-        if (!hasGun) { return; }
+        if (!hasGun) return;
         if (DeleteMenuManager.IsOpen) return;
+
         if (context.started)
         {
             if (isPlaceMode)
             {
-                //change movement mode
+                if (!hasStartedRotating)
+                {
+                    placementStartRotation = toPlace.transform.rotation;
+                    hasStartedRotating = true;
+                }
+
+                rotateMode = true;
                 return;
             }
-            else
-            {
-                ScanObject();
-            }
+
+            ScanObject();
+        }
+
+        if (context.canceled)
+        {
+            rotateMode = false;
         }
     }
 
     //placing
     public void OnRightClick(InputAction.CallbackContext context)
     {
-        if(!hasGun) { return; }
+        if (!hasGun) { return; }
         if (context.started && DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
@@ -238,6 +252,19 @@ public class PrefabGun : MonoBehaviour
         {
             ConfirmPlace();
         }
+    }
+
+    public void RotateWithMouse(Vector2 mouseDelta)
+    {
+        if (!isPlaceMode || !rotateMode) return;
+
+        Quaternion horizontalRotation = Quaternion.AngleAxis(-mouseDelta.x * mouseRotationSensitivity, Vector3.up);
+
+        Vector3 originalXAxis = placementStartRotation * Vector3.right;
+
+        Quaternion verticalRotation = Quaternion.AngleAxis(mouseDelta.y * mouseRotationSensitivity, originalXAxis);
+
+        rotationOffset = verticalRotation * horizontalRotation * rotationOffset;
     }
 
 
@@ -276,13 +303,15 @@ public class PrefabGun : MonoBehaviour
         if (curBudget + OG.cost > maxBudget)
         {
             if (!shaking)
-               ShowNotEnoughBudget();
+                ShowNotEnoughBudget();
             return;
         }
         // Set stats to default and show preview
         isPlaceMode = true;
         rotationInput = Vector3.zero;
-        rotationOffset = Vector3.zero;
+        rotationOffset = Quaternion.identity;
+        hasStartedRotating = false;
+        placementStartRotation = transform.rotation;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
         snapTo = true;
         toPlace = Instantiate(OG.prefab);
@@ -329,8 +358,10 @@ public class PrefabGun : MonoBehaviour
     public void ExitPlace()
     {
         isPlaceMode = false;
+        hasStartedRotating = false;
+        rotateMode = false;
         rotationInput = Vector3.zero;
-        rotationOffset = Vector3.zero;
+        rotationOffset = Quaternion.identity;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
@@ -354,7 +385,16 @@ public class PrefabGun : MonoBehaviour
         objProjectionDistance = Mathf.Lerp(objProjectionDistance, targetProjectionDistance, 1f - Mathf.Exp(-distanceSmoothSpeed * Time.deltaTime));
 
         Vector3 wantedPosition = transform.position + transform.forward * objProjectionDistance;
-        Quaternion wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y + rotationOffset.y, 0f);
+        Quaternion wantedRotation;
+
+        if (hasStartedRotating)
+        {
+            wantedRotation = rotationOffset * placementStartRotation;
+        }
+        else
+        {
+            wantedRotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        }
 
         int rayMask = placementBlockMask & ~playerMask;
 
@@ -801,7 +841,7 @@ public class PrefabGun : MonoBehaviour
     void UpdateDisplay()
     {
         displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
-        
+
         if (displayedObject != null)
         {
             Destroy(displayedObject);
@@ -812,10 +852,10 @@ public class PrefabGun : MonoBehaviour
 
         GenericObject OG = savedObjects[curObjIndex];
         displayedObject = Instantiate(OG.prefab, displayPoint);
-        if(OG.cost == 1)
+        if (OG.cost == 1)
         {
-           cost1.SetActive(true);
-           cost2.SetActive(false);
+            cost1.SetActive(true);
+            cost2.SetActive(false);
         }
         else
         {
@@ -830,6 +870,7 @@ public class PrefabGun : MonoBehaviour
         Display(displayedObject);
     }
 }
+
 
 
 

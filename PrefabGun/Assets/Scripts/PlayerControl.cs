@@ -134,7 +134,11 @@ public class PlayerControl : MonoBehaviour
 
     void DoLook()
     {
-
+        if (prefabGun != null && prefabGun.rotateMode)
+        {
+            prefabGun.RotateWithMouse(lookInput);     
+            return;
+        }
         lookX += lookInput.x * lookSensitivity; // Turn left/right
         lookY = Mathf.Clamp(lookY - lookInput.y * lookSensitivity, -lookXLimit, lookXLimit); // Look up/down
 
