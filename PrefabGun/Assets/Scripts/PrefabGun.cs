@@ -444,6 +444,7 @@ public class PrefabGun : MonoBehaviour
         }
 
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
+        placeIndicator.transform.rotation = Quaternion.identity;
         PressButton btn = toPlace.GetComponent<PressButton>();
         int doorCount = btn != null ? btn.RefreshConnections() : 1;
         SetPlacementValid(valid, valid && doorCount == 0);
@@ -538,6 +539,11 @@ public class PrefabGun : MonoBehaviour
         if (curObjIndex >= savedObjects.Count)
             curObjIndex = 0;
         UpdateDisplay();
+        if (isPlaceMode)
+        {
+            CancelPlace();
+            StartPlace();
+        }
     }
 
     // Goes to the previous object
@@ -549,6 +555,11 @@ public class PrefabGun : MonoBehaviour
         if (curObjIndex < 0)
             curObjIndex = savedObjects.Count - 1;
         UpdateDisplay();
+        if (isPlaceMode)
+        {
+            CancelPlace();
+            StartPlace();
+        }
     }
 
     // Move objects pre-place with mouse wheel
