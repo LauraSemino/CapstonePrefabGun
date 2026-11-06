@@ -164,12 +164,13 @@ MonoBehaviour:
   placedObjects: []
   minDistancePlace: 2.5
   maxDistancePlace: 10
-  rotationSpeed: 250
   placementBlockMask:
     serializedVersion: 2
     m_Bits: 4294967295
   placementSurfaceOffset: 0.05
   placeCooldown: 0.15
+  rotateMode: 0
+  mouseRotationSensitivity: 0.2
   displayIndex: {fileID: 5513989560480766802}
   cost1: {fileID: 8595289894018260149}
   cost2: {fileID: 3755663460677446645}
@@ -1641,6 +1642,7 @@ MonoBehaviour:
   stepCooldown: 0.15
   stepForwardNudge: 0.1
   stepGiveTime: 0.12
+  groundedGrace: 0.1
 --- !u!114 &7660401859769028909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1882,6 +1884,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: eb183e00-f0fc-4b8d-8b9a-1e597d5c66b4
     m_ActionName: 'Player/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3059690025070761662}
+        m_TargetAssemblyTypeName: PrefabGun, Assembly-CSharp
+        m_MethodName: OnScrollWheel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: a599b224-c8a0-43a4-a425-7657c88e57cd
+    m_ActionName: 'Player/ScrollWheel[/Mouse/scroll]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
