@@ -53,7 +53,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject prefabGunModel;
     [SerializeField] GameObject placeVisual;
     [SerializeField] GameObject arrows;
-
+ 
     [Header("Budget")]
     [SerializeField] public float maxBudget;
     [SerializeField] Scrollbar budgetBar;
@@ -315,6 +315,23 @@ public class PrefabGun : MonoBehaviour
         UpdatePlacement();
     }
 
+    public void OnScrollWheel(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        if (!hasGun || isPlaceMode || DeleteMenuManager.IsOpen) return;
+
+        Vector2 scroll = context.ReadValue<Vector2>();
+
+        if (scroll.y > 0)
+        {
+            NextObject();
+        }
+        else if (scroll.y < 0)
+        {
+            PreviousObject();
+        }
+    }
+
 
     // Place down object
     public void ConfirmPlace()
@@ -352,7 +369,7 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         hasStartedRotating = false;
         rotateMode = false;
-        rotationOffset = Quaternion.identity;
+       rotationOffset = Quaternion.identity;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
@@ -567,7 +584,6 @@ public class PrefabGun : MonoBehaviour
         if (DeleteMenuManager.IsOpen) return;
         if (context.started)
         {
-         
             NextObject();
         }
     }
@@ -582,7 +598,6 @@ public class PrefabGun : MonoBehaviour
             PreviousObject();
         }
     }
-
     // Displays the object in gun
     public void Display(GameObject display)
     {
@@ -812,7 +827,6 @@ public class PrefabGun : MonoBehaviour
     void UpdateDisplay()
     {
         displayIndex.text = savedObjects.Count == 0 ? "0/0" : curObjIndex + 1 + "/" + savedObjects.Count;
-
         if (displayedObject != null)
         {
             Destroy(displayedObject);
