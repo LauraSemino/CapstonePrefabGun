@@ -78,6 +78,7 @@ public class PlayerControl : MonoBehaviour
 
     private float groundedGraceTimer;
     private Vector3 lastGroundUp = Vector3.up;
+    public bool onIce;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -136,7 +137,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (prefabGun != null && prefabGun.rotateMode)
         {
-            prefabGun.RotateWithMouse(lookInput);     
+            prefabGun.RotateWithMouse(lookInput);
             return;
         }
         lookX += lookInput.x * lookSensitivity; // Turn left/right
@@ -427,11 +428,14 @@ public class PlayerControl : MonoBehaviour
             return;
         }
 
-        float speedLost = currentSpeed * friction * Time.fixedDeltaTime; // Faster means more friction
+        float currentFriction = onIce ? 2f : friction;
+
+        float speedLost = currentSpeed * currentFriction * Time.fixedDeltaTime;
         float newSpeed = Mathf.Max(currentSpeed - speedLost, 0f);
 
         velocity *= newSpeed / currentSpeed; // Keep direction but scale it all down
     }
+
 
     void ResetPlayer() // Reset player on death
     {
@@ -461,5 +465,18 @@ public class PlayerControl : MonoBehaviour
         {
             ResetPlayer();
         }
+        if (other.tag == "ice")
+        {
+            onIce = true;
+        }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "ice")
+        {
+            onIce = false;
+        }
+    }
+
 }

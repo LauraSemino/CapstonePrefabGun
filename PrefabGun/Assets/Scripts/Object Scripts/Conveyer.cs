@@ -10,12 +10,17 @@ public class Conveyer : MonoBehaviour
     {
 
     }
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerStay(Collider collision)
     {
-        if(collision.rigidbody == null)
-        { return; }
-        collision.rigidbody.AddForce((speed*collision.rigidbody.mass*(-transform.right)) - new Vector3(collision.rigidbody.linearVelocity.x,0,collision.rigidbody.linearVelocity.z) , ForceMode.VelocityChange);
-        Debug.Log("applying force: " + ((speed * collision.rigidbody.mass * (-transform.right)) - collision.rigidbody.linearVelocity));
-        //collision.rigidbody.linearVelocity = (speed * -transform.right);
+        Rigidbody otherRb = collision.gameObject.GetComponent<Rigidbody>();
+
+        if (otherRb == null)
+            return;
+
+        if (otherRb.GetComponent<PlayerControl>())
+        {
+        otherRb.AddForce(-transform.right * (speed*10), ForceMode.Acceleration);
+        }
+        otherRb.AddForce(-transform.right * speed, ForceMode.Acceleration);
     }
 }

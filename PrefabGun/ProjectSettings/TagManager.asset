@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Hazard
+  - ice
   layers:
   - Default
   - TransparentFX
