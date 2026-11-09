@@ -578,7 +578,7 @@ public class PrefabGun : MonoBehaviour
             return;
 
         float i = context.ReadValue<float>();
-        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + i, minDistancePlace, maxDistancePlace);
+        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + (i/2), minDistancePlace, maxDistancePlace);
     }
 
     // remove objects that player placed
