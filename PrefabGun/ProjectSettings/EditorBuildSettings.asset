@@ -6,11 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/TestScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
     path: Assets/Scenes/PrePoCScenes/POCBuildLevel.unity
     guid: 9754e145c728bc140bf5b5609054884f
   - enabled: 1
-    path: Assets/Scenes/TestScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/Level1XPHills.unity
+    guid: 248b3c43f523b334db2eb89d03c7e346
   - enabled: 0
     path: Assets/Scenes/PrePoCScenes/LauraTestPuzzle.unity
     guid: 009d066ee38704642845a4bd3ad84806
