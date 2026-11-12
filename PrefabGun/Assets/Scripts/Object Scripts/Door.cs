@@ -5,7 +5,7 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     public static List<Door> All = new List<Door>();
-    public Vector3 openOffset = new Vector3(0f, 4f, 0f);
+    public int openOffset = 4;
     public float openSpeed = 4f;
     public int pressCount = 0;
     public bool open;
@@ -28,7 +28,7 @@ public class Door : MonoBehaviour
 
     void Update()
     {
-        Vector3 target = pressCount > 0 || open ? closedPos + openOffset : closedPos;
+        Vector3 target = pressCount > 0 || open ? closedPos + (transform.up * openOffset) : closedPos;
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, target, openSpeed * Time.deltaTime);
     }
 }
