@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1XPHills.unity
     guid: 248b3c43f523b334db2eb89d03c7e346
+  - enabled: 1
+    path: Assets/Scenes/Level2SandyDesert.unity
+    guid: 42298d9d0af15ea42bbf4fbe72f3bc33
   - enabled: 0
     path: Assets/Scenes/PrePoCScenes/LauraTestPuzzle.unity
     guid: 009d066ee38704642845a4bd3ad84806
