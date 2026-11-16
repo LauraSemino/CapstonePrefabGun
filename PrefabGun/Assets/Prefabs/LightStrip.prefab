@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 561161380231223742}
   - component: {fileID: 3648219243730022584}
   m_Layer: 6
-  m_Name: Image
+  m_Name: LightStrip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
