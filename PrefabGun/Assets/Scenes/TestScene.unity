@@ -2480,7 +2480,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7660401859769028909, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 21
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 7660401859769028909, guid: 9fdc5f4d64f814e419f12cbf827de7ff, type: 3}
       propertyPath: m_ActionEvents.Array.data[20].m_ActionId
