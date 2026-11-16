@@ -5,7 +5,7 @@ public class LevelEventSpawn : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public bool oneUse;
-    public enum SpawnMode { Instantiate, SetActive }
+    public enum SpawnMode { Instantiate, SetActive, SetInactive}
     public SpawnMode mode = SpawnMode.Instantiate;
     public List<GameObject> toSpawn;
     public List<Transform> spawnPos;
@@ -26,6 +26,10 @@ public class LevelEventSpawn : MonoBehaviour
                 else if( mode == SpawnMode.SetActive)
                 {
                     toSpawn[i].SetActive(true);
+                }
+                else if (mode == SpawnMode.SetInactive)
+                {
+                    toSpawn[i].SetActive(false);
                 }
             }
             if (oneUse) { gameObject.SetActive(false); }
