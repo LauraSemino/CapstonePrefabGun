@@ -101,7 +101,8 @@ public class PrefabGun : MonoBehaviour
     bool currentScanned;
     bool alreadyScanned = false;
     ObjectOutline hitOutline = null;
-
+    DoorWall targetDoorWall;
+    Vector3 targetDoorPoint;
 
     bool doneBudgetTutorial;
 
@@ -125,6 +126,7 @@ public class PrefabGun : MonoBehaviour
         //eventually this is gonna need to be saved per file
         //hasGun = false;
         BuildBudgetLines();
+
     }
 
     // Update is called once per frame
@@ -158,8 +160,16 @@ public class PrefabGun : MonoBehaviour
                     hitOutline = hit.collider.GetComponentInParent<ObjectOutline>();
 
                     ObjectData hitData = hit.collider.GetComponentInParent<ObjectData>();
-                    if (hitData != null && hitData.objData != null)
+
+                    if (hitData != null && hitData.objData != null && hitOutline != null)
+                    {
                         alreadyScanned = savedIDs.Contains(hitData.objData.id);
+                        hitOutline.SetFlashing(!alreadyScanned);
+                    }
+                    else
+                    {
+                        alreadyScanned = false;
+                    }
                 }
             }
 
@@ -280,6 +290,7 @@ public class PrefabGun : MonoBehaviour
             return;
         }
         savedIDs.Add(objData.objData.id);
+        UpdateScannedObjects(objData.objData.id);
         savedObjects.Add(objData.objData);
         UpdateDisplay();
     }
@@ -347,14 +358,28 @@ public class PrefabGun : MonoBehaviour
 
         Vector3 placePos = targetPosition;
         Quaternion placeRot = targetRotation;
+
+        DoorFrame doorPreview = toPlace.GetComponent<DoorFrame>();
+        DoorWall wallToReplace = targetDoorWall;
+        Vector3 wallPoint = targetDoorPoint;
+
         Destroy(toPlace);
         toPlace = null;
+
         GenericObject OG = savedObjects[curObjIndex];
 
         // Place down object prefab
         if (TrySpend(OG.cost))
         {
             GameObject placedDownObject = Instantiate(OG.prefab, placePos, placeRot);
+
+            if (doorPreview != null && wallToReplace != null)
+            {
+                DoorFrame door = placedDownObject.GetComponent<DoorFrame>();
+
+                wallToReplace.CreateDoorway(wallPoint, door.width, door.height);
+            }
+
             placedObjects.Add(placedDownObject);
             placedDownObject.SetActive(true);
 
@@ -408,20 +433,56 @@ public class PrefabGun : MonoBehaviour
 
         int rayMask = placementBlockMask & ~playerMask;
 
+
+        DoorFrame door = toPlace.GetComponent<DoorFrame>();
+        bool valid;
+
+        targetDoorWall = null;
+
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo,
             objProjectionDistance, rayMask, QueryTriggerInteraction.Ignore))
         {
-            wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
+            if (door != null)
+            {
+                targetDoorWall = hitInfo.collider.GetComponentInParent<DoorWall>();
+
+                if (targetDoorWall != null && targetDoorWall.CanFitDoor(door))
+                {
+                    wantedPosition = targetDoorWall.GetDoorPosition(hitInfo.point, door);
+                    wantedRotation = targetDoorWall.transform.rotation;
+                    targetDoorPoint = hitInfo.point;
+                }
+                else
+                {
+                    targetDoorWall = null;
+                    wantedPosition = hitInfo.point;
+                }
+            }
+            else
+            {
+                wantedPosition = hitInfo.point + hitInfo.normal * placementSurfaceOffset;
+            }
         }
 
         // Figure out the target using position we wanna reach
         toPlace.transform.SetPositionAndRotation(wantedPosition, wantedRotation);
         Physics.SyncTransforms();
 
-        bool success = PushOutOfObstacles();
-        bool wentTooFaar = (toPlace.transform.position - wantedPosition).sqrMagnitude
-                            > maxPushDistance * maxPushDistance;
-        bool valid = success && !wentTooFaar & !TouchingNoBuildZone();
+        if (door != null)
+        {
+            valid = targetDoorWall != null && !TouchingNoBuildZone();
+        }
+        else
+        {
+            bool success = PushOutOfObstacles();
+
+            bool wentTooFaar = (toPlace.transform.position - wantedPosition).sqrMagnitude
+                              > maxPushDistance * maxPushDistance;
+
+            valid = success && !wentTooFaar && !TouchingNoBuildZone();
+        }
+
+
 
         if (!valid)
         {
@@ -446,18 +507,41 @@ public class PrefabGun : MonoBehaviour
         }
 
         toPlace.transform.SetPositionAndRotation(smoothedPosition, smoothedRotation);
+        DoorFrame doorFrame = toPlace.GetComponent<DoorFrame>();
+
         if (placeIndicator != null)
         {
-            Vector3 downPosition = toPlace.transform.position + Vector3.down * (placeIndicator.transform.localScale.y * 0.5f);
+            placeIndicator.SetActive(doorFrame == null);
+
+            if (doorFrame == null)
+            {
+                Vector3 downPosition = toPlace.transform.position + Vector3.down * (placeIndicator.transform.localScale.y * 0.5f);
 
             placeIndicator.transform.position = downPosition;
             placeIndicator.transform.rotation = Quaternion.identity;
+            }
         }
 
         PressButton btn = toPlace.GetComponent<PressButton>();
         int doorCount = btn != null ? btn.RefreshConnections() : 1;
         SetPlacementValid(valid, valid && doorCount == 0);
 
+    }
+
+    void UpdateScannedObjects(int id)
+    {
+        ObjectData[] allObjects = FindObjectsByType<ObjectData>(FindObjectsSortMode.None);
+
+        foreach (ObjectData data in allObjects)
+        {
+            if (data.objData == null || data.objData.id != id)
+                continue;
+
+            ObjectOutline outline = data.GetComponentInParent<ObjectOutline>();
+
+            if (outline != null)
+                outline.SetFlashing(false);
+        }
     }
 
     void SetPlacementValid(bool valid, bool warning = false)

@@ -11,9 +11,20 @@ public class ObjectOutline : MonoBehaviour
         original = new Material[renderers.Length][];
 
         for (int i = 0; i < renderers.Length; i++)
-            original[i] = renderers[i].sharedMaterials;
+            original[i] = renderers[i].materials;
 
         SetOutline(false);
+    }
+
+    public void SetFlashing(bool flash)
+    {
+        foreach (Material[] mats in original)
+        {
+            foreach (Material mat in mats)
+            {
+                mat.SetFloat("_flashingValue", flash ? 1f : 0f);
+            }
+        }
     }
 
     public void SetOutline(bool show, bool seeThrough = false, Material outlineOverride = null)
@@ -27,6 +38,7 @@ public class ObjectOutline : MonoBehaviour
             count = Mathf.Min(count, mats.Length);
 
             Material[] result = new Material[count];
+
             for (int j = 0; j < count; j++)
                 result[j] = mats[j];
 

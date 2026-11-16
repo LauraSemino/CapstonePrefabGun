@@ -137,7 +137,7 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     - _flashSpeed: 5
-    - _flashingValue: 0
+    - _flashingValue: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 0.697785, b: 0.42075467, a: 1}
     - _Color: {r: 1, g: 0.6977851, b: 0.42075464, a: 1}
