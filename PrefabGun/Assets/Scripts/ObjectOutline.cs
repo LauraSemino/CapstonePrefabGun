@@ -13,13 +13,16 @@ public class ObjectOutline : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
             original[i] = renderers[i].materials;
         ObjectData dat = GetComponent<ObjectData>();
-        if (dat != null && PrefabGun.instance.savedIDs.Contains(dat.objData.id))
-            {
-            SetFlashing(false);
-        }
-        else
+        if (dat != null && PrefabGun.instance != null)
         {
-            SetFlashing(true);
+            if (PrefabGun.instance.savedIDs.Contains(dat.objData.id))
+            {
+                SetFlashing(false);
+            }
+            else
+            {
+                SetFlashing(true);
+            }
         }
         SetOutline(false);
     }
