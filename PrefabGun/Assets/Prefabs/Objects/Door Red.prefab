@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6195981484991975468}
   - component: {fileID: 4341388051917605730}
   - component: {fileID: 5441261246171909738}
-  - component: {fileID: 4155111158467018956}
   m_Layer: 0
   m_Name: Door Red
   m_TagString: Untagged
@@ -154,20 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa249ed707cee864e8db91616c338d99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  openOffset: {x: 0, y: 3, z: 0}
+  openOffset: 4
   openSpeed: 4
   pressCount: 0
   open: 0
   frequency: 0
---- !u!114 &4155111158467018956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8828036390348696631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d139336b37828478ead79980a898da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectOutline
