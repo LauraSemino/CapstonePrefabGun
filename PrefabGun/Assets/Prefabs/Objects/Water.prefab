@@ -131,4 +131,5 @@ MonoBehaviour:
   bobHeight: 0.05
   bobSpeed: 2
   drag: 2
+  playerJumpMult: 10
   playerVerticalDrag: 5

@@ -11,6 +11,7 @@ public class Water : MonoBehaviour
     public float bobHeight = 0.05f;
     public float bobSpeed = 2f;
     public float drag = 2f;
+    public float playerJumpMult;
 
     [Header("Player")]
     public float playerVerticalDrag = 5f;
@@ -55,13 +56,20 @@ public class Water : MonoBehaviour
             if (rb.GetComponentInParent<PlayerControl>() != null)
             {
                 Vector3 velocity = rb.linearVelocity;
-                velocity.y *= 1f - playerVerticalDrag * Time.fixedDeltaTime;
+                if ( velocity.y > 0)
+                {
+                    velocity.y += (playerJumpMult * Time.deltaTime) *1.1f;
+                }
+                else
+                {
+                    velocity.y *= 1f - playerVerticalDrag * Time.fixedDeltaTime;
+                }
                 rb.linearVelocity = velocity;
                 continue;
             }
 
             // Water resistance
-            rb.linearVelocity *= 1f - drag * Time.fixedDeltaTime;
+            rb.linearVelocity *= 1f - playerVerticalDrag * Time.fixedDeltaTime;
             rb.angularVelocity *= 1f - drag * Time.fixedDeltaTime;
 
             // Floating objects
