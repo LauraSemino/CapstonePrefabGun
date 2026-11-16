@@ -377,7 +377,7 @@ public class PrefabGun : MonoBehaviour
             {
                 DoorFrame door = placedDownObject.GetComponent<DoorFrame>();
 
-                wallToReplace.CreateDoorway(wallPoint, door.width, door.height);
+                wallToReplace.CreateDoorway(wallPoint, door.width, door.height, door);
             }
 
             placedObjects.Add(placedDownObject);
@@ -528,7 +528,7 @@ public class PrefabGun : MonoBehaviour
 
     }
 
-    void UpdateScannedObjects(int id)
+    public void UpdateScannedObjects(int id)
     {
         ObjectData[] allObjects = FindObjectsByType<ObjectData>(FindObjectsSortMode.None);
 

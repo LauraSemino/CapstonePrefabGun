@@ -1,10 +1,13 @@
 
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class DoorWall : MonoBehaviour
 {
     BoxCollider wallCollider;
     Renderer wallRenderer;
+    List<GameObject> wallParts = new List<GameObject>();
 
     void Awake()
     {
@@ -31,6 +34,16 @@ public class DoorWall : MonoBehaviour
         float doorHeight = GetDoorHeight(door.height);
 
         return doorWidth <= wallCollider.size.x && doorHeight <= wallCollider.size.y;
+    }
+
+    public void RebuildTheWall()
+    {
+        foreach (GameObject piece in wallParts)
+        {
+            Destroy(piece);
+        }
+        wallCollider.enabled = true;
+        wallRenderer.enabled = true;
     }
 
     // Where should doorframe be on wall
@@ -62,7 +75,7 @@ public class DoorWall : MonoBehaviour
     }
 
     // Create the opening in wall
-    public void CreateDoorway(Vector3 hitPoint, float worldDoorWidth, float worldDoorHeight)
+    public void CreateDoorway(Vector3 hitPoint, float worldDoorWidth, float worldDoorHeight, DoorFrame door)
     {
         Vector3 localHit = transform.InverseTransformPoint(hitPoint);
 
@@ -117,7 +130,9 @@ public class DoorWall : MonoBehaviour
         }
 
         // Remove the original wall after creating its replacement pieces
-        Destroy(gameObject);
+        wallCollider.enabled = false;
+        wallRenderer.enabled = false;
+        door.ogWall = this;
     }
 
     // Create an individual piece of the remaining wall
@@ -139,5 +154,6 @@ public class DoorWall : MonoBehaviour
         {
             piece.GetComponent<Renderer>().sharedMaterial = wallRenderer.sharedMaterial;
         }
+        wallParts.Add(piece);
     }
 }

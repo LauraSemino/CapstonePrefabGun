@@ -114,6 +114,15 @@ public class DeleteMenuManager : MonoBehaviour
     {
         GameObject obj = prefabGun.placedObjects[selected];
         ObjectData data = obj.GetComponent<ObjectData>();
+        DoorFrame door = obj.GetComponent<DoorFrame>();
+        if (door != null)
+        {
+            DoorWall wall = door.ogWall;
+            if (wall != null)
+            {
+                wall.RebuildTheWall();
+            }
+        }
 
         // Give the budget back then remove the object
         prefabGun.Refund(data.objData.cost);
