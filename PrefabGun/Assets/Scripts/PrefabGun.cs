@@ -705,6 +705,8 @@ public class PrefabGun : MonoBehaviour
     // Displays the object in gun
     public void Display(GameObject display)
     {
+        ObjectOutline oj = display.GetComponent<ObjectOutline>();
+        oj.SetFlashing(false);
         // Remove the outline material from the gun display
         foreach (Renderer renderer in display.GetComponentsInChildren<Renderer>())
         {
