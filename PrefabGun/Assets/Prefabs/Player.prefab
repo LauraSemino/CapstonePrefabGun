@@ -1631,6 +1631,7 @@ MonoBehaviour:
   footGroundRays: 8
   groundCheckOrigin: {fileID: 1762599907481880889}
   groundCheckRadius: 0.4
+  groundAheadRadius: 0.17
   jumpStrength: 1.5
   spawnPos: {x: 0, y: 0, z: 0}
   rb: {fileID: 6347704212264493490}
