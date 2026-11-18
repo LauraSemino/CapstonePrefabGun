@@ -36,6 +36,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.4f; // Radius for the ground check
     private Vector3 steepDirection; // Direction of the too steep thingy
     private bool touchingSteep; // Did we touch too steep thing?
+    [SerializeField] private float groundAheadRadius = 0.2f;
 
     [Header("Jumping")]
     [SerializeField] private float jumpStrength; // How big we be jumping
@@ -183,7 +184,7 @@ public class PlayerControl : MonoBehaviour
         }
         if (moveDirection.sqrMagnitude > 0.001f)
         {
-            Vector3 aheadOrigin = center + moveDirection * (groundCheckRadius + 0.1f);
+            Vector3 aheadOrigin = center + moveDirection * groundAheadRadius;
             float aheadLength = rayLength + slopeSnapExtra;
 
             if (Physics.Raycast(aheadOrigin, Vector3.down, out RaycastHit ahead, aheadLength, groundMask, QueryTriggerInteraction.Ignore) && Vector3.Angle(ahead.normal, Vector3.up) <= maxSlopeAngle && (wasGrounded || isGrounded) && (ahead.normal.y < 0.999f || ahead.distance <= groundSkin + airGroundCheckDistance))
