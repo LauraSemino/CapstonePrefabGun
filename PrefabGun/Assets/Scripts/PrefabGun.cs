@@ -292,7 +292,8 @@ public class PrefabGun : MonoBehaviour
         savedIDs.Add(objData.objData.id);
         UpdateScannedObjects(objData.objData.id);
         savedObjects.Add(objData.objData);
-        UpdateDisplay();
+        curObjIndex = savedObjects.Count - 1;
+        UpdateDisplay();    
     }
 
 
