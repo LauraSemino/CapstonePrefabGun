@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BudgetChanger : MonoBehaviour
@@ -29,13 +28,14 @@ public class BudgetChanger : MonoBehaviour
     {
         //mark in save file as collected, if collected the "IsCollected" variable will always be true
         isCollected = true;
+        if (GetComponent<SaveID>() != null)
+            SaveManager.Instance.CollectBudgetUpgrade(GetComponentInChildren<SaveID>().id);
         gameObject.SetActive(false);
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            Debug.Log(other.name);
             PrefabGun pg = other.GetComponentInChildren<PrefabGun>();
 
             if(mode == BudgetMode.Set)

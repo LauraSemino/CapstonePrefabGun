@@ -292,11 +292,9 @@ public class PrefabGun : MonoBehaviour
         savedIDs.Add(objData.objData.id);
         UpdateScannedObjects(objData.objData.id);
         savedObjects.Add(objData.objData);
-        curObjIndex = savedObjects.Count - 1;
-        UpdateDisplay();    
+        SaveManager.Instance.AddScannedObject(objData.objData.id);
+        UpdateDisplay();
     }
-
-
 
     // Start the object placement process
     public void StartPlace()
@@ -964,8 +962,24 @@ public class PrefabGun : MonoBehaviour
 
         Display(displayedObject);
     }
+
+    public void RestoreScannedObject(int id)
+    {
+        ObjectData[] allObjects = FindObjectsByType<ObjectData>(FindObjectsSortMode.None);
+
+        foreach (ObjectData obj in allObjects)
+        {
+            if (obj.objData == null || obj.objData.id != id)
+                continue;
+
+            if (savedIDs.Contains(id))
+                return;
+
+            savedIDs.Add(id);
+            savedObjects.Add(obj.objData);
+            UpdateScannedObjects(id);
+            UpdateDisplay();
+            return;
+        }
+    }
 }
-
-
-
-
