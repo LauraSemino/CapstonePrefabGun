@@ -22,7 +22,6 @@ public class Water : MonoBehaviour
     void Awake()
     {
         zone = GetComponent<Collider>();
-        zone.isTrigger = true;
     }
 
     void OnTriggerEnter(Collider other)
@@ -51,6 +50,13 @@ public class Water : MonoBehaviour
         {
             if (rb == null || !rb.gameObject.activeInHierarchy || rb.isKinematic)
                 continue;
+
+
+            if (rb.GetComponent<FanWind>() != null)
+            {
+                FanWind fw = rb.GetComponent<FanWind>();
+                fw.FanState();
+            }
 
             // Player
             if (rb.GetComponentInParent<PlayerControl>() != null)
