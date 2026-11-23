@@ -191,6 +191,24 @@ MonoBehaviour:
   lineThickness: 2
   lineColor: {r: 0, g: 0, b: 0, a: 0.6}
   scannedOutlineMat: {fileID: 2100000, guid: 3507b9f1b96b2634abc4937228b88ea4, type: 2}
+  allObjects:
+  - {fileID: 11400000, guid: 29596eaa5d7268045b03a229fd7a5711, type: 2}
+  - {fileID: 11400000, guid: 902b0a7df2e3ac9428f26ee1dc44050c, type: 2}
+  - {fileID: 11400000, guid: 91913ba3b950e3749bf3f67f8d213824, type: 2}
+  - {fileID: 11400000, guid: 7ea326571ce38914ea6f24cbf7f211ae, type: 2}
+  - {fileID: 11400000, guid: 190e5022aab243340b8e862969b609d4, type: 2}
+  - {fileID: 11400000, guid: ec0fb662f1d80b24592c0e192f44521d, type: 2}
+  - {fileID: 11400000, guid: 873e541d49beedb47add3124254f46f5, type: 2}
+  - {fileID: 11400000, guid: fed8e729e172d2a4088204a734c42be7, type: 2}
+  - {fileID: 11400000, guid: 6f35b53c5535c9c41a809e57c99e28f8, type: 2}
+  - {fileID: 11400000, guid: cf3a678e63185134f958e83d64423ec3, type: 2}
+  - {fileID: 11400000, guid: 0d1f82dd6653eb4479238480261ff0ab, type: 2}
+  - {fileID: 11400000, guid: 9c56a2bf49f9052498be5476189215d6, type: 2}
+  - {fileID: 11400000, guid: 55244e8f0e93cfe469d7d4e3b33e8c2f, type: 2}
+  - {fileID: 11400000, guid: 08a2e283fb585b24baea26d02486103e, type: 2}
+  - {fileID: 11400000, guid: b009ee234719f0d42a0f2f6ddd8cae28, type: 2}
+  - {fileID: 11400000, guid: fca438b62cc04da4398c4882972859c4, type: 2}
+  - {fileID: 11400000, guid: 1e5b842b443fa574496f7fbf61e9d5e6, type: 2}
 --- !u!114 &-7989786145367587007
 MonoBehaviour:
   m_ObjectHideFlags: 0

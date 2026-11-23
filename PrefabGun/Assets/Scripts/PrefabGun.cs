@@ -53,7 +53,7 @@ public class PrefabGun : MonoBehaviour
     [SerializeField] GameObject prefabGunModel;
     [SerializeField] GameObject placeVisual;
     [SerializeField] GameObject arrows;
- 
+
     [Header("Budget")]
     [SerializeField] public float maxBudget;
     [SerializeField] Scrollbar budgetBar;
@@ -103,8 +103,8 @@ public class PrefabGun : MonoBehaviour
     ObjectOutline hitOutline = null;
     DoorWall targetDoorWall;
     Vector3 targetDoorPoint;
-
     bool doneBudgetTutorial;
+    public GenericObject[] allObjects;
 
     // Game default settings
     private void Awake()
@@ -395,7 +395,7 @@ public class PrefabGun : MonoBehaviour
         isPlaceMode = false;
         hasStartedRotating = false;
         rotateMode = false;
-       rotationOffset = Quaternion.identity;
+        rotationOffset = Quaternion.identity;
         objProjectionDistance = targetProjectionDistance = minDistancePlace;
     }
 
@@ -516,8 +516,8 @@ public class PrefabGun : MonoBehaviour
             {
                 Vector3 downPosition = toPlace.transform.position + Vector3.down * (placeIndicator.transform.localScale.y * 0.5f);
 
-            placeIndicator.transform.position = downPosition;
-            placeIndicator.transform.rotation = Quaternion.identity;
+                placeIndicator.transform.position = downPosition;
+                placeIndicator.transform.rotation = Quaternion.identity;
             }
         }
 
@@ -661,7 +661,7 @@ public class PrefabGun : MonoBehaviour
             return;
 
         float i = context.ReadValue<float>();
-        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + (i/2), minDistancePlace, maxDistancePlace);
+        targetProjectionDistance = Mathf.Clamp(targetProjectionDistance + (i / 2), minDistancePlace, maxDistancePlace);
     }
 
     // remove objects that player placed
@@ -965,21 +965,20 @@ public class PrefabGun : MonoBehaviour
 
     public void RestoreScannedObject(int id)
     {
-        ObjectData[] allObjects = FindObjectsByType<ObjectData>(FindObjectsSortMode.None);
-
-        foreach (ObjectData obj in allObjects)
+        foreach (GenericObject obj in allObjects)
         {
-            if (obj.objData == null || obj.objData.id != id)
-                continue;
+            if (obj.id == id)
+            {
+                if (savedIDs.Contains(id))
+                    return;
 
-            if (savedIDs.Contains(id))
+                savedObjects.Add(obj);
+                savedIDs.Add(id);
+
+                UpdateScannedObjects(id);
+                UpdateDisplay();
                 return;
-
-            savedIDs.Add(id);
-            savedObjects.Add(obj.objData);
-            UpdateScannedObjects(id);
-            UpdateDisplay();
-            return;
+            }
         }
     }
 }
