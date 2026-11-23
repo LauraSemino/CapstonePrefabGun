@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8293359488616976678}
   - component: {fileID: 6520908851751002701}
   - component: {fileID: 7349366695444965354}
+  - component: {fileID: 5371671166684715018}
   m_Layer: 0
   m_Name: PlacedItemDeleter
   m_TagString: Untagged
@@ -125,3 +126,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b74523f5820aae4faa30a820c3ade29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacedObjectDeleter
+--- !u!114 &5371671166684715018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129685063615897720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc1c0c76e480d94bba79a86f79bc1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveID
+  id: 

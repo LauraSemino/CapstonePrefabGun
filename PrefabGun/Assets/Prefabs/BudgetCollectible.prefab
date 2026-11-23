@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 1845569401897064061}
   - component: {fileID: 1999261424502217414}
   - component: {fileID: 1886733825339727064}
+  - component: {fileID: 2874947430243326448}
   m_Layer: 0
   m_Name: BudgetCollectible
   m_TagString: Untagged
@@ -162,3 +163,16 @@ MonoBehaviour:
   isCollected: 0
   model: {fileID: 1470871314790299219}
   rotationSpeed: 1
+--- !u!114 &2874947430243326448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9058881306053477594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc1c0c76e480d94bba79a86f79bc1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveID
+  id: Level1-Budget1
