@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39287d3777193b40b733108c444837f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Water
-  sinkMass: 3
+  sinkMass: 3.5
   buoyancy: 2
   floatRange: 1
   bobHeight: 0.05
