@@ -88,6 +88,7 @@ public class PlayerControl : MonoBehaviour
         lookX = transform.eulerAngles.y; // Start looking the way the player object is facing
         prefabGun = mainCamera.gameObject.GetComponent<PrefabGun>();
         camBaseLocalPos = mainCamera.transform.localPosition;
+        lookSensitivity = PlayerPrefs.GetFloat("Sensitivity", lookSensitivity);
     }
 
     void LateUpdate()
@@ -136,6 +137,8 @@ public class PlayerControl : MonoBehaviour
 
     void DoLook()
     {
+        if (Time.timeScale == 0f)
+            return;
         if (prefabGun != null && prefabGun.rotateMode)
         {
             prefabGun.RotateWithMouse(lookInput);
@@ -438,7 +441,7 @@ public class PlayerControl : MonoBehaviour
     }
 
 
-    void ResetPlayer() // Reset player on death
+    public void ResetPlayer() // Reset player on death
     {
         Debug.Log(spawnPos);
         rb.position = spawnPos;
@@ -479,5 +482,17 @@ public class PlayerControl : MonoBehaviour
             onIce = false;
         }
     }
+
+    public float GetSensitivity()
+    {
+        return PlayerPrefs.GetFloat("Sensitivity", lookSensitivity);
+    }
+
+    public void SetSensitivity(float value)
+    {
+        Debug.Log("baaa " + value);
+        lookSensitivity = value;
+    }
+
 
 }
