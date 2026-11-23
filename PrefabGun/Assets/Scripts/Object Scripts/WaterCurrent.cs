@@ -14,7 +14,7 @@ public class WaterCurrent : MonoBehaviour
         if (Physics.SphereCast(origin, radius, transform.up, out RaycastHit hit, range + radius, blowable, QueryTriggerInteraction.Ignore))
         {
             FanWind wind = hit.transform.gameObject.GetComponentInChildren<FanWind>();
-            if (hit.rigidbody != null && (wind == null || !wind.enabled))
+            if (hit.rigidbody != null)
 
                 hit.rigidbody.AddForce(transform.up * windness, ForceMode.Acceleration);
         }
