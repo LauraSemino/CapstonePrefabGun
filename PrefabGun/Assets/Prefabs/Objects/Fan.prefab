@@ -423,6 +423,7 @@ MonoBehaviour:
   windness: 20
   range: 4.5
   radius: 1
+  on: 1
   blowable:
     serializedVersion: 2
     m_Bits: 73
