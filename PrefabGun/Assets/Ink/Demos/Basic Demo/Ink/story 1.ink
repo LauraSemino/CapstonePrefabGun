@@ -1,5 +1,5 @@
-I'm evil clippy
-I do evil things
-I'm malicious
-I voted for him
+I'm mr go
+I do helpful things
+I'll help
+helping!!
 - -> END
