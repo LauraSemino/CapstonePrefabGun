@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level2SandyDesert.unity
     guid: 42298d9d0af15ea42bbf4fbe72f3bc33
+  - enabled: 1
+    path: Assets/Scenes/Level3Poolcore.unity
+    guid: 22b1b0a335a02914690f61f278c2b2b5
   - enabled: 0
     path: Assets/Scenes/PrePoCScenes/LauraTestPuzzle.unity
     guid: 009d066ee38704642845a4bd3ad84806
