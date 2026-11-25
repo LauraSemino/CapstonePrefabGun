@@ -6,11 +6,7 @@ public class PauseMenu : MonoBehaviour
 {
     public GameObject pausePanel;
     public GameObject optionsPanel;
-
-
     bool isPaused;
-
-
     void Start()
     {
         pausePanel.SetActive(false);
@@ -26,6 +22,7 @@ public class PauseMenu : MonoBehaviour
             if (optionsPanel.activeSelf)
             {
                 BackToPause();
+                Debug.Log("topause");
             }
             else if (isPaused)
             {
