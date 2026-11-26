@@ -319,8 +319,6 @@ public class PlayerControl : MonoBehaviour
         bool jumping = jumpBufferTimer > 0f && coyoteTimer > 0f;
         if (jumping)
         {
-            if (DeleteMenuManager.IsOpen)
-                DeleteMenuManager.instance.Toggle();
             jumpBufferTimer = 0f; // Use up the press and the coyote time so we can't double jump
             coyoteTimer = 0f;
             groundIgnoreTimer = 0.15f;
@@ -370,7 +368,7 @@ public class PlayerControl : MonoBehaviour
             Velocity.x = horVelocity.x;
             Velocity.z = horVelocity.z;
         }
-
+       
         // Nonono can't climb too sleep slope
         if (touchingSteep)
         {
@@ -398,6 +396,12 @@ public class PlayerControl : MonoBehaviour
             TryStepUp(moveDirection);
         lastVelocity = Velocity;
         rb.linearVelocity = Velocity;
+
+        if (!isGrounded)
+        {
+            if (DeleteMenuManager.IsOpen)
+                DeleteMenuManager.instance.Toggle();
+        }
 
         // Gravity only in the air cuz it would just push us down into the floor a bit and then makes it weird to jump? so it works better if we just have it in air
         rb.useGravity = !isGrounded || jumping;
