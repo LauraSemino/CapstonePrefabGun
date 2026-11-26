@@ -133,4 +133,4 @@ MonoBehaviour:
   playerJumpMult: 5
   verticalDrag: 5
   horizontalDrag: 3
-  angularDrag: 2
+  angularDrag: 5
