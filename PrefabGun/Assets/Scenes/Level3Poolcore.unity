@@ -6980,8 +6980,8 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2910652967840534188, guid: 37e952cef4d64794e9287e54231c8cba, type: 3}
-      propertyPath: horizontalDrag
-      value: 3
+      propertyPath: angularDrag
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3695118689199570805, guid: 37e952cef4d64794e9287e54231c8cba, type: 3}
       propertyPath: m_LocalScale.x
