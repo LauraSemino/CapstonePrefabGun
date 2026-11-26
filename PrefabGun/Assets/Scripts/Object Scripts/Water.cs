@@ -10,11 +10,12 @@ public class Water : MonoBehaviour
     public float floatRange = 1f;
     public float bobHeight = 0.05f;
     public float bobSpeed = 2f;
-    public float drag = 2f;
     public float playerJumpMult;
 
-    [Header("Player")]
-    public float playerVerticalDrag = 5f;
+    [Header("Drag")]
+    public float verticalDrag = 5f;
+    public float horizontalDrag = 2f;
+    public float angularDrag = 2f;
 
     Collider zone;
     List<Rigidbody> bodies = new List<Rigidbody>();
@@ -68,15 +69,23 @@ public class Water : MonoBehaviour
                 }
                 else
                 {
-                    velocity.y *= 1f - playerVerticalDrag * Time.fixedDeltaTime;
+                    velocity.y *= 1f - verticalDrag * Time.fixedDeltaTime;
+                    velocity.x *= 1f - horizontalDrag * Time.fixedDeltaTime;
+                    velocity.z *= 1f - horizontalDrag * Time.fixedDeltaTime;
                 }
                 rb.linearVelocity = velocity;
                 continue;
             }
-
-            // Water resistance
-            rb.linearVelocity *= 1f - playerVerticalDrag * Time.fixedDeltaTime;
-            rb.angularVelocity *= 1f - drag * Time.fixedDeltaTime;
+            else
+            {
+                // Water resistance
+                Vector3 lv = rb.linearVelocity;
+                lv.y *= 1f - verticalDrag * Time.fixedDeltaTime;
+                lv.x *= 1f - horizontalDrag * Time.fixedDeltaTime;
+                lv.z *= 1f - horizontalDrag * Time.fixedDeltaTime;
+                rb.linearVelocity = lv;
+                rb.angularVelocity *= 1f - angularDrag * Time.fixedDeltaTime;
+            }
 
             // Floating objects
             if (rb.mass < sinkMass)

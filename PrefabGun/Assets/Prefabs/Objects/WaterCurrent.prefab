@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterCurrent
   windness: 10
   range: 3
-  radius: 2
+  radius: 1
   blowable:
     serializedVersion: 2
     m_Bits: 73

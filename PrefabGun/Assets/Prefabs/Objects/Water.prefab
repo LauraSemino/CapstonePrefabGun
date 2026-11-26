@@ -130,6 +130,7 @@ MonoBehaviour:
   floatRange: 1
   bobHeight: 0.05
   bobSpeed: 2
-  drag: 2
   playerJumpMult: 5
-  playerVerticalDrag: 5
+  verticalDrag: 5
+  horizontalDrag: 3
+  angularDrag: 2
